@@ -30,7 +30,7 @@ import java.io.*;
 import client_pkg.*;
 import java.lang.ClassLoader.*;
 
-public class Server implements Runnable
+public class Server extends Server_interface_class implements Runnable
 {  private Socket       socket = null;
    private ServerSocket server = null;
    private Thread       thread = null;
@@ -39,6 +39,10 @@ public class Server implements Runnable
    private FileOutputStream fos = null;
    private BufferedOutputStream bos = null;
    static byte[] memory= new byte[100000] ;
+   
+   public byte[] getMemory(){
+	   return memory;
+   }
    
 
    public Server(int port)
@@ -52,6 +56,11 @@ public class Server implements Runnable
       {  System.out.println(ioe); 
       }
    }
+   
+   public Server()
+   {  
+   }
+   
    public void run()
    {  while (thread != null)
       {   try
@@ -66,23 +75,66 @@ public class Server implements Runnable
             socket = server.accept();
             System.out.println("Client accepted: " + socket);
             open();
+            int commandbytearraylength = 0;
+            byte [] commandbytearray  = new byte [100];
             byte [] mybytearray  = new byte [filesize];
-            bytesRead = is.read(mybytearray,0,mybytearray.length);
-            current = bytesRead;
-            System.out.println("after reading stream from socket , bytes : " + bytesRead);
-            /*do {
-               bytesRead =
-                  is.read(mybytearray, current, (mybytearray.length-current));
-               if(bytesRead >= 0) current += bytesRead;
-            } while(bytesRead > -1);*/
-
-            System.out.println("Writing class file...");
-            bos.write(mybytearray, 0 , current);
-            bos.flush();
-            long end = System.currentTimeMillis();
-            System.out.println(end-start);
             
-            executeInstructions();
+            //First 100 bytes sent are just the bytes corresponding to the 
+            //command(including padding)
+            ////First 'int' bytes are length of command
+            commandbytearraylength=is.read();//assuming int is 4 bytes
+            System.out.println("Server Received lenght " +commandbytearraylength+"command");
+            bytesRead = is.read(commandbytearray,0,commandbytearraylength);
+            String command = new String(commandbytearray, 0, commandbytearraylength);
+            System.out.println("Server Received command  "+command);
+            
+            if(command.equalsIgnoreCase("PutCode")){
+            	//TBD - Add code that returns refrence to code file back to client
+            	bytesRead = is.read(mybytearray,0,mybytearray.length);
+            	current = bytesRead;
+            	System.out.println("after reading stream from socket , bytes : " + bytesRead);
+            	/*do {
+               	bytesRead =
+                  	is.read(mybytearray, current, (mybytearray.length-current));
+               	if(bytesRead >= 0) current += bytesRead;
+            	} while(bytesRead > -1);*/
+
+            	System.out.println("Writing class file...");
+            	bos.write(mybytearray, 0 , current);
+            	bos.flush();
+            	long end = System.currentTimeMillis();
+            	System.out.println(end-start);
+            }
+            
+            else if(command.equalsIgnoreCase("ExecuteCode")){
+            	//TBD - Add ocde that takes in reference to Code file as input from CLient
+            	executeInstructions();
+            	System.out.println("Contents of memory at offset "+0+" after setting to 1 is "+Server.memory[0]);
+            }
+            else if(command.equalsIgnoreCase("Read")){
+            	//Do this op on Server.memory
+            	int addr=is.read();//assuming int is 4 bytes
+            	byte results = Server.memory[addr];
+            }
+            else if(command.equalsIgnoreCase("Write")){
+            	//DO this op on Server.memory
+            	int addr=is.read();//assuming int is 4 bytes
+            	byte results = Server.memory[addr];
+            	byte second_args=(byte)is.read();//assuming int is 4 bytes
+            	Server.memory[addr] = second_args;
+            }
+            else if(command.equalsIgnoreCase("CAS")){
+            	//DO this op on Server.memory
+            	int addr=is.read();//assuming int is 4 bytes
+            	int results = Server.memory[addr];
+            	byte second_args=(byte)is.read();//assuming int is 4 bytes
+            	byte third_args=(byte)is.read();//assuming int is 4 bytes
+            	Server.memory[addr]=second_args;
+       		 	if(Server.memory[addr]==second_args){
+       		 		results = Server.memory[addr];
+       		 		Server.memory[addr]=third_args;
+       		 	}
+            }
             
             close();
          }
@@ -111,14 +163,11 @@ public class Server implements Runnable
    }
    
    public void executeInstructions(){
-	   
-	    //ClassLoader classLoader = Server.class.getClassLoader();
+
+	    //TBD - Add ocde that takes in reference to Code file as input from CLient
 	    Class aClass=null;
 	    Instructions_interface_class ins= null;
 	    try {
-	        /*aClass = classLoader.loadClass("Instructions");
-	        System.out.println("aClass.getName() = " + aClass.getName());
-	        aClass ins=new aClass();*/
 	    	aClass = Class.forName("client_pkg.Instructions");
 	    } catch (ClassNotFoundException e) {
 	        e.printStackTrace();
@@ -131,42 +180,10 @@ public class Server implements Runnable
 	        e.printStackTrace();
 	    }
 
-	    //if(ins==null)return;
-
-	   //aClass ins=new aClass();
-	   /*this code should be automatically be inserted by server into byte code and does not 
-		 * have to be written by client program
-		 */
-		int instructions_length = ins.get_Instruction_set().length;//compute from no of instructions specified
-		byte[] mem = Server.memory;
-		byte results[] = new byte[instructions_length];
-		//boolean bool [] = new boolean[instructions_length];
-	
-		/*END*/
+	    //byte[] mem = Server.memory;
+	    Server.memory = ins.execute();
 		
-		//String Instruction_set[] = ins.get_Instruction_set();
-		for(int i=0;i<ins.get_Instruction_set().length;i++){
-			if(ins.get_Instruction_set()[i].equalsIgnoreCase("Read")){
-				results[i] = mem[ins.get_first_args()[i]];
-			}
-			else if(ins.get_Instruction_set()[i].equalsIgnoreCase("Write")){		
-				results[i] = mem[ins.get_first_args()[i]];
-				mem[ins.get_first_args()[i]]=ins.get_second_args()[i];
-			}
-			else if(ins.get_Instruction_set()[i].equalsIgnoreCase("CAS")){
-				results[i] = mem[ins.get_first_args()[i]];
-				mem[ins.get_first_args()[i]]=ins.get_second_args()[i];
-				if(mem[ins.get_first_args()[i]]==ins.get_second_args()[i]){
-					results[i] = mem[ins.get_first_args()[i]];
-					mem[ins.get_first_args()[i]]=ins.get_third_args()[i];
-				}
-				else{
-					results[i] = -1;
-				}
-			}
-			System.out.println("Contents of memory at offset "+ins.get_first_args()[i]+" is "+mem[ins.get_first_args()[i]]);
-		}
-		//return results[] to client
+		//return 0;
 	   
    }
    

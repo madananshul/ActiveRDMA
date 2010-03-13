@@ -38,41 +38,81 @@ public class Client
    private OutputStream os = null;
 
    public Client(String serverName, int serverPort)
-   {  System.out.println("Establishing connection. Please wait ...");
-      try
-      {  socket = new Socket(serverName, serverPort);
-         System.out.println("Connected: " + socket);
-         start();
-      }
-      catch(UnknownHostException uhe)
-      {  System.out.println("Host unknown: " + uhe.getMessage());
-      }
-      catch(IOException ioe)
-      {  
-    	  System.out.println("Unexpected exception: " + ioe.getMessage());
-      }
-      
-      byte [] mybytearray  = new byte [(int)myFile.length()];
-      try {
-          int read = bis.read(mybytearray,0,mybytearray.length);
-          System.out.println("Read " + read + "bytes from file.");
-      }
-      catch(IOException ioe)
-      {
-    	  System.out.println("Sending error: " + ioe.getMessage());
-      }
-      System.out.println("Sending file...");
-      try {
-    	  os.write(mybytearray,0,mybytearray.length);
-          os.flush();
-      }
-      catch(IOException ioe)
-      {
-    	  System.out.println("Sending error: " + ioe.getMessage());
-      }
-      
-      
+   {  
+      startConnection(serverName, serverPort);
+      putCode();
+      startConnection(serverName, serverPort);
+      executeCode();
    }
+   
+   public void startConnection(String serverName, int serverPort){
+	      System.out.println("Establishing connection. Please wait ...");
+	      try
+	      {  socket = new Socket(serverName, serverPort);
+	         System.out.println("Connected: " + socket);
+	         start();
+	      }
+	      catch(UnknownHostException uhe)
+	      {  System.out.println("Host unknown: " + uhe.getMessage());
+	      }
+	      catch(IOException ioe)
+	      {  
+	    	  System.out.println("Unexpected exception: " + ioe.getMessage());
+	      }
+   }
+   
+   public void putCode(){
+	   	  //First 100 bytes sent are just the bytes corresponding to the command(including
+	      //padding)
+	      //First 'int' bytes are length of command
+	      byte [] command1bytearray  = "PutCode".getBytes();
+	      
+	      byte [] mybytearray  = new byte [(int)myFile.length()];
+	      try {
+	    	  
+	          int read = bis.read(mybytearray,0,mybytearray.length);
+	          System.out.println("Read " + read + "bytes from file.");
+	      }
+	      catch(IOException ioe)
+	      {
+	    	  System.out.println("Sending error: " + ioe.getMessage());
+	      }
+	      System.out.println("Sending file...");
+	      try {
+	    	
+	    	  os.write(command1bytearray.length);
+	    	  os.write(command1bytearray);
+	    	  
+	    	  os.write(mybytearray,0,mybytearray.length);
+	          os.flush();
+	          System.out.println("Client has sent PutCode");
+	      }
+	      catch(IOException ioe)
+	      {
+	    	  System.out.println("Sending error: " + ioe.getMessage());
+	      }
+	   
+   }
+   
+   public void executeCode(){
+	   	  //First 100 bytes sent are just the bytes corresponding to the command(including
+	      //padding)
+	      //First 'int' bytes are length of command
+	      byte [] command1bytearray  = "ExecuteCode".getBytes();
+	      
+	      try {
+	    	  os.write(command1bytearray.length);
+	    	  os.write(command1bytearray);
+	          os.flush();
+	          System.out.println("Client has sent ExecuteCode");
+	      }
+	      catch(IOException ioe)
+	      {
+	    	  System.out.println("Sending error: " + ioe.getMessage());
+	      }
+	   
+   }
+   
    public void start() throws IOException
    {  console   = new DataInputStream(System.in);
       streamOut = new DataOutputStream(socket.getOutputStream());

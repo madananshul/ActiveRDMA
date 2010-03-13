@@ -77,7 +77,7 @@ public class Client
    {  console   = new DataInputStream(System.in);
       streamOut = new DataOutputStream(socket.getOutputStream());
       
-      myFile = new File ("Ins.class");
+      myFile = new File ("Instructions.class");
       //fis = new FileInputStream(myFile);
       try {
     	  bis = new BufferedInputStream(new FileInputStream(myFile));

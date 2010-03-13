@@ -26,12 +26,9 @@ and success/failure bools for each insn
 package server_pkg;
 
 import java.net.*;
-
-import java.net.*;
 import java.io.*;
-
-import java.net.*;
-import java.io.*;
+import client_pkg.*;
+import java.lang.ClassLoader.*;
 
 public class Server implements Runnable
 {  private Socket       socket = null;
@@ -109,43 +106,65 @@ public class Server implements Runnable
    public void open() throws IOException
    {  
       is = socket.getInputStream();
-      fos = new FileOutputStream("Instructions.class");
+      fos = new FileOutputStream("./Prototype/client_pkg/Instructions.class");
       bos = new BufferedOutputStream(fos);
    }
    
    public void executeInstructions(){
-	   Instructions ins=new Instructions();
+	   
+	    //ClassLoader classLoader = Server.class.getClassLoader();
+	    Class aClass=null;
+	    Instructions_interface_class ins= null;
+	    try {
+	        /*aClass = classLoader.loadClass("Instructions");
+	        System.out.println("aClass.getName() = " + aClass.getName());
+	        aClass ins=new aClass();*/
+	    	aClass = Class.forName("client_pkg.Instructions");
+	    } catch (ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
+	    try {
+	    	if(aClass!=null)System.out.println("Class was instantiated");
+	    	//if(aClass!=null)ins = aClass.newInstance();
+	    	if(aClass!=null)ins = (Instructions_interface_class)aClass.newInstance();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    //if(ins==null)return;
+
+	   //aClass ins=new aClass();
 	   /*this code should be automatically be inserted by server into byte code and does not 
 		 * have to be written by client program
 		 */
-		int instructions_length = ins.Instruction_set.length;//compute from no of instructions specified
+		int instructions_length = ins.get_Instruction_set().length;//compute from no of instructions specified
 		byte[] mem = Server.memory;
 		byte results[] = new byte[instructions_length];
-		boolean bool [] = new boolean[instructions_length];
+		//boolean bool [] = new boolean[instructions_length];
 	
 		/*END*/
 		
-		String Instruction_set[] = ins.Instruction_set;
-		for(int i=0;i<ins.Instruction_set.length;i++){
-			if(ins.Instruction_set[i].equalsIgnoreCase("Read")){
-				results[i] = mem[ins.first_args[i]];
+		//String Instruction_set[] = ins.get_Instruction_set();
+		for(int i=0;i<ins.get_Instruction_set().length;i++){
+			if(ins.get_Instruction_set()[i].equalsIgnoreCase("Read")){
+				results[i] = mem[ins.get_first_args()[i]];
 			}
-			else if(ins.Instruction_set[i].equalsIgnoreCase("Write")){		
-				results[i] = mem[ins.first_args[i]];
-				mem[ins.first_args[i]]=ins.second_args[i];
+			else if(ins.get_Instruction_set()[i].equalsIgnoreCase("Write")){		
+				results[i] = mem[ins.get_first_args()[i]];
+				mem[ins.get_first_args()[i]]=ins.get_second_args()[i];
 			}
-			else if(ins.Instruction_set[i].equalsIgnoreCase("CAS")){
-				results[i] = mem[ins.first_args[i]];
-				mem[ins.first_args[i]]=ins.second_args[i];
-				if(mem[ins.first_args[i]]==ins.second_args[i]){
-					results[i] = mem[ins.first_args[i]];
-					mem[ins.first_args[i]]=ins.third_args[i];
+			else if(ins.get_Instruction_set()[i].equalsIgnoreCase("CAS")){
+				results[i] = mem[ins.get_first_args()[i]];
+				mem[ins.get_first_args()[i]]=ins.get_second_args()[i];
+				if(mem[ins.get_first_args()[i]]==ins.get_second_args()[i]){
+					results[i] = mem[ins.get_first_args()[i]];
+					mem[ins.get_first_args()[i]]=ins.get_third_args()[i];
 				}
 				else{
 					results[i] = -1;
 				}
 			}
-			System.out.println("Contents of memory at offset "+ins.first_args[i]+" is "+mem[ins.first_args[i]]);
+			System.out.println("Contents of memory at offset "+ins.get_first_args()[i]+" is "+mem[ins.get_first_args()[i]]);
 		}
 		//return results[] to client
 	   

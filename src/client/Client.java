@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import common.ActiveRDMA;
@@ -123,10 +124,15 @@ public class Client implements ActiveRDMA{
 	
 	//TODO: actually a higher level method, not from the ActiveRDMA interface
 	public boolean load(String name){
-		//FIXME: may depend on the bin/ etc configuration...
 		//FIXME: this is horrible for nested classes we need to find how to 
 		// extract the code from loaded classes
-		File classfile = new File("bin/"+name+".class");
+		File classfile;
+		try {
+			classfile = new File( Client.class.getClassLoader().getResource(name+".class").toURI() );
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+			return false;
+		}
 		int len = (int)(classfile.length());
 		byte[] bytes = new byte[len];
 		try {
@@ -139,6 +145,22 @@ public class Client implements ActiveRDMA{
 		}
 		return load(bytes);
 	}
+	
+//	public boolean load(Class<?> c){
+//		try {
+//		    ByteArrayOutputStream bos = new ByteArrayOutputStream() ;
+//		    ObjectOutputStream out = new ObjectOutputStream(bos) ;
+//		    out.writeObject(c);
+//		    out.close();
+//
+//		    System.out.println("++++ "+bos.toByteArray().length );
+//		    
+//		    return false; 
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return false;
+//	}
 
 	public boolean load(byte[] code) {
 		int result = 0;

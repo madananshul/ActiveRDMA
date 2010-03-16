@@ -1,10 +1,15 @@
 package client;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
@@ -84,6 +89,36 @@ public class Client implements ActiveRDMA{
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	protected int udp_exchange(MessageFactory.Operation op){
+		int result = 0;
+		try {
+			DatagramSocket socket = new DatagramSocket();
+			
+			ByteArrayOutputStream b = new ByteArrayOutputStream();
+			DataOutputStream out = new DataOutputStream( b );
+			//TODO: append UID
+			op.write(out);
+			out.close();
+			
+			byte[] ar = b.toByteArray();
+			DatagramPacket p = new DatagramPacket(ar, ar.length);
+			//FIXME: cache this...
+			p.setAddress(InetAddress.getByName(server));
+			p.setPort(ActiveRDMA.PORT);
+			
+			socket.send(p);
+			//TODO: add timeouts.
+			
+			socket.receive(p);
+			DataInputStream in = new DataInputStream(new ByteArrayInputStream(p.getData()));
+			result = in.readInt();
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;

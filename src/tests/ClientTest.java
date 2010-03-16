@@ -19,7 +19,7 @@ public class ClientTest extends TestCase {
 		assertEquals( client.w(0,1234567) , 0 );
 		assertEquals( client.r(0) , 1234567 );
 		
-		assertEquals( client.cas(0,1234567,42) , true );
+		assertTrue( client.cas(0,1234567,42) != 0 );
 		assertEquals( client.r(0) , 42 );
 	}
 	
@@ -30,7 +30,7 @@ public class ClientTest extends TestCase {
 		assertEquals( client.r(7) , 0 );
 		
 		// assuming bin/MobileCode.class exists ...
-		assertEquals( client.load("MobileCode") , true );
+		assertTrue( client.load("MobileCode") != 0 );
 		
 		// sets to [7]42
 		assertEquals( client.run("MobileCode",7) , 42 );

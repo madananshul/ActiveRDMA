@@ -1,32 +1,56 @@
 package common;
 
-
+//FIXME: there is no specified result for when the address is out of bounds!
+//FIXME: or when the execution fails...
 public interface ActiveRDMA {
 	
 	final int PORT = 15712;
 	enum OpCode{ READ, WRITE, CAS, RUN, LOAD};
 
-	//mobile code interface should be:
-	//static public int execute(AtomicInteger[] mem, int arg);
+	/*
+	 * RDMA operations
+	 */
 	
-	//reads value @address
+	/** Reads from the server's memory.
+	 * @param address - offset of the memory location
+	 * @return value of memory location *at the time of the read*
+	 */
 	int r(int address);
 	
-	//writes value @address ; returns old
+	/** Writes the value into the server's memory.
+	 * @param address - offset of the memory location
+	 * @param value - the new value to be store
+	 * @return old value
+	 */
 	int w(int address, int value);
 	
-	//compare-and-swap if(test) writes value
-	//FIXME: returns boolean, not old value
-	boolean cas(int address, int test, int value);
+	/** Compare-And-Swap, if test is true it will atomically write value into 
+	 * the memory at location address.
+	 * @param address - offset of the memory location
+	 * @param test - condition that must be true for the assignment to occur
+	 * @param value - the new value to be store
+	 * @return boolean as int (0 - false, else - true) with the test result
+	 */ //TODO: returning int simplifies the interface?
+	int cas(int address, int test, int value);
+
+	/*
+	 * Active operations
+	 */
 	
-	//runs previous loaded code (with its md5 as UID)
-	//FIXME: revert to md5?
+	// mobile code interface expected to be:
+	// static public int execute(AtomicInteger[] mem, int arg); 
+
+	/** Executes the previously loaded code in the server.
+	 * @param name - class to be executed, FIXME: this will change to something else, md5 maybe?
+	 * @param arg - argument supplied to the executing code
+	 * @result result of the executed method.
+	 */
 	int run(String name, int arg);
 	
-	//loads byte[] as a class
-	// true if not overriding anything
-	//FIXME: what to return? anything at all? needs to block to ensure
-	//FIXME: that code was loaded...
-	boolean load(byte[] code);
+	/** Loads the code of a class
+	 * @param code - the bytecode of a class, not its serialization!
+	 * @return boolean as int (0 - false, else - true) with load success result
+	 */ //TODO: the return value is not all that well defined, what is success?
+	int load(byte[] code);
 	
 }

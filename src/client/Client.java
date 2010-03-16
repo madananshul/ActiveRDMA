@@ -22,7 +22,7 @@ public class Client implements ActiveRDMA{
 	//FIXME: code repetition is ugly, wish Java had lambdas...
 	//FIXME: same problem with excessive socket open/closes
 	
-	public boolean cas(int address, int test, int value) {
+	public int cas(int address, int test, int value) {
 		int result = 0;
 		try {
 			Socket socket = new Socket(server, ActiveRDMA.PORT);
@@ -45,7 +45,7 @@ public class Client implements ActiveRDMA{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result != 0;
+		return result;
 	}
 
 	public int w(int address, int value) {
@@ -123,7 +123,7 @@ public class Client implements ActiveRDMA{
 	}
 	
 	//TODO: actually a higher level method, not from the ActiveRDMA interface
-	public boolean load(String name){
+	public int load(String name){
 		//FIXME: this is horrible for nested classes we need to find how to 
 		// extract the code from loaded classes
 		File classfile;
@@ -131,7 +131,7 @@ public class Client implements ActiveRDMA{
 			classfile = new File( Client.class.getClassLoader().getResource(name+".class").toURI() );
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
-			return false;
+			return 0;
 		}
 		int len = (int)(classfile.length());
 		byte[] bytes = new byte[len];
@@ -141,7 +141,7 @@ public class Client implements ActiveRDMA{
 			i.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
+			return 0;
 		}
 		return load(bytes);
 	}
@@ -162,7 +162,7 @@ public class Client implements ActiveRDMA{
 //		return false;
 //	}
 
-	public boolean load(byte[] code) {
+	public int load(byte[] code) {
 		int result = 0;
 		try {
 			Socket socket = new Socket(server, ActiveRDMA.PORT);
@@ -184,7 +184,7 @@ public class Client implements ActiveRDMA{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result != 0;
+		return result;
 	}
 
 }

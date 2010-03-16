@@ -57,7 +57,7 @@ public class Server extends ClassLoader implements ActiveRDMA
 				
 				switch(code_table[code]){
 				case CAS:
-					result = cas(in.readInt(),in.readInt(),in.readInt()) ? 1 : 0;
+					result = cas(in.readInt(),in.readInt(),in.readInt());
 					break;
 				case READ:
 					result = r(in.readInt());
@@ -69,7 +69,7 @@ public class Server extends ClassLoader implements ActiveRDMA
 				case LOAD:
 					byte[] array = new byte[in.readInt()];
 					in.read(array);
-					result = load(array) ? 1 : 0;
+					result = load(array);
 					break;
 
 				case RUN:
@@ -117,14 +117,14 @@ public class Server extends ClassLoader implements ActiveRDMA
 		return old;
 	}
 	
-	public boolean cas(int address, int test, int value) {
-		return memory[address].compareAndSet(test, value);
+	public int cas(int address, int test, int value) {
+		return memory[address].compareAndSet(test, value) ? 1 : 0;
 	}
 
-	public boolean load(byte[] code) {
+	public int load(byte[] code) {
 		Class<?> c = defineClass(null, code, 0, code.length);
 		//indexes by the name of the class TODO: index by md5 instead?
-		return map.put(c.getName(),c) == null ;
+		return map.put(c.getName(),c) == null ? 1 : 0;
 	}
 
 	public int run(String name, int arg) {

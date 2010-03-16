@@ -1,5 +1,5 @@
 package dht;
 
-public class DHT_Active {
+public class DHT_Active implements DHT {
 
 }

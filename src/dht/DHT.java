@@ -1,7 +1,7 @@
 package dht;
 
 public interface DHT {
-	String get(String key);
-	void put(String key, String val);
+	int get(String key);
+	void put(String key, int val);
 	boolean has(String key);
 }

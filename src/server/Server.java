@@ -3,6 +3,7 @@ package server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -24,33 +25,69 @@ import common.messages.MessageFactory.Write;
 public class Server extends ClassLoader implements MessageVisitor<Socket>
 {
 
-	protected ServerSocket socket;
-	protected AtomicInteger[] memory;
-	protected Map<String,Class<?>> map;
-	protected BlockingQueue<Job> queue;
+	final protected AtomicInteger[] memory;
+	final protected Map<String,Class<?>> map;
+	final protected BlockingQueue<Job> queue;
 	
-	public Server(int memory_size, int workers) throws IOException{
+	class Job{
+		Socket socket;
+		String name;
+		int arg;
+		
+		public Job(Socket socket, String name, int arg){
+			this.socket = socket;
+			this.name = name;
+			this.arg = arg;
+		}
+	}
+	
+	public Server(int memory_size, int workers) {
 		super();
 		map = new TreeMap<String, Class<?>>();
 		memory = new AtomicInteger[memory_size];
 		for(int i=0; i<memory.length; ++i)
 			memory[i] = new AtomicInteger(0);
 		
-		socket = new ServerSocket(ActiveRDMA.PORT);
 		
 		queue = new LinkedBlockingQueue<Job>();
 		
 		//the worker pool
-		Worker[] w = new Worker[workers];
 		for(int i=0; i<workers; ++i)
-			w[i] = new Worker(queue,memory,map);
+			new Thread(){
+
+			//worker stuff
+			public void run(){
+				while(true){
+					try{
+						Job job = queue.take();
+						int result = 0;
+						Class<?> c = map.get(job.name);
+						try {
+							Method m = c.getMethod("execute", new Class[]{AtomicInteger[].class,int.class});
+							result = (Integer) m.invoke(null, new Object[]{memory,job.arg});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+						DataOutputStream out = new DataOutputStream(job.socket.getOutputStream());
+						out.writeInt(result);
+						out.flush();
+
+						out.close();
+						job.socket.close();
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}.start();
 		
-		for(int i=0; i<workers; ++i)
-			w[i].start();
 	}
 	
-	public void listen(){
-
+	public void listen() throws IOException{
+		ServerSocket socket = new ServerSocket(ActiveRDMA.PORT);
+		
 		while(true){
 			try {
 				//FIXME: using TCP simplifies reliability of messages sent

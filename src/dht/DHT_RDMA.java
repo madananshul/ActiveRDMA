@@ -1,6 +1,8 @@
 package dht;
+
 import client.Client;
-import client;
+
+//import client.Client;
 
 // hash table is at address N, has N entries, each entry is 
 // <next> <data> <key0> <key1> ... 0.
@@ -76,6 +78,7 @@ public class DHT_RDMA implements DHT {
 	{
 		int[] k = stringToInt(key);
 		int ptr = findKey(k);
+		return ptr;
 	}
 	
 	public void put(String key, int val)
@@ -101,6 +104,11 @@ public class DHT_RDMA implements DHT {
 			m_client.w(newPtr + 1, oldHead);
 			if (m_client.cas(N + hash(k), oldHead, newPtr)) break;
 		}
+	}
+
+	public boolean has(String key) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

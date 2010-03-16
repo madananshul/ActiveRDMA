@@ -47,42 +47,42 @@ public class Server extends ClassLoader implements MessageVisitor<Socket>
 		memory = new AtomicInteger[memory_size];
 		for(int i=0; i<memory.length; ++i)
 			memory[i] = new AtomicInteger(0);
-		
-		
 		queue = new LinkedBlockingQueue<Job>();
 		
 		//the worker pool
-		for(int i=0; i<workers; ++i)
+		for(int i=0; i<workers; ++i){
 			new Thread(){
-
-			//worker stuff
-			public void run(){
-				while(true){
-					try{
-						Job job = queue.take();
-						int result = 0;
-						Class<?> c = map.get(job.name);
-						try {
-							Method m = c.getMethod("execute", new Class[]{AtomicInteger[].class,int.class});
-							result = (Integer) m.invoke(null, new Object[]{memory,job.arg});
-						} catch (Exception e) {
+				//worker stuff
+				public void run(){
+					while(true){
+						try{
+							work();
+						}catch(Exception e){
 							e.printStackTrace();
 						}
-
-						DataOutputStream out = new DataOutputStream(job.socket.getOutputStream());
-						out.writeInt(result);
-						out.flush();
-
-						out.close();
-						job.socket.close();
-					}catch(Exception e){
-						e.printStackTrace();
 					}
 				}
-			}
+			}.start();
+		}
+	}
+	
+	protected void work() throws Exception {
+		Job job = queue.take();
+		int result = 0;
+		Class<?> c = map.get(job.name);
+		try {
+			Method m = c.getMethod("execute", new Class[]{AtomicInteger[].class,int.class});
+			result = (Integer) m.invoke(null, new Object[]{memory,job.arg});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		}.start();
-		
+		DataOutputStream out = new DataOutputStream(job.socket.getOutputStream());
+		out.writeInt(result);
+		out.flush();
+
+		out.close();
+		job.socket.close();
 	}
 	
 	public void listen() throws IOException{
@@ -100,6 +100,7 @@ public class Server extends ClassLoader implements MessageVisitor<Socket>
 				int result = op.visit(this, incoming);
 				
 				//FIXME: ARGHH ugly code!
+				//don't close socket if it's a Run operation
 				if( op instanceof MessageFactory.Run )
 					continue;
 
@@ -137,10 +138,6 @@ public class Server extends ClassLoader implements MessageVisitor<Socket>
 
 	public int visit(Run run, Socket context) {
 		Job job = new Job(context,run.name,run.arg);
-		
-		//this closes the *whole* socket, so let it leak (will be
-		//close together with the socket.close()
-		// in.close();
 		try {
 			queue.put(job);
 		} catch (InterruptedException e) {

@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import common.ActiveRDMA;
+import common.messages.MessageFactory;
 
 public class Client implements ActiveRDMA{
 
@@ -18,108 +19,25 @@ public class Client implements ActiveRDMA{
 	public Client(String server){
 		this.server = server;
 	}
-
-	//FIXME: code repetition is ugly, wish Java had lambdas...
-	//FIXME: same problem with excessive socket open/closes
 	
 	public int cas(int address, int test, int value) {
-		int result = 0;
-		try {
-			Socket socket = new Socket(server, ActiveRDMA.PORT);
-			
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			out.writeInt(OpCode.CAS.ordinal());
-			out.writeInt(address);
-			out.writeInt(test);
-			out.writeInt(value);
-			out.flush();
-			
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			result = in.readInt();
-			
-			out.close();
-			in.close();
-			socket.close();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
+		return exchange( MessageFactory.makeCAS(address, test, value));
 	}
 
 	public int w(int address, int value) {
-		int result = 0;
-		try {
-			Socket socket = new Socket(server, ActiveRDMA.PORT);
-			
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			out.writeInt(OpCode.WRITE.ordinal());
-			out.writeInt(address);
-			out.writeInt(value);
-			out.flush();
-			
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			result = in.read();
-			
-			out.close();
-			in.close();
-			socket.close();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
+		return exchange( MessageFactory.makeWrite(address, value));
 	}
 	
 	public int r(int address) {
-		int result = 0;
-		try {
-			Socket socket = new Socket(server, ActiveRDMA.PORT);
-			
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			out.writeInt(OpCode.READ.ordinal());
-			out.writeInt(address);
-			out.flush();
-			
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			result = in.readInt();
-			
-			out.close();
-			in.close();
-			socket.close();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
+		return exchange( MessageFactory.makeRead(address));
 	}
 
 	public int run(String name, int arg) {
-		int result = 0;
-		try {
-			Socket socket = new Socket(server, ActiveRDMA.PORT);
-			
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			out.writeInt(OpCode.RUN.ordinal());
-			out.writeUTF(name);
-			out.writeInt(arg);
-			out.flush();
-			
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			result = in.readInt();
-			
-			out.close();
-			in.close();
-			socket.close();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
+		return exchange( MessageFactory.makeRun(name, arg));
+	}
+	
+	public int load(byte[] code) {
+		return exchange( MessageFactory.makeLoad(code));
 	}
 	
 	//TODO: actually a higher level method, not from the ActiveRDMA interface
@@ -145,34 +63,18 @@ public class Client implements ActiveRDMA{
 		}
 		return load(bytes);
 	}
-	
-//	public boolean load(Class<?> c){
-//		try {
-//		    ByteArrayOutputStream bos = new ByteArrayOutputStream() ;
-//		    ObjectOutputStream out = new ObjectOutputStream(bos) ;
-//		    out.writeObject(c);
-//		    out.close();
-//
-//		    System.out.println("++++ "+bos.toByteArray().length );
-//		    
-//		    return false; 
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
 
-	public int load(byte[] code) {
+	//FIXME: same problem with excessive TCP socket open/closes
+	protected int exchange(MessageFactory.Operation op){
 		int result = 0;
 		try {
 			Socket socket = new Socket(server, ActiveRDMA.PORT);
 			
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			out.writeInt(OpCode.LOAD.ordinal());
-			out.writeInt(code.length);
-			out.write(code);
+			op.write(out);
 			out.flush();
 			
+			//always just one int returned
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			result = in.readInt();
 			

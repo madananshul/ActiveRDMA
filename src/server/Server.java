@@ -12,8 +12,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import common.ActiveRDMA;
+import common.messages.MessageFactory;
+import common.messages.MessageVisitor;
+import common.messages.MessageFactory.CAS;
+import common.messages.MessageFactory.Load;
+import common.messages.MessageFactory.Operation;
+import common.messages.MessageFactory.Read;
+import common.messages.MessageFactory.Run;
+import common.messages.MessageFactory.Write;
 
-public class Server extends ClassLoader implements ActiveRDMA 
+public class Server extends ClassLoader implements MessageVisitor<Socket>
 {
 
 	protected ServerSocket socket;
@@ -42,8 +50,7 @@ public class Server extends ClassLoader implements ActiveRDMA
 	}
 	
 	public void listen(){
-		final OpCode[] code_table = OpCode.values();
-		
+
 		while(true){
 			try {
 				//FIXME: using TCP simplifies reliability of messages sent
@@ -52,44 +59,12 @@ public class Server extends ClassLoader implements ActiveRDMA
 				Socket incoming = socket.accept();
 
 				DataInputStream in = new DataInputStream(incoming.getInputStream());
-				int code = in.readInt();
-				int result = 0;
+				Operation op = MessageFactory.read(in);
+				int result = op.visit(this, incoming);
 				
-				switch(code_table[code]){
-				case CAS:
-					result = cas(in.readInt(),in.readInt(),in.readInt());
-					break;
-				case READ:
-					result = r(in.readInt());
-					break;
-				case WRITE:
-					result = w(in.readInt(),in.readInt());
-					break;
-
-				case LOAD:
-					byte[] array = new byte[in.readInt()];
-					in.read(array);
-					result = load(array);
-					break;
-
-				case RUN:
-					Job job = new Job(incoming,in.readUTF(),in.readInt());
-					
-					//this closes the *whole* socket, so let it leak (will be
-					//close together with the socket.close()
-					// in.close();
-					try {
-						queue.put(job);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					continue; 
-					//note this jump to next *iteration* instead of doing
-					//clean up stuff bellow
-					
-				default:
-					throw new RuntimeException("OpCode "+code+" unexpected.");
-				}
+				//FIXME: ARGHH ugly code!
+				if( op instanceof MessageFactory.Run )
+					continue;
 
 				DataOutputStream out = new DataOutputStream(incoming.getOutputStream());
 				out.writeInt(result);
@@ -104,32 +79,43 @@ public class Server extends ClassLoader implements ActiveRDMA
 			}
 		}
 	}
+
+	/*
+	 * Visit each operation
+	 */
 	
-	//FIXME: error codes for array out of bound errors
-	
-	public int r(int address) {
-		return memory[address].get();
+	public int visit(Read read, Socket context) {
+		return memory[read.address].get();
 	}
 
-	public int w(int address, int value) {
-		int old = memory[address].get();
-		memory[address].set(value);
+	public int visit(Write write, Socket context) {
+		int old = memory[write.address].get();
+		memory[write.address].set(write.value);
 		return old;
 	}
-	
-	public int cas(int address, int test, int value) {
-		return memory[address].compareAndSet(test, value) ? 1 : 0;
+
+	public int visit(CAS cas, Socket context) {
+		return memory[cas.address].compareAndSet(cas.test, cas.value) ? 1 : 0;
 	}
 
-	public int load(byte[] code) {
-		Class<?> c = defineClass(null, code, 0, code.length);
+	public int visit(Run run, Socket context) {
+		Job job = new Job(context,run.name,run.arg);
+		
+		//this closes the *whole* socket, so let it leak (will be
+		//close together with the socket.close()
+		// in.close();
+		try {
+			queue.put(job);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public int visit(Load load, Socket context) {
+		Class<?> c = defineClass(null, load.code, 0, load.code.length);
 		//indexes by the name of the class TODO: index by md5 instead?
 		return map.put(c.getName(),c) == null ? 1 : 0;
-	}
-
-	public int run(String name, int arg) {
-		//FIXME: design bug, worker pool does not use this interface
-		throw new RuntimeException("ok this is really a design bug");
 	}
 
 }

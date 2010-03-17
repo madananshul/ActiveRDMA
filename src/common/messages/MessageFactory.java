@@ -4,10 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import common.ActiveRDMA.OpCode;
-
-//TODO: wish Java had structs... wasteful allocations?
+//TODO: wasteful allocations?
 public class MessageFactory {
+
+	enum OpCode{ READ, WRITE, CAS, RUN, LOAD };
 	
 	static public Operation makeRead(int address){
 		Read r = new Read();

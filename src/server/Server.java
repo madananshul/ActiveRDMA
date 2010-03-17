@@ -1,13 +1,9 @@
 package server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -75,7 +71,7 @@ public class Server extends ClassLoader implements MessageVisitor<Socket>
 		int result = 0;
 		Class<?> c = map.get(job.name);
 		try {
-			Method m = c.getMethod("execute", new Class[]{AtomicInteger[].class,int.class});
+			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
 			result = (Integer) m.invoke(null, new Object[]{memory,job.arg});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,7 +86,7 @@ public class Server extends ClassLoader implements MessageVisitor<Socket>
 	}
 	
 	public void listen() throws IOException{
-		ServerSocket socket = new ServerSocket(ActiveRDMA.PORT);
+		ServerSocket socket = new ServerSocket(ActiveRDMA.SERVER_PORT);
 		
 		while(true){
 			try {
@@ -115,40 +111,6 @@ public class Server extends ClassLoader implements MessageVisitor<Socket>
 				in.close();
 				out.close();
 				incoming.close();
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public void udp_listen() throws IOException{
-		DatagramSocket socket = new DatagramSocket(ActiveRDMA.PORT);
-		byte[] b = new byte[6500]; //FIXME: not good...
-		DatagramPacket packet = new DatagramPacket(b, b.length);
-		while(true){
-			try {
-				socket.receive(packet);
-				
-				DataInputStream in = new DataInputStream(new ByteArrayInputStream(packet.getData()));
-				Operation op = MessageFactory.read(in);
-				int result = op.visit(this, null);
-				
-				//FIXME: ARGHH ugly code!
-				//don't close socket if it's a Run operation
-				if( op instanceof MessageFactory.Run )
-					continue;
-
-				ByteArrayOutputStream oub = new ByteArrayOutputStream();
-				DataOutputStream out = new DataOutputStream(oub);
-				out.writeInt(result);
-				out.close();
-				
-				byte[] bb = oub.toByteArray();
-				DatagramPacket res = new DatagramPacket(bb,bb.length);
-				res.setAddress(packet.getAddress());
-				res.setPort(packet.getPort());
-				socket.send(res);
 				
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -185,9 +147,16 @@ public class Server extends ClassLoader implements MessageVisitor<Socket>
 	}
 
 	public int visit(Load load, Socket context) {
-		Class<?> c = defineClass(null, load.code, 0, load.code.length);
-		//indexes by the name of the class TODO: index by md5 instead?
-		return map.put(c.getName(),c) == null ? 1 : 0;
+		try{
+			Class<?> c = defineClass(null, load.code, 0, load.code.length);
+			//indexes by the name of the class TODO: index by md5 instead?
+			//this will actually never return false, if there is a previous
+			//class with the same name LinkageError will occur.
+			return map.put(c.getName(),c) == null ? 1 : 0;
+		}catch(LinkageError e){
+			//problems loading
+			return 0;
+		}
 	}
 
 }

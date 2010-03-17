@@ -1,4 +1,4 @@
-package dht;
+package examples.dht;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

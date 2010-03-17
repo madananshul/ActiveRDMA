@@ -1,4 +1,4 @@
-package dht;
+package examples.dht;
 
 public class DHT_Active implements DHT {
 

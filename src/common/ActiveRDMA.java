@@ -1,11 +1,13 @@
 package common;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 //FIXME: there is no specified result for when the address is out of bounds!
 //FIXME: or when the execution fails...
 public interface ActiveRDMA {
 	
-	final int PORT = 15712;
-	enum OpCode{ READ, WRITE, CAS, RUN, LOAD};
+	final public int REQUEST_TIMEOUT = 5000; //5000ms = 5s
+	final public int SERVER_PORT = 15712;
 
 	/*
 	 * RDMA operations
@@ -39,6 +41,8 @@ public interface ActiveRDMA {
 	
 	// mobile code interface expected to be:
 	// static public int execute(AtomicInteger[] mem, int arg); 
+	final public String METHOD = "execute";
+	final public Class<?>[] SIGNATURE = new Class[]{AtomicInteger[].class,int.class};
 
 	/** Executes the previously loaded code in the server.
 	 * @param name - class to be executed, FIXME: this will change to something else, md5 maybe?

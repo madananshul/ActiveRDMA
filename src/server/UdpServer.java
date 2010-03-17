@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
@@ -30,15 +31,17 @@ public class UdpServer extends ClassLoader implements MessageVisitor<DatagramPac
 	final protected AtomicInteger[] memory;
 	final protected Map<String,Class<?>> map;
 	final protected BlockingQueue<Job> queue;
-	final DatagramSocket socket;
+	final protected DatagramSocket socket;
 	
 	class Job{
-		DatagramPacket packet;
+		InetAddress address;
+		int port;
 		String name;
 		int arg;
 		
-		public Job(DatagramPacket socket, String name, int arg){
-			this.packet = socket;
+		public Job(InetAddress address, int port, String name, int arg){
+			this.address = address;
+			this.port = port;
 			this.name = name;
 			this.arg = arg;
 		}
@@ -46,7 +49,7 @@ public class UdpServer extends ClassLoader implements MessageVisitor<DatagramPac
 	
 	public UdpServer(int memory_size, int workers) throws IOException {
 		super();
-		socket = new DatagramSocket(ActiveRDMA.PORT);
+		socket = new DatagramSocket(ActiveRDMA.SERVER_PORT);
 		map = new TreeMap<String, Class<?>>();
 		memory = new AtomicInteger[memory_size];
 		for(int i=0; i<memory.length; ++i)
@@ -75,7 +78,7 @@ public class UdpServer extends ClassLoader implements MessageVisitor<DatagramPac
 		int result = 0;
 		Class<?> c = map.get(job.name);
 		try {
-			Method m = c.getMethod("execute", new Class[]{AtomicInteger[].class,int.class});
+			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
 			result = (Integer) m.invoke(null, new Object[]{memory,job.arg});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -88,14 +91,14 @@ public class UdpServer extends ClassLoader implements MessageVisitor<DatagramPac
 		
 		byte[] bb = oub.toByteArray();
 		DatagramPacket res = new DatagramPacket(bb,bb.length);
-		res.setAddress(job.packet.getAddress());
-		res.setPort(job.packet.getPort());
+		res.setAddress(job.address);
+		res.setPort(job.port);
 		
 		socket.send(res);
 	}
 	
 	public void listen() throws IOException{
-		byte[] b = new byte[6500]; //FIXME: not good...
+		byte[] b = new byte[socket.getReceiveBufferSize()];
 		DatagramPacket packet = new DatagramPacket(b, b.length);
 		while(true){
 			try {
@@ -146,12 +149,7 @@ public class UdpServer extends ClassLoader implements MessageVisitor<DatagramPac
 	}
 
 	public int visit(Run run, DatagramPacket context) {
-		byte[] copy = new byte[1]; //TODO: buggy
-		DatagramPacket clone = new DatagramPacket(copy,copy.length);
-		clone.setAddress(context.getAddress());
-		clone.setPort(context.getPort());
-		
-		Job job = new Job(clone,run.name,run.arg);
+		Job job = new Job(context.getAddress(),context.getPort(),run.name,run.arg);
 		try {
 			queue.put(job);
 		} catch (InterruptedException e) {
@@ -161,9 +159,16 @@ public class UdpServer extends ClassLoader implements MessageVisitor<DatagramPac
 	}
 
 	public int visit(Load load, DatagramPacket context) {
-		Class<?> c = defineClass(null, load.code, 0, load.code.length);
-		//indexes by the name of the class TODO: index by md5 instead?
-		return map.put(c.getName(),c) == null ? 1 : 0;
+		try{
+			Class<?> c = defineClass(null, load.code, 0, load.code.length);
+			//indexes by the name of the class TODO: index by md5 instead?
+			//this will actually never return false, if there is a previous
+			//class with the same name LinkageError will occur.
+			return map.put(c.getName(),c) == null ? 1 : 0;
+		}catch(LinkageError e){
+			//problems loading
+			return 0;
+		}
 	}
 
 }

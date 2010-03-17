@@ -11,6 +11,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
@@ -19,10 +20,10 @@ import common.messages.MessageFactory;
 
 public class Client implements ActiveRDMA{
 
-	protected String server;
+	protected InetAddress server;
 	
-	public Client(String server){
-		this.server = server;
+	public Client(String server) throws IOException{
+		this.server = InetAddress.getByName(server);
 	}
 	
 	public int cas(int address, int test, int value) {
@@ -45,13 +46,20 @@ public class Client implements ActiveRDMA{
 		return exchange( MessageFactory.makeLoad(code));
 	}
 	
+	//FIXME: this DOES NOT WORK for nested/anonymous classes
+	static public String getClassFilePath(Class<?> c){
+		return c.getCanonicalName().replaceAll("\\.", "/")+".class";
+	}
+	
 	//TODO: actually a higher level method, not from the ActiveRDMA interface
 	public int load(String name){
-		//FIXME: this is horrible for nested classes we need to find how to 
-		// extract the code from loaded classes
+		if( !name.endsWith(".class")){
+			name = name.replaceAll("\\.", "/")+".class"; 
+		}
+		
 		File classfile;
 		try {
-			classfile = new File( Client.class.getClassLoader().getResource(name+".class").toURI() );
+			classfile = new File( Client.class.getClassLoader().getResource(name).toURI() );
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
 			return 0;
@@ -69,11 +77,11 @@ public class Client implements ActiveRDMA{
 		return load(bytes);
 	}
 
-	//FIXME: same problem with excessive TCP socket open/closes
-	protected int exchange(MessageFactory.Operation op){
+	//FIXME: problem with excessive TCP socket open/closes
+	protected int tcp_exchange(MessageFactory.Operation op){
 		int result = 0;
 		try {
-			Socket socket = new Socket(server, ActiveRDMA.PORT);
+			Socket socket = new Socket(server, ActiveRDMA.SERVER_PORT);
 			
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 			op.write(out);
@@ -94,27 +102,42 @@ public class Client implements ActiveRDMA{
 		return result;
 	}
 	
-	protected int udp_exchange(MessageFactory.Operation op){
+	protected int exchange(MessageFactory.Operation op){
 		int result = 0;
 		try {
+			//FIXME: creates a new socket for each request, a bit wasteful
 			DatagramSocket socket = new DatagramSocket();
 			
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream( b );
-			//TODO: append UID
+			//TODO: append UID?
 			op.write(out);
 			out.close();
 			
 			byte[] ar = b.toByteArray();
 			DatagramPacket p = new DatagramPacket(ar, ar.length);
-			//FIXME: cache this...
-			p.setAddress(InetAddress.getByName(server));
-			p.setPort(ActiveRDMA.PORT);
-			
+
+			p.setAddress(server);
+			p.setPort(ActiveRDMA.SERVER_PORT);
+
 			socket.send(p);
-			//TODO: add timeouts.
 			
-			socket.receive(p);
+			int n_retry = 3;
+			while( n_retry-- > 0 ){
+				try{
+				socket.setSoTimeout(ActiveRDMA.REQUEST_TIMEOUT);
+				socket.receive(p);
+				break;
+				}catch(SocketTimeoutException e){
+					//re send
+					socket.send(p);
+				}
+			}
+			
+			if( n_retry == -1 ){
+				throw new RuntimeException("The server is dead, Jim.");
+			}
+			
 			DataInputStream in = new DataInputStream(new ByteArrayInputStream(p.getData()));
 			result = in.readInt();
 			

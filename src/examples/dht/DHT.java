@@ -1,4 +1,4 @@
-package dht;
+package examples.dht;
 
 public interface DHT {
 	int get(String key);

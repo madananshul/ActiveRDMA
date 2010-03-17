@@ -1,4 +1,4 @@
-package dht;
+package examples.dht;
 
 import client.Client;
 

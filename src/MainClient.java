@@ -6,9 +6,9 @@ import client.Client;
 public class MainClient {
 
 	public static class MobileCode {
-		public static int execute(AtomicInteger[] mem, int i) {
-			mem[i].set(42);
-			return mem[i].get();
+		public static int execute(AtomicInteger[] mem, int[] i) {
+			mem[i[0]].set(42);
+			return mem[i[0]].get();
 		}
 	}
 	
@@ -22,7 +22,7 @@ public class MainClient {
 		System.out.println( client.r(2) );
 		
 		System.out.println( client.load(MobileCode.class) );
-		System.out.println( client.run(MobileCode.class, 2) );
+		System.out.println( client.run(MobileCode.class, new int[]{2}) );
 		System.out.println( client.r(2) );
 	}
 

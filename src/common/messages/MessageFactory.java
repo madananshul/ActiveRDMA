@@ -30,7 +30,7 @@ public class MessageFactory {
 		return r;
 	}
 
-	static public Operation makeRun(String name, int arg){
+	static public Operation makeRun(String name, int[] arg){
 		Run r = new Run();
 		r.name = name;
 		r.arg = arg;
@@ -134,7 +134,7 @@ public class MessageFactory {
 	
 	public static class Run implements Operation {
 		public String name;
-		public int arg;
+		public int[] arg;
 		
 		public <C> int visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
@@ -143,12 +143,17 @@ public class MessageFactory {
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(OpCode.RUN.ordinal());
 			s.writeUTF(name);
-			s.writeInt(arg);
+			s.writeInt(arg.length);
+			for(int i=0;i<arg.length;++i)
+				s.writeInt(arg[i]);
 		}
 
 		public void read(DataInputStream s) throws IOException {
 			name = s.readUTF();
-			arg = s.readInt();
+			int n = s.readInt();
+			arg = new int[n];
+			for(int i=0;i<arg.length;++i)
+				arg[i] = s.readInt();
 		}
 	}
 	

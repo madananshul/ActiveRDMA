@@ -10,9 +10,9 @@ import junit.framework.TestCase;
 public class ClientTest extends TestCase {
 
 	static public class MobileCodeTest{
-		public static int execute(AtomicInteger[] mem, int i) {
-			mem[i].set(42);
-			return mem[i].get();
+		public static int execute(AtomicInteger[] mem, int[] i) {
+			mem[i[0]].set(42);
+			return mem[i[0]].get();
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class ClientTest extends TestCase {
 		assertTrue( client.load(MobileCodeTest.class) != 0 );
 		
 		// sets to [7]42
-		assertEquals( client.run(MobileCodeTest.class,7) , 42 );
+		assertEquals( client.run(MobileCodeTest.class,new int[]{7}) , 42 );
 		assertEquals( client.r(7) , 42 );
 
 	}

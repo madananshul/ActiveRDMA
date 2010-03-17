@@ -42,14 +42,14 @@ public interface ActiveRDMA {
 	// mobile code interface expected to be:
 	// static public int execute(AtomicInteger[] mem, int arg); 
 	final public String METHOD = "execute";
-	final public Class<?>[] SIGNATURE = new Class[]{AtomicInteger[].class,int.class};
+	final public Class<?>[] SIGNATURE = new Class[]{AtomicInteger[].class,int[].class};
 
 	/** Executes the previously loaded code in the server.
 	 * @param name - class to be executed, FIXME: this will change to something else, md5 maybe?
 	 * @param arg - argument supplied to the executing code
 	 * @result result of the executed method.
 	 */
-	int run(String name, int arg);
+	int run(String name, int[] arg);
 	
 	/** Loads the code of a class
 	 * @param code - the bytecode of a class, not its serialization!

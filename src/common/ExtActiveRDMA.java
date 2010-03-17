@@ -65,7 +65,7 @@ public abstract class ExtActiveRDMA implements ActiveRDMA{
 		}
 	}
 
-	public int run(Class<?> c, int arg) {
+	public int run(Class<?> c, int[] arg) {
 		return run(c.getName(),arg);
 	}
 

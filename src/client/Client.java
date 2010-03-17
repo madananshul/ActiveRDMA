@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 
 import common.ActiveRDMA;
 import common.ExtActiveRDMA;
@@ -36,7 +34,7 @@ public class Client extends ExtActiveRDMA{
 		return exchange( MessageFactory.makeRead(address));
 	}
 
-	public int run(String name, int arg) {
+	public int run(String name, int[] arg) {
 		return exchange( MessageFactory.makeRun(name, arg));
 	}
 	
@@ -47,31 +45,6 @@ public class Client extends ExtActiveRDMA{
 	/*
 	 * Communication stuff
 	 */
-	
-	//FIXME: problem with excessive TCP socket open/closes
-	protected int tcp_exchange(MessageFactory.Operation op){
-		int result = 0;
-		try {
-			Socket socket = new Socket(server, ActiveRDMA.SERVER_PORT);
-			
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			op.write(out);
-			out.flush();
-			
-			//always just one int returned
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			result = in.readInt();
-			
-			out.close();
-			in.close();
-			socket.close();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
 	
 	protected int exchange(MessageFactory.Operation op){
 		int result = 0;
@@ -119,3 +92,31 @@ public class Client extends ExtActiveRDMA{
 	}
 
 }
+
+/* OLD TCP Client
+
+protected int tcp_exchange(MessageFactory.Operation op){
+	int result = 0;
+	try {
+		Socket socket = new Socket(server, ActiveRDMA.SERVER_PORT);
+		
+		DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+		op.write(out);
+		out.flush();
+		
+		//always just one int returned
+		DataInputStream in = new DataInputStream(socket.getInputStream());
+		result = in.readInt();
+		
+		out.close();
+		in.close();
+		socket.close();
+	} catch (UnknownHostException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	return result;
+}
+
+*/

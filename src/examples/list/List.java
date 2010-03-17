@@ -8,6 +8,8 @@ public interface List {
 	 */
 	int add(int value);
 	
+	//TODO: find value or read element at position pos.
+	
 //	/**
 //	 * @param value - to search for and remove
 //	 * @return not-found/fail (0) or success (!0)

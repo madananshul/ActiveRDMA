@@ -25,7 +25,7 @@ public class List_RDMA implements List {
 		//now try to put it at the end
 		int pos = root_ptr;
 		while( c.cas(pos,NULL,node) == 0 ){
-			//link was not null
+			//link was not NULL
 			//follow the link of the node
 			pos = c.r( c.r(pos)+1 );
 		}

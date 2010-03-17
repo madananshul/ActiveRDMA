@@ -3,7 +3,7 @@ package common;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //FIXME: there is no specified result for when the address is out of bounds!
-//FIXME: or when the execution fails...
+//FIXME: or when the execution fails... use error handlers?
 public interface ActiveRDMA {
 	
 	final public int REQUEST_TIMEOUT = 5000; //5000ms = 5s

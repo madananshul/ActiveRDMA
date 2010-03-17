@@ -1,17 +1,28 @@
 package tests;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import common.ExtActiveRDMA;
+
 import client.Client;
 import junit.framework.TestCase;
 
 public class ClientTest extends TestCase {
 
+	static public class MobileCodeTest{
+		public static int execute(AtomicInteger[] mem, int i) {
+			mem[i].set(42);
+			return mem[i].get();
+		}
+	}
+	
 	//MainServer should be running before launching tests
 	//only one test at each time or it might fail...
 	
 	final String server = "localhost";
 	
 	public void tests_R_W_CAS() throws Exception {
-		Client client = new Client(server);
+		ExtActiveRDMA client = new Client(server);
 
 		client.w(0,0);
 		assertEquals( client.r(0) , 0 );
@@ -24,16 +35,15 @@ public class ClientTest extends TestCase {
 	}
 	
 	public void tests_Load_Run() throws Exception{
-		Client client = new Client(server);
+		ExtActiveRDMA client = new Client(server);
 
 		client.w(7,0);
 		assertEquals( client.r(7) , 0 );
 		
-		// assuming bin/MobileCode.class exists ...
-		assertTrue( client.load("MobileCode") != 0 );
+		assertTrue( client.load(MobileCodeTest.class) != 0 );
 		
 		// sets to [7]42
-		assertEquals( client.run("MobileCode",7) , 42 );
+		assertEquals( client.run(MobileCodeTest.class,7) , 42 );
 		assertEquals( client.r(7) , 42 );
 
 	}

@@ -1,8 +1,17 @@
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import client.Client;
 
 public class MainClient {
 
+	public static class MobileCode {
+		public static int execute(AtomicInteger[] mem, int i) {
+			mem[i].set(42);
+			return mem[i].get();
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		Client client = new Client("localhost");
 		
@@ -12,8 +21,8 @@ public class MainClient {
 		System.out.println( client.cas(2,12345,666) ) ;
 		System.out.println( client.r(2) );
 		
-		System.out.println( client.load("MobileCode") );
-		System.out.println( client.run("MobileCode", 2) );
+		System.out.println( client.load(MobileCode.class) );
+		System.out.println( client.run(MobileCode.class, 2) );
 		System.out.println( client.r(2) );
 	}
 

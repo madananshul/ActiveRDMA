@@ -4,21 +4,19 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import common.ActiveRDMA;
+import common.ExtActiveRDMA;
 import common.messages.MessageFactory;
 
-public class Client implements ActiveRDMA{
+public class Client extends ExtActiveRDMA{
 
 	protected InetAddress server;
 	
@@ -45,38 +43,11 @@ public class Client implements ActiveRDMA{
 	public int load(byte[] code) {
 		return exchange( MessageFactory.makeLoad(code));
 	}
-	
-	//FIXME: this DOES NOT WORK for nested/anonymous classes
-	static public String getClassFilePath(Class<?> c){
-		return c.getCanonicalName().replaceAll("\\.", "/")+".class";
-	}
-	
-	//TODO: actually a higher level method, not from the ActiveRDMA interface
-	public int load(String name){
-		if( !name.endsWith(".class")){
-			name = name.replaceAll("\\.", "/")+".class"; 
-		}
-		
-		File classfile;
-		try {
-			classfile = new File( Client.class.getClassLoader().getResource(name).toURI() );
-		} catch (URISyntaxException e1) {
-			e1.printStackTrace();
-			return 0;
-		}
-		int len = (int)(classfile.length());
-		byte[] bytes = new byte[len];
-		try {
-			FileInputStream i = new FileInputStream(classfile);
-			i.read(bytes, 0, len);
-			i.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return 0;
-		}
-		return load(bytes);
-	}
 
+	/*
+	 * Communication stuff
+	 */
+	
 	//FIXME: problem with excessive TCP socket open/closes
 	protected int tcp_exchange(MessageFactory.Operation op){
 		int result = 0;

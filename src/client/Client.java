@@ -85,7 +85,7 @@ public class Client extends ExtActiveRDMA{
 			DataInputStream in = new DataInputStream(new ByteArrayInputStream(p.getData()));
 			result = in.readInt();
 
-                        socket.close();
+			socket.close();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

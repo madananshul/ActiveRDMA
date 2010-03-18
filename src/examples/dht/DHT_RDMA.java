@@ -37,7 +37,7 @@ public class DHT_RDMA implements DHT {
 	int[] stringToInt(String s)
 	{
 		byte[] bytes = s.getBytes();
-		int[] ret = new int[(s.length()+2)/4];
+		int[] ret = new int[(s.length()+3)/4 + 1];
 		for (int i = 0; i < ret.length; i++) ret[i] = 0;
 		
 		for (int i = 0; i < s.length(); i++)
@@ -45,6 +45,8 @@ public class DHT_RDMA implements DHT {
 			ret[i/4] <<= 8;
 			ret[i/4] |= bytes[i];
 		}
+
+                ret[ret.length - 1] = 0;
 		
 		return ret;
 	}
@@ -56,14 +58,14 @@ public class DHT_RDMA implements DHT {
 			int val = m_client.r(ptr + i);
 			if (val != key[i]) return false;
 		}
-		
-		return m_client.r(ptr + key.length) == 0;
+
+                return true;
 	}
 	
 	int findKey(int[] key)
 	{
 		int ptr = m_client.r(N + hash(key));
-		
+
 		while (ptr != 0)
 		{
 			if (compareKey(key, ptr + 2)) break;

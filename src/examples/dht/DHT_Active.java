@@ -133,10 +133,10 @@ public class DHT_Active implements examples.dht.DHT {
 	int[] stringToInt(String s)
 	{
 		byte[] bytes = s.getBytes();
-		int[] ret = new int[(s.length()+2)/4];
+		int[] ret = new int[(bytes.length+3)/4];
 		for (int i = 0; i < ret.length; i++) ret[i] = 0;
 
-		for (int i = 0; i < s.length(); i++)
+		for (int i = 0; i < bytes.length; i++)
 		{
 			ret[i/4] <<= 8;
 			ret[i/4] |= bytes[i];

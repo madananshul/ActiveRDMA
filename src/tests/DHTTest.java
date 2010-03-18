@@ -1,11 +1,13 @@
 package tests;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.TestCase;
+import client.Client;
 
 import common.ExtActiveRDMA;
-import client.Client;
-import examples.dht.*;
+
+import examples.dht.DHT;
+import examples.dht.DHT_Active;
+import examples.dht.DHT_RDMA;
 
 public class DHTTest extends TestCase {
 

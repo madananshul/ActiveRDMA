@@ -1,6 +1,5 @@
 package examples.dht;
 
-import client.Client;
 import common.*;
 
 //import client.Client;

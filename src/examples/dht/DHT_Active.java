@@ -5,167 +5,166 @@ import common.*;
 
 public class DHT_Active implements examples.dht.DHT {
 
-    static final int N = 1024;
+	static final int N = 1024;
 
-    protected ExtActiveRDMA m_c;
+	protected ExtActiveRDMA m_c;
 
-    public static class DHT_Active_Get {
+	public static class DHT_Active_Get {
 
-	static int hash(int[] key) {
-            int t = 0;
-            for (int i = 0; i < key.length; i++) t ^= key[i];
-            return t % N;
+		static int hash(int[] key) {
+			int t = 0;
+			for (int i = 0; i < key.length; i++) t ^= key[i];
+			return t % N;
+		}
+
+		static boolean compareKey(AtomicInteger[] mem, int ptr, int[] args) {
+			for (int i = 0; i < args.length; i++)
+				if (mem[ptr + 2 + i].get() != args[i]) return false;
+
+			return true;
+		}
+
+		public static int execute(AtomicInteger[] mem, int[] args) {
+
+			// args[] is the key
+
+			int h = hash(args);
+			int ptr = mem[N + h].get();
+			while (ptr != 0)
+			{
+				if (compareKey(mem, ptr, args)) break;
+				ptr = mem[ptr].get();
+			}
+
+			if (ptr != 0)
+				return mem[ptr + 1].get();
+			else
+				return 0;
+		}
 	}
 
-        static boolean compareKey(AtomicInteger[] mem, int ptr, int[] args) {
-            for (int i = 0; i < args.length; i++)
-                if (mem[ptr + 2 + i].get() != args[i]) return false;
+	public static class DHT_Active_Has {
+		static final int N = 1024;
 
-            return true;
-        }
+		public static class DHT_Active_Get {
 
-        public static int execute(AtomicInteger[] mem, int[] args) {
-            
-            // args[] is the key
-            
-            int h = hash(args);
-            int ptr = mem[N + h].get();
-            while (ptr != 0)
-            {
-                if (compareKey(mem, ptr, args)) break;
-                ptr = mem[ptr].get();
-            }
+			static int hash(int[] key) {
+				int t = 0;
+				for (int i = 0; i < key.length; i++) t ^= key[i];
+				return t % N;
+			}
 
-            if (ptr != 0)
-                return mem[ptr + 1].get();
-            else
-                return 0;
-        }
-    }
+			static boolean compareKey(AtomicInteger[] mem, int ptr, int[] args) {
+				for (int i = 0; i < args.length; i++)
+					if (mem[ptr + 2 + i].get() != args[i]) return false;
 
-    public static class DHT_Active_Has {
-        static final int N = 1024;
+				return true;
+			}
 
-        protected ExtActiveRDMA m_c;
+			public static int execute(AtomicInteger[] mem, int[] args) {
 
-        public static class DHT_Active_Get {
+				// args[] is the key
 
-            static int hash(int[] key) {
-                int t = 0;
-                for (int i = 0; i < key.length; i++) t ^= key[i];
-                return t % N;
-            }
+				int h = hash(args);
+				int ptr = mem[N + h].get();
+				while (ptr != 0)
+				{
+					if (compareKey(mem, ptr, args)) break;
+					ptr = mem[ptr].get();
+				}
 
-            static boolean compareKey(AtomicInteger[] mem, int ptr, int[] args) {
-                for (int i = 0; i < args.length; i++)
-                    if (mem[ptr + 2 + i].get() != args[i]) return false;
+				return ptr != 0 ? 1 : 0;
+			}
+		}
+	}
 
-                return true;
-            }
+	public static class DHT_Active_Put {
 
-            public static int execute(AtomicInteger[] mem, int[] args) {
-            
-                // args[] is the key
-            
-                int h = hash(args);
-                int ptr = mem[N + h].get();
-                while (ptr != 0)
-                {
-                    if (compareKey(mem, ptr, args)) break;
-                    ptr = mem[ptr].get();
-                }
+		static int hash(int[] key, int off) {
+			int t = 0;
+			for (int i = off; i < key.length; i++) t ^= key[i];
+			return t % N;
+		}
 
-                return ptr != 0 ? 1 : 0;
-            }
-        }
-    }
+		public static int execute(AtomicInteger[] mem, int[] args) {
 
-    public static class DHT_Active_Put {
+			// args[0] is the value, args[1...] is the key
+			int val = args[0];
+			int kLen = args.length - 1;
 
-        static int hash(int[] key, int off) {
-            int t = 0;
-            for (int i = off; i < key.length; i++) t ^= key[i];
-            return t % N;
-        }
+			// allocate new block: <next> <val> <key>...
+			int newPtr = 0;
+			while (true)
+			{
+				newPtr = mem[0].get();
+				if (mem[0].compareAndSet(newPtr, newPtr + 2 + kLen))
+					break;
+			}
 
-        public static int execute(AtomicInteger[] mem, int[] args) {
-            
-            // args[0] is the value, args[1...] is the key
-            int val = args[0];
-            int kLen = args.length - 1;
+			int h = hash(args, 1);
+			mem[newPtr + 1].set(val);
+			for (int i = 0; i < kLen; i++)
+				mem[newPtr + 2 + i].set(args[i + 1]);
 
-            // allocate new block: <next> <val> <key>...
-            int newPtr = 0;
-            while (true)
-            {
-                newPtr = mem[0].get();
-                if (mem[0].compareAndSet(newPtr, newPtr + 2 + kLen))
-                    break;
-            }
+			while (true)
+			{
+				int head = mem[N + h].get();
+				mem[newPtr].set(head);
+				if (mem[N + h].compareAndSet(head, newPtr))
+					break;
+			}
 
-            int h = hash(args, 1);
-            mem[newPtr + 1].set(val);
-            for (int i = 0; i < kLen; i++)
-                mem[newPtr + 2 + i].set(args[i + 1]);
+			return newPtr;
+		}
+	}
 
-            while (true)
-            {
-                int head = mem[N + h].get();
-                mem[newPtr].set(head);
-                if (mem[N + h].compareAndSet(head, newPtr))
-                    break;
-            }
+	public DHT_Active(ExtActiveRDMA c) {
+		m_c = c;
 
-            return newPtr;
-        }
-    }
+		c.load(DHT_Active_Get.class);
+		c.load(DHT_Active_Put.class);
+		c.load(DHT_Active_Has.class);
+		c.w(0, 2*N);
 
-    public DHT_Active(ExtActiveRDMA c) {
-        m_c = c;
+		for (int i = 0; i < N; i++)
+			c.w(N + i, 0);
+	}
 
-        c.load(DHT_Active_Get.class);
-        c.load(DHT_Active_Put.class);
-        c.w(0, 2*N);
+	int[] stringToInt(String s)
+	{
+		byte[] bytes = s.getBytes();
+		int[] ret = new int[(s.length()+2)/4];
+		for (int i = 0; i < ret.length; i++) ret[i] = 0;
 
-        for (int i = 0; i < N; i++)
-            c.w(N + i, 0);
-    }
+		for (int i = 0; i < s.length(); i++)
+		{
+			ret[i/4] <<= 8;
+			ret[i/4] |= bytes[i];
+		}
 
-    int[] stringToInt(String s)
-    {
-        byte[] bytes = s.getBytes();
-        int[] ret = new int[(s.length()+2)/4];
-        for (int i = 0; i < ret.length; i++) ret[i] = 0;
-		
-        for (int i = 0; i < s.length(); i++)
-        {
-            ret[i/4] <<= 8;
-            ret[i/4] |= bytes[i];
-        }
-		
-        return ret;
-    }
+		return ret;
+	}
 
-    public int get(String key) {
-        int[] k = stringToInt(key);
+	public int get(String key) {
+		int[] k = stringToInt(key);
 
-        return m_c.run(DHT_Active_Get.class, k);
-    }
+		return m_c.run(DHT_Active_Get.class, k);
+	}
 
-    public boolean has(String key) {
-        int[] k = stringToInt(key);
-        
-        return m_c.run(DHT_Active_Has.class, k) != 0;
-    }
+	public boolean has(String key) {
+		int[] k = stringToInt(key);
 
-    public void put(String key, int val) {
-        int[] k = stringToInt(key);
-        int[] args = new int[k.length + 1];
+		return m_c.run(DHT_Active_Has.class, k) != 0;
+	}
 
-        args[0] = val;
-        for (int i = 0; i < k.length; i++)
-            args[i + 1] = k[i];
+	public void put(String key, int val) {
+		int[] k = stringToInt(key);
+		int[] args = new int[k.length + 1];
 
-        m_c.run(DHT_Active_Put.class, args);
-    }
+		args[0] = val;
+		for (int i = 0; i < k.length; i++)
+			args[i + 1] = k[i];
+
+		m_c.run(DHT_Active_Put.class, args);
+	}
 }

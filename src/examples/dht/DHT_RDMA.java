@@ -78,7 +78,7 @@ public class DHT_RDMA implements DHT {
 	{
 		int[] k = stringToInt(key);
 		int ptr = findKey(k);
-		return ptr;
+		return (ptr != 0) ? m_client.r(ptr + 1) : 0;
 	}
 	
 	public void put(String key, int val)

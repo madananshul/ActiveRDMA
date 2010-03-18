@@ -125,7 +125,7 @@ public class DHT_Active implements examples.dht.DHT {
 
         c.load(DHT_Active_Get.class);
         c.load(DHT_Active_Put.class);
-        c.w(0, 0);
+        c.w(0, 2*N);
 
         for (int i = 0; i < N; i++)
             c.w(N + i, 0);

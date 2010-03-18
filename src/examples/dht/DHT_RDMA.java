@@ -93,7 +93,7 @@ public class DHT_RDMA implements DHT {
 			newPtr = m_client.r(0);
 			if (m_client.cas(0, newPtr, newPtr + k.length + 2) != 0) break;
 		}
-		
+
 		m_client.w(newPtr, 0);
 		m_client.w(newPtr + 1, val);
 		for (int i = 0; i < k.length; i++)
@@ -102,7 +102,7 @@ public class DHT_RDMA implements DHT {
 		while (true)
 		{
 			int oldHead = m_client.r(N + hash(k));
-			m_client.w(newPtr + 1, oldHead);
+			m_client.w(newPtr, oldHead);
 			if (m_client.cas(N + hash(k), oldHead, newPtr) != 0) break;
 		}
 	}

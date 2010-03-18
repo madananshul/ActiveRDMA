@@ -1,0 +1,5270 @@
+%!PS-Adobe-3.0
+%%BoundingBox: (atend)
+%%Pages: (atend)
+%%PageOrder: (atend)
+%%DocumentFonts: (atend)
+%%Creator: Frame 4.0
+%%DocumentData: Clean7Bit
+%%EndComments
+%%BeginProlog
+%
+% Frame ps_prolog 4.0, for use with Frame 4.0 products
+% This ps_prolog file is Copyright (c) 1986-1993 Frame Technology
+% Corporation.  All rights reserved.  This ps_prolog file may be
+% freely copied and distributed in conjunction with documents created
+% using FrameMaker, FrameBuilder and FrameViewer as long as this 
+% copyright notice is preserved.
+%
+% Frame products normally print colors as their true color on a color printer
+% or as shades of gray, based on luminance, on a black-and white printer. The
+% following flag, if set to True, forces all non-white colors to print as pure
+% black. This has no effect on bitmap images.
+/FMPrintAllColorsAsBlack             false def
+%
+% Frame products can either set their own line screens or use a printer's 
+% default settings. Three flags below control this separately for no 
+% separations, spot separations and process separations. If a flag
+% is true, then the default printer settings will not be changed. If it is
+% false, Frame products will use their own settings from a table based on
+% the printer's resolution.
+/FMUseDefaultNoSeparationScreen      true  def
+/FMUseDefaultSpotSeparationScreen    true  def
+/FMUseDefaultProcessSeparationScreen false def
+%
+% For any given PostScript printer resolution, Frame products have two sets of 
+% screen angles and frequencies for printing process separations, which are 
+% recomended by Adobe. The following variable chooses the higher frequencies
+% when set to true or the lower frequencies when set to false. This is only
+% effective if the appropriate FMUseDefault...SeparationScreen flag is false.
+/FMUseHighFrequencyScreens true def
+%
+% PostScript Level 2 printers contain an "Accurate Screens" feature which can
+% improve process separation rendering at the expense of compute time. This 
+% flag is ignored by PostScript Level 1 printers.
+/FMUseAcccurateScreens true def
+%
+% The following PostScript procedure defines the spot function that Frame
+% products will use for process separations. You may un-comment-out one of
+% the alternative functions below, or use your own.
+%
+% Dot function
+/FMSpotFunction {abs exch abs 2 copy add 1 gt 
+		{1 sub dup mul exch 1 sub dup mul add 1 sub }
+		{dup mul exch dup mul add 1 exch sub }ifelse } def
+%
+% Line function
+% /FMSpotFunction { pop } def
+%
+% Elipse function
+% /FMSpotFunction { dup 5 mul 8 div mul exch dup mul exch add 
+%		sqrt 1 exch sub } def
+%
+%
+/FMversion (4.0) def 
+/FMLevel1 /languagelevel where {pop languagelevel} {1} ifelse 2 lt def
+/FMPColor
+	FMLevel1 {
+		false
+		/colorimage where {pop pop true} if
+	} {
+		true
+	} ifelse
+def
+/FrameDict 400 dict def 
+systemdict /errordict known not {/errordict 10 dict def
+		errordict /rangecheck {stop} put} if
+% The readline in PS 23.0 doesn't recognize cr's as nl's on AppleTalk
+FrameDict /tmprangecheck errordict /rangecheck get put 
+errordict /rangecheck {FrameDict /bug true put} put 
+FrameDict /bug false put 
+mark 
+% Some PS machines read past the CR, so keep the following 3 lines together!
+currentfile 5 string readline
+00
+0000000000
+cleartomark 
+errordict /rangecheck FrameDict /tmprangecheck get put 
+FrameDict /bug get { 
+	/readline {
+		/gstring exch def
+		/gfile exch def
+		/gindex 0 def
+		{
+			gfile read pop 
+			dup 10 eq {exit} if 
+			dup 13 eq {exit} if 
+			gstring exch gindex exch put 
+			/gindex gindex 1 add def 
+		} loop
+		pop 
+		gstring 0 gindex getinterval true 
+		} bind def
+	} if
+/FMshowpage /showpage load def
+/FMquit /quit load def
+/FMFAILURE { 
+	dup = flush 
+	FMshowpage 
+	/Helvetica findfont 12 scalefont setfont
+	72 200 moveto
+	show FMshowpage 
+	FMquit 
+	} def 
+/FMVERSION {
+	FMversion ne {
+		(Frame product version does not match ps_prolog!) FMFAILURE
+		} if
+	} def 
+/FMBADEPSF { 
+	(PostScript Lang. Ref. Man., 2nd Ed., H.2.4 says EPS must not call X              )
+	dup dup (X) search pop exch pop exch pop length 
+	4 -1 roll 
+	putinterval 
+	FMFAILURE
+	} def
+/FMLOCAL {
+	FrameDict begin
+	0 def 
+	end 
+	} def 
+/concatprocs
+	{
+	/proc2 exch cvlit def/proc1 exch cvlit def/newproc proc1 length proc2 length add array def
+	newproc 0 proc1 putinterval newproc proc1 length proc2 putinterval newproc cvx
+}def
+FrameDict begin 
+/FMnone 0 def
+/FMcyan 1 def
+/FMmagenta 2 def
+/FMyellow 3 def
+/FMblack 4 def
+/FMcustom 5 def
+/FrameNegative false def 
+/FrameSepIs FMnone def 
+/FrameSepBlack 0 def
+/FrameSepYellow 0 def
+/FrameSepMagenta 0 def
+/FrameSepCyan 0 def
+/FrameSepRed 1 def
+/FrameSepGreen 1 def
+/FrameSepBlue 1 def
+/FrameCurGray 1 def
+/FrameCurPat null def
+/FrameCurColors [ 0 0 0 1 0 0 0 ] def 
+/FrameColorEpsilon .001 def	
+/eqepsilon {		
+	sub dup 0 lt {neg} if
+	FrameColorEpsilon le
+} bind def
+/FrameCmpColorsCMYK { 
+	2 copy 0 get exch 0 get eqepsilon {
+		2 copy 1 get exch 1 get eqepsilon {
+			2 copy 2 get exch 2 get eqepsilon {
+				3 get exch 3 get eqepsilon
+			} {pop pop false} ifelse
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/FrameCmpColorsRGB { 
+	2 copy 4 get exch 0 get eqepsilon {
+		2 copy 5 get exch 1 get eqepsilon {
+			6 get exch 2 get eqepsilon
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/RGBtoCMYK { 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	3 copy 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	dup dup dup 
+	6 1 roll 
+	4 1 roll 
+	7 1 roll 
+	sub 
+	6 1 roll 
+	sub 
+	5 1 roll 
+	sub 
+	4 1 roll 
+} bind def
+/CMYKtoRGB { 
+	dup dup 4 -1 roll add 						  
+	5 1 roll 3 -1 roll add 						  
+	4 1 roll add 								  
+	1 exch sub dup 0 lt {pop 0} if 3 1 roll 	  
+	1 exch sub dup 0 lt {pop 0} if exch 	      
+	1 exch sub dup 0 lt {pop 0} if exch	  		  
+} bind def
+/FrameSepInit {
+	1.0 RealSetgray
+} bind def
+/FrameSetSepColor { 
+	/FrameSepBlue exch def
+	/FrameSepGreen exch def
+	/FrameSepRed exch def
+	/FrameSepBlack exch def
+	/FrameSepYellow exch def
+	/FrameSepMagenta exch def
+	/FrameSepCyan exch def
+	/FrameSepIs FMcustom def
+	setCurrentScreen	
+} bind def
+/FrameSetCyan {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 1.0 def
+	/FrameSepIs FMcyan def
+	setCurrentScreen	
+} bind def
+ 
+/FrameSetMagenta {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 1.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMmagenta def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetYellow {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 1.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMyellow def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetBlack {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 1.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMblack def
+	setCurrentScreen
+} bind def
+ 
+/FrameNoSep { 
+	/FrameSepIs FMnone def
+	setCurrentScreen
+} bind def
+/FrameSetSepColors { 
+	FrameDict begin
+	[ exch 1 add 1 roll ]
+	/FrameSepColors  
+	exch def end
+	} bind def
+/FrameColorInSepListCMYK { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsCMYK 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/FrameColorInSepListRGB { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsRGB 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/RealSetgray /setgray load def
+/RealSetrgbcolor /setrgbcolor load def
+/RealSethsbcolor /sethsbcolor load def
+end 
+/setgray { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+		{ RealSetgray } 
+		{ 
+		FrameSepIs FMblack eq 
+			{ RealSetgray } 
+			{ FrameSepIs FMcustom eq 
+			  FrameSepRed 0 eq and
+			  FrameSepGreen 0 eq and
+			  FrameSepBlue 0 eq and {
+			  	RealSetgray
+			  } {
+				1 RealSetgray pop 
+			  } ifelse
+			} ifelse
+		} ifelse
+	end
+} bind def
+/setrgbcolor { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+	{  RealSetrgbcolor }
+	{
+		3 copy [ 4 1 roll ] 
+		FrameColorInSepListRGB
+		{
+				FrameSepBlue eq exch 
+			 	FrameSepGreen eq and exch 
+			 	FrameSepRed eq and
+			 	{ 0 } { 1 } ifelse
+		}
+		{
+			FMPColor {
+				RealSetrgbcolor
+				currentcmykcolor
+			} {
+				RGBtoCMYK
+			} ifelse
+			FrameSepIs FMblack eq
+			{1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		RealSetgray
+	} 
+	ifelse
+	end
+} bind def
+/sethsbcolor {
+	FrameDict begin
+	FrameSepIs FMnone eq 
+	{ RealSethsbcolor } 
+	{
+		RealSethsbcolor 
+		currentrgbcolor  
+		setrgbcolor 
+	} 
+	ifelse
+	end
+} bind def
+FrameDict begin
+/setcmykcolor where {
+	pop /RealSetcmykcolor /setcmykcolor load def
+} {
+	/RealSetcmykcolor {
+		4 1 roll
+		3 { 3 index add 0 max 1 min 1 exch sub 3 1 roll} repeat 
+		setrgbcolor pop
+	} bind def
+} ifelse
+userdict /setcmykcolor { 
+		FrameDict begin
+		FrameSepIs FMnone eq
+		{ RealSetcmykcolor } 
+		{
+			4 copy [ 5 1 roll ]
+			FrameColorInSepListCMYK
+			{
+				FrameSepBlack eq exch 
+				FrameSepYellow eq and exch 
+				FrameSepMagenta eq and exch 
+				FrameSepCyan eq and 
+				{ 0 } { 1 } ifelse
+			}
+			{
+				FrameSepIs FMblack eq
+				{1.0 exch sub 4 1 roll pop pop pop} {
+				FrameSepIs FMyellow eq
+				{pop 1.0 exch sub 3 1 roll pop pop} {
+				FrameSepIs FMmagenta eq
+				{pop pop 1.0 exch sub exch pop } {
+				FrameSepIs FMcyan eq
+				{pop pop pop 1.0 exch sub } 
+				{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+			} ifelse
+			RealSetgray
+		}
+		ifelse
+		end
+	} bind put
+FMLevel1 not { 
+	
+	/patProcDict 5 dict dup begin
+		<0f1e3c78f0e1c387> { 3 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<0f87c3e1f0783c1e> { 3 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+		<8142241818244281> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke
+											-1 -1 moveto 9 9 lineto stroke } bind def
+		<03060c183060c081> { 1 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<8040201008040201> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+	end def
+	/patDict 15 dict dup begin
+		/PatternType 1 def		
+		/PaintType 2 def		
+		/TilingType 3 def		
+		/BBox [ 0 0 8 8 ] def 	
+		/XStep 8 def			
+		/YStep 8 def			
+		/PaintProc {
+			begin
+			patProcDict bstring known {
+				patProcDict bstring get exec
+			} {
+				8 8 true [1 0 0 -1 0 8] bstring imagemask
+			} ifelse
+			end
+		} bind def
+	end def
+} if
+/combineColor {
+    FrameSepIs FMnone eq
+	{
+		graymode FMLevel1 or not {
+			
+			[/Pattern [/DeviceCMYK]] setcolorspace
+			FrameCurColors 0 4 getinterval aload pop FrameCurPat setcolor
+		} {
+			FrameCurColors 3 get 1.0 ge {
+				FrameCurGray RealSetgray
+			} {
+				FMPColor graymode and {
+					0 1 3 { 
+						FrameCurColors exch get
+						1 FrameCurGray sub mul
+					} for
+					RealSetcmykcolor
+				} {
+					4 1 6 {
+						FrameCurColors exch get
+						graymode {
+							1 exch sub 1 FrameCurGray sub mul 1 exch sub
+						} {
+							1.0 lt {FrameCurGray} {1} ifelse
+						} ifelse
+					} for
+					RealSetrgbcolor
+				} ifelse
+			} ifelse
+		} ifelse
+	} { 
+		FrameCurColors 0 4 getinterval aload
+		FrameColorInSepListCMYK {
+			FrameSepBlack eq exch 
+			FrameSepYellow eq and exch 
+			FrameSepMagenta eq and exch 
+			FrameSepCyan eq and
+			FrameSepIs FMcustom eq and
+			{ FrameCurGray } { 1 } ifelse
+		} {
+			FrameSepIs FMblack eq
+			{FrameCurGray 1.0 exch sub mul 1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop FrameCurGray 1.0 exch sub mul 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		graymode FMLevel1 or not {
+			
+			[/Pattern [/DeviceGray]] setcolorspace
+			FrameCurPat setcolor
+		} { 
+			graymode not FMLevel1 and {
+				
+				dup 1 lt {pop FrameCurGray} if
+			} if
+			RealSetgray
+		} ifelse
+	} ifelse
+} bind def
+/savematrix {
+	orgmatrix currentmatrix pop
+	} bind def
+/restorematrix {
+	orgmatrix setmatrix
+	} bind def
+/dmatrix matrix def
+/dpi    72 0 dmatrix defaultmatrix dtransform
+    dup mul exch   dup mul add   sqrt def
+	
+/freq dpi dup 72 div round dup 0 eq {pop 1} if 8 mul div def
+/sangle 1 0 dmatrix defaultmatrix dtransform exch atan def
+/dpiranges   [  2540    2400    1693     1270    1200     635      600      0      ] def
+/CMLowFreqs  [ 100.402  94.8683 89.2289 100.402  94.8683  66.9349  63.2456 47.4342 ] def
+/YLowFreqs   [  95.25   90.0    84.65    95.25   90.0     70.5556  66.6667 50.0    ] def
+/KLowFreqs   [  89.8026 84.8528 79.8088  89.8026 84.8528  74.8355  70.7107 53.033  ] def
+/CLowAngles  [  71.5651 71.5651 71.5651 71.5651  71.5651  71.5651  71.5651 71.5651 ] def
+/MLowAngles  [  18.4349 18.4349 18.4349 18.4349  18.4349  18.4349  18.4349 18.4349 ] def
+/YLowTDot    [  true    true    false    true    true     false    false   false   ] def
+/CMHighFreqs [ 133.87  126.491 133.843  108.503 102.523  100.402   94.8683 63.2456 ] def
+/YHighFreqs  [ 127.0   120.0   126.975  115.455 109.091   95.25    90.0    60.0    ] def
+/KHighFreqs  [ 119.737 113.137 119.713  128.289 121.218   89.8026  84.8528 63.6395 ] def
+/CHighAngles [  71.5651 71.5651 71.5651  70.0169 70.0169  71.5651  71.5651 71.5651 ] def
+/MHighAngles [  18.4349 18.4349 18.4349  19.9831 19.9831  18.4349  18.4349 18.4349 ] def
+/YHighTDot   [  false   false   true     false   false    true     true    false   ] def
+/PatFreq     [	10.5833 10.0     9.4055  10.5833 10.0	  10.5833  10.0	   9.375   ] def
+/screenIndex {
+	0 1 dpiranges length 1 sub { dup dpiranges exch get 1 sub dpi le {exit} {pop} ifelse } for
+} bind def
+/getCyanScreen {
+	FMUseHighFrequencyScreens { CHighAngles CMHighFreqs} {CLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getMagentaScreen {
+	FMUseHighFrequencyScreens { MHighAngles CMHighFreqs } {MLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getYellowScreen {
+	FMUseHighFrequencyScreens { YHighTDot YHighFreqs} { YLowTDot YLowFreqs } ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get { 3 div
+			{2 { 1 add 2 div 3 mul dup floor sub 2 mul 1 sub exch} repeat
+			FMSpotFunction } } {/FMSpotFunction load } ifelse
+			0.0 exch
+} bind def
+/getBlackScreen  {
+	FMUseHighFrequencyScreens { KHighFreqs } { KLowFreqs } ifelse
+		screenIndex get 45.0 /FMSpotFunction load 
+} bind def
+/getSpotScreen {
+	getBlackScreen
+} bind def
+/getCompositeScreen {
+	getBlackScreen
+} bind def
+/FMSetScreen 
+	FMLevel1 { /setscreen load 
+	}{ {
+		8 dict begin
+		/HalftoneType 1 def
+		/SpotFunction exch def
+		/Angle exch def
+		/Frequency exch def
+		/AccurateScreens FMUseAcccurateScreens def
+		currentdict end sethalftone
+	} bind } ifelse
+def
+/setDefaultScreen {
+	FMPColor {
+		orgrxfer cvx orggxfer cvx orgbxfer cvx orgxfer cvx setcolortransfer
+	}
+	{
+		orgxfer cvx settransfer
+	} ifelse
+	orgfreq organgle orgproc cvx setscreen
+} bind def
+/setCurrentScreen {
+	FrameSepIs FMnone eq {
+		FMUseDefaultNoSeparationScreen {
+			setDefaultScreen
+		} {
+			getCompositeScreen FMSetScreen
+		} ifelse
+	} {
+		FrameSepIs FMcustom eq {
+			FMUseDefaultSpotSeparationScreen {
+				setDefaultScreen
+			} {
+				getSpotScreen FMSetScreen
+			} ifelse
+		} {
+			FMUseDefaultProcessSeparationScreen {
+				setDefaultScreen
+			} {
+				FrameSepIs FMcyan eq {
+					getCyanScreen FMSetScreen
+				} {
+					FrameSepIs FMmagenta eq {
+						getMagentaScreen FMSetScreen
+					} {
+						FrameSepIs FMyellow eq {
+							getYellowScreen FMSetScreen
+						} {
+							getBlackScreen FMSetScreen
+						} ifelse
+					} ifelse
+				} ifelse
+			} ifelse
+		} ifelse
+	} ifelse 
+} bind def
+end
+	/gstring FMLOCAL
+	/gfile FMLOCAL
+	/gindex FMLOCAL
+	/orgrxfer FMLOCAL
+	/orggxfer FMLOCAL
+	/orgbxfer FMLOCAL
+	/orgxfer FMLOCAL
+	/orgproc FMLOCAL
+	/orgrproc FMLOCAL
+	/orggproc FMLOCAL
+	/orgbproc FMLOCAL
+	/organgle FMLOCAL
+	/orgrangle FMLOCAL
+	/orggangle FMLOCAL
+	/orgbangle FMLOCAL
+	/orgfreq FMLOCAL
+	/orgrfreq FMLOCAL
+	/orggfreq FMLOCAL
+	/orgbfreq FMLOCAL
+	/yscale FMLOCAL
+	/xscale FMLOCAL
+	/edown FMLOCAL
+	/manualfeed FMLOCAL
+	/paperheight FMLOCAL
+	/paperwidth FMLOCAL
+/FMDOCUMENT { 
+	array /FMfonts exch def 
+	/#copies exch def
+	FrameDict begin
+	0 ne /manualfeed exch def
+	/paperheight exch def
+	/paperwidth exch def
+	0 ne /FrameNegative exch def 
+	0 ne /edown exch def 
+	/yscale exch def
+	/xscale exch def
+	FMLevel1 {
+		manualfeed {setmanualfeed} if
+		/FMdicttop countdictstack 1 add def 
+		/FMoptop count def 
+		setpapername 
+		manualfeed {true} {papersize} ifelse 
+		{manualpapersize} {false} ifelse 
+		{desperatepapersize} {false} ifelse 
+		{ (Can't select requested paper size for Frame print job!) FMFAILURE } if
+		count -1 FMoptop {pop pop} for
+		countdictstack -1 FMdicttop {pop end} for 
+		}
+		{{1 dict dup /PageSize [paperwidth paperheight]put setpagedevice}stopped
+		{ (Can't select requested paper size for Frame print job!) FMFAILURE } if
+		 {1 dict dup /ManualFeed manualfeed put setpagedevice } stopped pop }
+	ifelse 
+	
+	FMPColor {
+		currentcolorscreen
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+			cvlit /orgbproc exch def
+				  /orgbangle exch def 
+				  /orgbfreq exch def
+			cvlit /orggproc exch def
+				  /orggangle exch def 
+				  /orggfreq exch def
+			cvlit /orgrproc exch def
+				  /orgrangle exch def 
+				  /orgrfreq exch def
+			currentcolortransfer 
+			FrameNegative {
+				1 1 4 { 
+					pop { 1 exch sub } concatprocs 4 1 roll
+				} for
+				4 copy
+				setcolortransfer
+			} if
+			cvlit /orgxfer exch def
+			cvlit /orgbxfer exch def
+			cvlit /orggxfer exch def
+			cvlit /orgrxfer exch def
+	} {
+		currentscreen 
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+				  
+		currenttransfer 
+		FrameNegative {
+			{ 1 exch sub } concatprocs
+			dup settransfer
+		} if 
+		cvlit /orgxfer exch def
+	} ifelse
+	end 
+} def 
+/pagesave FMLOCAL
+/orgmatrix FMLOCAL
+/landscape FMLOCAL
+/pwid FMLOCAL
+/FMBEGINPAGE { 
+	FrameDict begin 
+	/pagesave save def
+	3.86 setmiterlimit
+	/landscape exch 0 ne def
+	landscape { 
+		90 rotate 0 exch dup /pwid exch def neg translate pop 
+	}{
+		pop /pwid exch def
+	} ifelse
+	edown { [-1 0 0 1 pwid 0] concat } if
+	0 0 moveto paperwidth 0 lineto paperwidth paperheight lineto 
+	0 paperheight lineto 0 0 lineto 1 setgray fill
+	xscale yscale scale
+	/orgmatrix matrix def
+	gsave 
+} def 
+/FMENDPAGE {
+	grestore 
+	pagesave restore
+	end 
+	showpage
+	} def 
+/FMFONTDEFINE { 
+	FrameDict begin
+	findfont 
+	ReEncode 
+	1 index exch 
+	definefont 
+	FMfonts 3 1 roll 
+	put
+	end 
+	} def 
+/FMFILLS {
+	FrameDict begin dup
+	array /fillvals exch def
+	dict /patCache exch def
+	end 
+	} def 
+/FMFILL {
+	FrameDict begin
+	 fillvals 3 1 roll put
+	end 
+	} def 
+/FMNORMALIZEGRAPHICS { 
+	newpath
+	0.0 0.0 moveto
+	1 setlinewidth
+	0 setlinecap
+	0 0 0 sethsbcolor
+	0 setgray 
+	} bind def
+	/fx FMLOCAL
+	/fy FMLOCAL
+	/fh FMLOCAL
+	/fw FMLOCAL
+	/llx FMLOCAL
+	/lly FMLOCAL
+	/urx FMLOCAL
+	/ury FMLOCAL
+/FMBEGINEPSF { 
+	end 
+	/FMEPSF save def 
+	/showpage {} def 
+% See Adobe's "PostScript Language Reference Manual, 2nd Edition", page 714.
+% "...the following operators MUST NOT be used in an EPS file:" (emphasis ours)
+	/banddevice {(banddevice) FMBADEPSF} def
+	/clear {(clear) FMBADEPSF} def
+	/cleardictstack {(cleardictstack) FMBADEPSF} def 
+	/copypage {(copypage) FMBADEPSF} def
+	/erasepage {(erasepage) FMBADEPSF} def
+	/exitserver {(exitserver) FMBADEPSF} def
+	/framedevice {(framedevice) FMBADEPSF} def
+	/grestoreall {(grestoreall) FMBADEPSF} def
+	/initclip {(initclip) FMBADEPSF} def
+	/initgraphics {(initgraphics) FMBADEPSF} def
+	/initmatrix {(initmatrix) FMBADEPSF} def
+	/quit {(quit) FMBADEPSF} def
+	/renderbands {(renderbands) FMBADEPSF} def
+	/setglobal {(setglobal) FMBADEPSF} def
+	/setpagedevice {(setpagedevice) FMBADEPSF} def
+	/setshared {(setshared) FMBADEPSF} def
+	/startjob {(startjob) FMBADEPSF} def
+	/lettertray {(lettertray) FMBADEPSF} def
+	/letter {(letter) FMBADEPSF} def
+	/lettersmall {(lettersmall) FMBADEPSF} def
+	/11x17tray {(11x17tray) FMBADEPSF} def
+	/11x17 {(11x17) FMBADEPSF} def
+	/ledgertray {(ledgertray) FMBADEPSF} def
+	/ledger {(ledger) FMBADEPSF} def
+	/legaltray {(legaltray) FMBADEPSF} def
+	/legal {(legal) FMBADEPSF} def
+	/statementtray {(statementtray) FMBADEPSF} def
+	/statement {(statement) FMBADEPSF} def
+	/executivetray {(executivetray) FMBADEPSF} def
+	/executive {(executive) FMBADEPSF} def
+	/a3tray {(a3tray) FMBADEPSF} def
+	/a3 {(a3) FMBADEPSF} def
+	/a4tray {(a4tray) FMBADEPSF} def
+	/a4 {(a4) FMBADEPSF} def
+	/a4small {(a4small) FMBADEPSF} def
+	/b4tray {(b4tray) FMBADEPSF} def
+	/b4 {(b4) FMBADEPSF} def
+	/b5tray {(b5tray) FMBADEPSF} def
+	/b5 {(b5) FMBADEPSF} def
+	FMNORMALIZEGRAPHICS 
+	[/fy /fx /fh /fw /ury /urx /lly /llx] {exch def} forall 
+	fx fw 2 div add fy fh 2 div add  translate
+	rotate
+	fw 2 div neg fh 2 div neg translate
+	fw urx llx sub div fh ury lly sub div scale 
+	llx neg lly neg translate 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count def 
+	} bind def
+/FMENDEPSF {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMEPSF restore
+	FrameDict begin 
+	} bind def
+FrameDict begin 
+/setmanualfeed {
+%%BeginFeature *ManualFeed True
+	 statusdict /manualfeed true put
+%%EndFeature
+	} bind def
+/max {2 copy lt {exch} if pop} bind def
+/min {2 copy gt {exch} if pop} bind def
+/inch {72 mul} def
+/pagedimen { 
+	paperheight sub abs 16 lt exch 
+	paperwidth sub abs 16 lt and
+	{/papername exch def} {pop} ifelse
+	} bind def
+	/papersizedict FMLOCAL
+/setpapername { 
+	/papersizedict 14 dict def 
+	papersizedict begin
+	/papername /unknown def 
+		/Letter 8.5 inch 11.0 inch pagedimen
+		/LetterSmall 7.68 inch 10.16 inch pagedimen
+		/Tabloid 11.0 inch 17.0 inch pagedimen
+		/Ledger 17.0 inch 11.0 inch pagedimen
+		/Legal 8.5 inch 14.0 inch pagedimen
+		/Statement 5.5 inch 8.5 inch pagedimen
+		/Executive 7.5 inch 10.0 inch pagedimen
+		/A3 11.69 inch 16.5 inch pagedimen
+		/A4 8.26 inch 11.69 inch pagedimen
+		/A4Small 7.47 inch 10.85 inch pagedimen
+		/B4 10.125 inch 14.33 inch pagedimen
+		/B5 7.16 inch 10.125 inch pagedimen
+	end
+	} bind def
+/papersize {
+	papersizedict begin
+		/Letter {lettertray letter} def
+		/LetterSmall {lettertray lettersmall} def
+		/Tabloid {11x17tray 11x17} def
+		/Ledger {ledgertray ledger} def
+		/Legal {legaltray legal} def
+		/Statement {statementtray statement} def
+		/Executive {executivetray executive} def
+		/A3 {a3tray a3} def
+		/A4 {a4tray a4} def
+		/A4Small {a4tray a4small} def
+		/B4 {b4tray b4} def
+		/B5 {b5tray b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	statusdict begin stopped end 
+	} bind def
+/manualpapersize {
+	papersizedict begin
+		/Letter {letter} def
+		/LetterSmall {lettersmall} def
+		/Tabloid {11x17} def
+		/Ledger {ledger} def
+		/Legal {legal} def
+		/Statement {statement} def
+		/Executive {executive} def
+		/A3 {a3} def
+		/A4 {a4} def
+		/A4Small {a4small} def
+		/B4 {b4} def
+		/B5 {b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	stopped 
+	} bind def
+/desperatepapersize {
+	statusdict /setpageparams known
+		{
+		paperwidth paperheight 0 1 
+		statusdict begin
+		{setpageparams} stopped 
+		end
+		} {true} ifelse 
+	} bind def
+/DiacriticEncoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+/numbersign /dollar /percent /ampersand /quotesingle /parenleft
+/parenright /asterisk /plus /comma /hyphen /period /slash /zero /one
+/two /three /four /five /six /seven /eight /nine /colon /semicolon
+/less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K
+/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+/bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h
+/i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar
+/braceright /asciitilde /.notdef /Adieresis /Aring /Ccedilla /Eacute
+/Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis
+/atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis
+/iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve
+/ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex
+/udieresis /dagger /.notdef /cent /sterling /section /bullet
+/paragraph /germandbls /registered /copyright /trademark /acute
+/dieresis /.notdef /AE /Oslash /.notdef /.notdef /.notdef /.notdef
+/yen /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/ordfeminine /ordmasculine /.notdef /ae /oslash /questiondown
+/exclamdown /logicalnot /.notdef /florin /.notdef /.notdef
+/guillemotleft /guillemotright /ellipsis /.notdef /Agrave /Atilde
+/Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright
+/quoteleft /quoteright /.notdef /.notdef /ydieresis /Ydieresis
+/fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl
+/periodcentered /quotesinglbase /quotedblbase /perthousand
+/Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute
+/Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex /.notdef /Ograve
+/Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron
+/breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+] def
+/ReEncode { 
+	dup 
+	length 
+	dict begin 
+	{
+	1 index /FID ne 
+		{def} 
+		{pop pop} ifelse 
+	} forall 
+	0 eq {/Encoding DiacriticEncoding def} if 
+	currentdict 
+	end 
+	} bind def
+FMPColor 
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPCOLOR} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPCOLORc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUECOLOR } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUECOLORc } def
+	}
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPGRAY} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPGRAYc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUEGRAY } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUEGRAYc } def
+	}
+ifelse
+/K { 
+	FMPrintAllColorsAsBlack {
+		dup 1 eq 2 index 1 eq and 3 index 1 eq and not
+			{7 {pop} repeat 0 0 0 1 0 0 0} if
+	} if 
+	FrameCurColors astore 
+	pop combineColor
+} bind def
+/graymode true def
+	/bwidth FMLOCAL
+	/bpside FMLOCAL
+	/bstring FMLOCAL
+	/onbits FMLOCAL
+	/offbits FMLOCAL
+	/xindex FMLOCAL
+	/yindex FMLOCAL
+	/x FMLOCAL
+	/y FMLOCAL
+/setPatternMode {
+	FMLevel1 {
+		/bwidth  exch def
+		/bpside  exch def
+		/bstring exch def
+		/onbits 0 def  /offbits 0 def
+		freq sangle landscape {90 add} if 
+			{/y exch def
+			 /x exch def
+			 /xindex x 1 add 2 div bpside mul cvi def
+			 /yindex y 1 add 2 div bpside mul cvi def
+			 bstring yindex bwidth mul xindex 8 idiv add get
+			 1 7 xindex 8 mod sub bitshift and 0 ne FrameNegative {not} if
+			 {/onbits  onbits  1 add def 1}
+			 {/offbits offbits 1 add def 0}
+			 ifelse
+			}
+			setscreen
+		offbits offbits onbits add div FrameNegative {1.0 exch sub} if
+		/FrameCurGray exch def
+	} { 
+		pop pop
+		dup patCache exch known {
+			patCache exch get
+		} { 
+			dup
+			patDict /bstring 3 -1 roll put
+			patDict 
+			9 PatFreq screenIndex get div dup matrix scale
+			makepattern
+			dup 
+			patCache 4 -1 roll 3 -1 roll put
+		} ifelse
+		/FrameCurGray 0 def
+		/FrameCurPat exch def
+	} ifelse
+	/graymode false def
+	combineColor
+} bind def
+/setGrayScaleMode {
+	graymode not {
+		/graymode true def
+		FMLevel1 {
+			setCurrentScreen
+		} if
+	} if
+	/FrameCurGray exch def
+	combineColor
+} bind def
+/normalize {
+	transform round exch round exch itransform
+	} bind def
+/dnormalize {
+	dtransform round exch round exch idtransform
+	} bind def
+/lnormalize { 
+	0 dtransform exch cvi 2 idiv 2 mul 1 add exch idtransform pop
+	} bind def
+/H { 
+	lnormalize setlinewidth
+	} bind def
+/Z {
+	setlinecap
+	} bind def
+	
+/PFill {
+	graymode FMLevel1 or not {
+		gsave 1 setgray eofill grestore
+	} if
+} bind def
+/PStroke {
+	graymode FMLevel1 or not {
+		gsave 1 setgray stroke grestore
+	} if
+	stroke
+} bind def
+	/fillvals FMLOCAL
+/X { 
+	fillvals exch get
+	dup type /stringtype eq
+	{8 1 setPatternMode} 
+	{setGrayScaleMode}
+	ifelse
+	} bind def
+/V { 
+	PFill gsave eofill grestore
+	} bind def
+/Vclip {
+	clip
+	} bind def
+/Vstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/N { 
+	PStroke
+	} bind def
+/Nclip {
+	strokepath clip newpath
+	} bind def
+/Nstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/M {newpath moveto} bind def
+/E {lineto} bind def
+/D {curveto} bind def
+/O {closepath} bind def
+	/n FMLOCAL
+/L { 
+ 	/n exch def
+	newpath
+	normalize
+	moveto 
+	2 1 n {pop normalize lineto} for
+	} bind def
+/Y { 
+	L 
+	closepath
+	} bind def
+	/x1 FMLOCAL
+	/x2 FMLOCAL
+	/y1 FMLOCAL
+	/y2 FMLOCAL
+/R { 
+	/y2 exch def
+	/x2 exch def
+	/y1 exch def
+	/x1 exch def
+	x1 y1
+	x2 y1
+	x2 y2
+	x1 y2
+	4 Y 
+	} bind def
+	/rad FMLOCAL
+/rarc 
+	{rad 
+	 arcto
+	} bind def
+/RR { 
+	/rad exch def
+	normalize
+	/y2 exch def
+	/x2 exch def
+	normalize
+	/y1 exch def
+	/x1 exch def
+	mark
+	newpath
+	{
+	x1 y1 rad add moveto
+	x1 y2 x2 y2 rarc
+	x2 y2 x2 y1 rarc
+	x2 y1 x1 y1 rarc
+	x1 y1 x1 y2 rarc
+	closepath
+	} stopped {x1 y1 x2 y2 R} if 
+	cleartomark
+	} bind def
+/RRR { 
+	/rad exch def
+	normalize /y4 exch def /x4 exch def
+	normalize /y3 exch def /x3 exch def
+	normalize /y2 exch def /x2 exch def
+	normalize /y1 exch def /x1 exch def
+	newpath
+	normalize moveto 
+	mark
+	{
+	x2 y2 x3 y3 rarc
+	x3 y3 x4 y4 rarc
+	x4 y4 x1 y1 rarc
+	x1 y1 x2 y2 rarc
+	closepath
+	} stopped
+	 {x1 y1 x2 y2 x3 y3 x4 y4 newpath moveto lineto lineto lineto closepath} if
+	cleartomark
+	} bind def
+/C { 
+	grestore
+	gsave
+	R 
+	clip
+	setCurrentScreen
+} bind def
+/CP { 
+	grestore
+	gsave
+	Y 
+	clip
+	setCurrentScreen
+} bind def
+	/FMpointsize FMLOCAL
+/F { 
+	FMfonts exch get
+	FMpointsize scalefont
+	setfont
+	} bind def
+/Q { 
+	/FMpointsize exch def
+	F 
+	} bind def
+/T { 
+	moveto show
+	} bind def
+/RF { 
+	rotate
+	0 ne {-1 1 scale} if
+	} bind def
+/TF { 
+	gsave
+	moveto 
+	RF
+	show
+	grestore
+	} bind def
+/P { 
+	moveto
+	0 32 3 2 roll widthshow
+	} bind def
+/PF { 
+	gsave
+	moveto 
+	RF
+	0 32 3 2 roll widthshow
+	grestore
+	} bind def
+/S { 
+	moveto
+	0 exch ashow
+	} bind def
+/SF { 
+	gsave
+	moveto
+	RF
+	0 exch ashow
+	grestore
+	} bind def
+/B { 
+	moveto
+	0 32 4 2 roll 0 exch awidthshow
+	} bind def
+/BF { 
+	gsave
+	moveto
+	RF
+	0 32 4 2 roll 0 exch awidthshow
+	grestore
+	} bind def
+/G { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	PFill fill
+	grestore
+	} bind def
+/Gstrk {
+	savematrix
+    newpath
+    2 index 2 div add exch 3 index 2 div sub exch 
+    normalize 2 index 2 div sub exch 3 index 2 div add exch 
+    translate
+    scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+    } bind def
+/Gclip { 
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	clip newpath
+	restorematrix
+	} bind def
+/GG { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	rotate 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath
+	PFill
+	fill
+	grestore
+	} bind def
+/GGclip { 
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	clip newpath
+	restorematrix
+	} bind def
+/GGstrk { 
+	savematrix
+    newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath 
+	restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/A { 
+	gsave
+	savematrix
+	newpath
+	2 index 2 div add exch 3 index 2 div sub exch 
+	normalize 2 index 2 div sub exch 3 index 2 div add exch 
+	translate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/Aclip {
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	strokepath clip newpath
+	restorematrix
+} bind def
+/Astrk {
+	Gstrk
+} bind def
+/AA { 
+	gsave
+	savematrix
+	newpath
+	
+	3 index 2 div add exch 4 index 2 div sub exch 
+	
+	normalize 3 index 2 div sub exch 4 index 2 div add exch
+	translate 
+	rotate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/AAclip {
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	strokepath clip newpath
+	restorematrix
+} bind def
+/AAstrk {
+	GGstrk
+} bind def
+	/x FMLOCAL
+	/y FMLOCAL
+	/w FMLOCAL
+	/h FMLOCAL
+	/xx FMLOCAL
+	/yy FMLOCAL
+	/ww FMLOCAL
+	/hh FMLOCAL
+	/FMsaveobject FMLOCAL
+	/FMoptop FMLOCAL
+	/FMdicttop FMLOCAL
+/BEGINPRINTCODE { 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count 7 sub def 
+	/FMsaveobject save def
+	userdict begin 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	3 index neg 3 index neg translate
+	} bind def
+/ENDPRINTCODE {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMsaveobject restore 
+	} bind def
+/gn { 
+	0 
+	{	46 mul 
+		cf read pop 
+		32 sub 
+		dup 46 lt {exit} if 
+		46 sub add 
+		} loop
+	add 
+	} bind def
+	/str FMLOCAL
+/cfs { 
+	/str sl string def 
+	0 1 sl 1 sub {str exch val put} for 
+	str def 
+	} bind def
+/ic [ 
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0
+	{0 hx} {1 hx} {2 hx} {3 hx} {4 hx} {5 hx} {6 hx} {7 hx} {8 hx} {9 hx}
+	{10 hx} {11 hx} {12 hx} {13 hx} {14 hx} {15 hx} {16 hx} {17 hx} {18 hx}
+	{19 hx} {gn hx} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}
+	{13} {14} {15} {16} {17} {18} {19} {gn} {0 wh} {1 wh} {2 wh} {3 wh}
+	{4 wh} {5 wh} {6 wh} {7 wh} {8 wh} {9 wh} {10 wh} {11 wh} {12 wh}
+	{13 wh} {14 wh} {gn wh} {0 bl} {1 bl} {2 bl} {3 bl} {4 bl} {5 bl} {6 bl}
+	{7 bl} {8 bl} {9 bl} {10 bl} {11 bl} {12 bl} {13 bl} {14 bl} {gn bl}
+	{0 fl} {1 fl} {2 fl} {3 fl} {4 fl} {5 fl} {6 fl} {7 fl} {8 fl} {9 fl}
+	{10 fl} {11 fl} {12 fl} {13 fl} {14 fl} {gn fl}
+	] def
+	/sl FMLOCAL
+	/val FMLOCAL
+	/ws FMLOCAL
+	/im FMLOCAL
+	/bs FMLOCAL
+	/cs FMLOCAL
+	/len FMLOCAL
+	/pos FMLOCAL
+/ms { 
+	/sl exch def 
+	/val 255 def 
+	/ws cfs 
+	/im cfs 
+	/val 0 def 
+	/bs cfs 
+	/cs cfs 
+	} bind def
+400 ms 
+/ip { 
+	is 
+	0 
+	cf cs readline pop 
+	{	ic exch get exec 
+		add 
+		} forall 
+	pop 
+	
+	} bind def
+/rip { 
+	   
+	  
+	  bis ris copy pop 
+      is
+      0
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop 
+	  ris gis copy pop 
+	  dup is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop
+	  gis bis copy pop 
+	  dup add is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+      pop 
+      
+      } bind def
+/wh { 
+	/len exch def 
+	/pos exch def 
+	ws 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/bl { 
+	/len exch def 
+	/pos exch def 
+	bs 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/s1 1 string def
+/fl { 
+	/len exch def 
+	/pos exch def 
+	/val cf s1 readhexstring pop 0 get def
+	pos 1 pos len add 1 sub {im exch val put} for
+	pos len 
+	} bind def
+/hx { 
+	3 copy getinterval 
+	cf exch readhexstring pop pop 
+	} bind def
+	/h FMLOCAL
+	/w FMLOCAL
+	/d FMLOCAL
+	/lb FMLOCAL
+	/bitmapsave FMLOCAL
+	/is FMLOCAL
+	/cf FMLOCAL
+/wbytes { 
+      dup dup
+      24 eq { pop pop 3 mul }
+      { 8 eq {pop} {1 eq {7 add 8 idiv} {3 add 4 idiv} ifelse} ifelse } ifelse
+	} bind def
+/BEGINBITMAPBWc { 
+	1 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAPGRAYc { 
+	8 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAP2BITc { 
+	2 {} COMMONBITMAPc
+	} bind def
+/COMMONBITMAPc { 
+		 
+	/r exch def
+	/d exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	r                    
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{ip} image 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BEGINBITMAPBW { 
+	1 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAPGRAY { 
+	8 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAP2BIT { 
+	2 {} COMMONBITMAP
+	} bind def
+/COMMONBITMAP { 
+	/r exch def
+	/d exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/bitmapsave save def 
+	r                    
+	/is w d wbytes string def
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{cf is readhexstring pop} image
+	bitmapsave restore 
+	grestore
+	} bind def
+/ngrayt 256 array def
+/nredt 256 array def
+/nbluet 256 array def
+/ngreent 256 array def
+	/gryt FMLOCAL
+	/blut FMLOCAL
+	/grnt FMLOCAL
+	/redt FMLOCAL
+	/indx FMLOCAL
+	/cynu FMLOCAL
+	/magu FMLOCAL
+	/yelu FMLOCAL
+	/k FMLOCAL
+	/u FMLOCAL
+FMLevel1 {
+/colorsetup {
+	currentcolortransfer
+	/gryt exch def
+	/blut exch def
+	/grnt exch def
+	/redt exch def
+	0 1 255 {
+		/indx exch def
+		/cynu 1 red indx get 255 div sub def
+		/magu 1 green indx get 255 div sub def
+		/yelu 1 blue indx get 255 div sub def
+		/k cynu magu min yelu min def
+		/u k currentundercolorremoval exec def
+%		/u 0 def
+		nredt indx 1 0 cynu u sub max sub redt exec put
+		ngreent indx 1 0 magu u sub max sub grnt exec put
+		nbluet indx 1 0 yelu u sub max sub blut exec put
+		ngrayt indx 1 k currentblackgeneration exec sub gryt exec put
+	} for
+	{255 mul cvi nredt exch get}
+	{255 mul cvi ngreent exch get}
+	{255 mul cvi nbluet exch get}
+	{255 mul cvi ngrayt exch get}
+	setcolortransfer
+	{pop 0} setundercolorremoval
+	{} setblackgeneration
+	} bind def
+}
+{
+/colorSetup2 {
+	[ /Indexed /DeviceRGB 255 
+		{dup red exch get 255 div 
+		 exch dup green exch get 255 div 
+		 exch blue exch get 255 div}
+	] setcolorspace
+} bind def
+} ifelse
+	/tran FMLOCAL
+/fakecolorsetup {
+	/tran 256 string def
+	0 1 255 {/indx exch def 
+		tran indx
+		red indx get 77 mul
+		green indx get 151 mul
+		blue indx get 28 mul
+		add add 256 idiv put} for
+	currenttransfer
+	{255 mul cvi tran exch get 255.0 div}
+	exch concatprocs settransfer
+} bind def
+/BITMAPCOLOR { 
+	/d 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/bitmapsave save def
+	FMLevel1 {	
+		colorsetup
+		/is w d wbytes string def
+		/cf currentfile def 
+		w h d [w 0 0 h neg 0 h] 
+		{cf is readhexstring pop} {is} {is} true 3 colorimage 
+	} {
+		colorSetup2
+		/is w d wbytes string def
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width w def
+			/Height h def
+			/ImageMatrix [w 0 0 h neg 0 h] def
+			/DataSource {cf is readhexstring pop} bind def
+			/BitsPerComponent d def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPCOLORc { 
+	/d 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	FMLevel1 {	
+		colorsetup
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		w h d [w 0 0 h neg 0 h] 
+		{ip} {is} {is} true 3 colorimage
+	} {
+		colorSetup2
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width w def
+			/Height h def
+			/ImageMatrix [w 0 0 h neg 0 h] def
+			/DataSource {ip} bind def
+			/BitsPerComponent d def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPTRUECOLORc { 
+	/d 24 def
+        gsave
+ 	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 w getinterval def	
+	/gis im w w getinterval def	
+	/bis im w 2 mul w getinterval def 
+        
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {w rip pop ris} {gis} {bis} true 3 colorimage
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUECOLOR { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop } 
+        { cf gis readhexstring pop } 
+        { cf bis readhexstring pop } 
+        true 3 colorimage 
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUEGRAYc { 
+	/d 24 def
+        gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 w getinterval def	
+	/gis im w w getinterval def	
+	/bis im w 2 mul w getinterval def 
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {w rip pop ris gis bis w gray} image
+        bitmapsave restore 
+        grestore
+        } bind def
+/ww FMLOCAL
+/r FMLOCAL
+/g FMLOCAL
+/b FMLOCAL
+/i FMLOCAL
+/gray { 
+        /ww exch def
+        /b exch def
+        /g exch def
+        /r exch def
+        0 1 ww 1 sub { /i exch def r i get .299 mul g i get .587 mul
+			b i get .114 mul add add r i 3 -1 roll floor cvi put } for
+        r
+        } bind def
+/BITMAPTRUEGRAY { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop 
+          cf gis readhexstring pop 
+          cf bis readhexstring pop w gray}  image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPGRAY { 
+	8 {fakecolorsetup} COMMONBITMAP
+	} bind def
+/BITMAPGRAYc { 
+	8 {fakecolorsetup} COMMONBITMAPc
+	} bind def
+/ENDBITMAP {
+	} bind def
+end 
+	/ALDsave FMLOCAL
+	/ALDmatrix matrix def ALDmatrix currentmatrix pop
+/StartALD {
+	/ALDsave save def
+	 savematrix
+	 ALDmatrix setmatrix
+	} bind def
+/InALD {
+	 restorematrix
+	} bind def
+/DoneALD {
+	 ALDsave restore
+	} bind def
+/I { setdash } bind def
+/J { [] 0 setdash } bind def
+%%EndProlog
+%%BeginSetup
+(4.0) FMVERSION
+1 1 0 0 612 792 0 1 17 FMDOCUMENT
+0 0 /Times-Roman FMFONTDEFINE
+1 0 /Times-Bold FMFONTDEFINE
+2 1 /Symbol FMFONTDEFINE
+3 0 /Times-Italic FMFONTDEFINE
+4 0 /Courier-Bold FMFONTDEFINE
+32 FMFILLS
+0 0 FMFILL
+1 0.1 FMFILL
+2 0.3 FMFILL
+3 0.5 FMFILL
+4 0.7 FMFILL
+5 0.9 FMFILL
+6 0.97 FMFILL
+7 1 FMFILL
+8 <0f1e3c78f0e1c387> FMFILL
+9 <0f87c3e1f0783c1e> FMFILL
+10 <cccccccccccccccc> FMFILL
+11 <ffff0000ffff0000> FMFILL
+12 <8142241818244281> FMFILL
+13 <03060c183060c081> FMFILL
+14 <8040201008040201> FMFILL
+16 1 FMFILL
+17 0.9 FMFILL
+18 0.7 FMFILL
+19 0.5 FMFILL
+20 0.3 FMFILL
+21 0.1 FMFILL
+22 0.03 FMFILL
+23 0 FMFILL
+24 <f0e1c3870f1e3c78> FMFILL
+25 <f0783c1e0f87c3e1> FMFILL
+26 <3333333333333333> FMFILL
+27 <0000ffff0000ffff> FMFILL
+28 <7ebddbe7e7dbbd7e> FMFILL
+29 <fcf9f3e7cf9f3f7e> FMFILL
+30 <7fbfdfeff7fbfdfe> FMFILL
+%%EndSetup
+%%Page: "1" 1
+%%BeginPaperSize: Letter
+%%EndPaperSize
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+J
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(1) 536 42.62 T
+0 18 Q
+(HP) 107.87 709.67 T
+(AM: An Active Message layer for a Network of HP) 129.22 709.67 T
+(W) 257.97 686.67 T
+(orkstations) 273.52 686.67 T
+1 12 Q
+(Richard P) 258.31 653.67 T
+(. Martin) 309.53 653.67 T
+(University of California at Berkeley) 213.59 637.67 T
+(rmartin@CS.Berkeley) 233.68 621.67 T
+(.EDU) 348.49 621.67 T
+1 16 Q
+( Abstract) 273.48 579 T
+0 12 Q
+0.95 (Active Messages is a thin, highly optimized communication layer tar) 108.83 551.67 P
+0.95 (geted at the) 447.78 551.67 P
+0.09 (library or compiler writer) 108.83 537.67 P
+0.09 (. A primary goal of an Active Message layer is to deliver) 230.74 537.67 P
+1.3 (the minimum latency and peak bandwidth of the network hardware to user pro-) 108.83 523.67 P
+1.86 (grams. Previous work on Active Messages demonstrated a 6-to 12-fold perfor-) 108.83 509.67 P
+-0.11 (mance improvement over vendor supplied send and receive libraries for Massively) 108.83 495.67 P
+(Parallel Processors.) 108.83 481.67 T
+0.58 (This document describes an Active Message layer we have constructed on a Net-) 108.83 455.67 P
+-0.15 (work of W) 108.83 441.67 P
+-0.15 (orkstations. The HP) 159.57 441.67 P
+-0.15 (AM layer currently runs on a network of 4 HP 9000/) 253.83 441.67 P
+0.12 (735 workstations with Medusa FDDI interface cards. HP) 108.83 427.67 P
+0.12 (AM achieves a round trip) 381.87 427.67 P
+-0.13 (time for a 20 byte payload of 29) 108.83 413.67 P
+2 F
+-0.13 (m) 265.07 413.67 P
+0 F
+-0.13 (sec, an order of magnitude better than traditional) 271.98 413.67 P
+(software, and a maximum bandwidth of 12 MB/s.) 108.83 399.67 T
+1 16 Q
+(1. Intr) 71.33 359 T
+(oduction) 114.6 359 T
+0 12 Q
+0.99 (Recent technological trends have driven Massively Parallel Processor \050MPP\051 hardware towards) 71.33 331.67 P
+0.95 (systems that are essentially a collection of workstation class nodes connected by a high perfor-) 71.33 317.67 P
+0.15 (mance network. Advances in Local Area Network \050LAN\051 technologies can provide a Network of) 71.33 303.67 P
+1.44 (W) 71.33 289.67 P
+1.44 (orkstations \050NOW\051 with switched, high bandwidth MPP like interconnects, blurring the line) 81.7 289.67 P
+0.41 (between an MPP and a NOW) 71.33 275.67 P
+0.41 (. T) 213.92 275.67 P
+0.41 (raditional communications software for a LAN,) 227.25 275.67 P
+3 F
+0.41 (e.g.) 461.34 275.67 P
+0 F
+0.41 ( TCP/IP) 478.67 275.67 P
+0.41 (, has) 516.76 275.67 P
+0.33 (lagged behind MPP software in terms of the fraction of raw hardware performance it can deliver) 71.33 261.67 P
+1.38 (to programs. The low performance stems from the assumptions made in traditional LAN soft-) 71.33 247.67 P
+0.02 (ware. These include invoking the operation system on every message, driver support for complex) 71.33 233.67 P
+0.02 (gather/scatter operations, and protocols which model communication only in point-to-point terms) 71.33 219.67 P
+-0.3 (rather than in an all-to-all framework. Studies show that for TCP) 71.33 205.67 P
+-0.3 (, only a small fraction of the com-) 377.96 205.67 P
+-0.13 (munication time is spent accessing the actual hardware. Protocol processing consumes substantial) 71.33 191.67 P
+-0.11 (time, but still it is only a small fraction of the total cost. The costs of all operations of the commu-) 71.33 177.67 P
+1.14 (nications software, including context switching, buf) 71.33 163.67 P
+1.14 (fer and timer management, scheduling, and) 325.82 163.67 P
+1.54 (data copying must be reduced to improve performance [2] [6]. The HP Active Message layer) 71.33 149.67 P
+0.58 (\050HP) 71.33 135.67 P
+0.58 (AM\051 is a software layer which delivers close to the hardware performance to user level pro-) 89.56 135.67 P
+1.43 (grams on a NOW without sacri\336cing essential services of the communication layer) 71.33 121.67 P
+1.43 (. The layer) 484.66 121.67 P
+(takes positions which dif) 71.33 107.67 T
+(fer from typical LAN communications software. These are:) 190.78 107.67 T
+4 F
+(\245) 71.33 87.67 T
+0 F
+(Direct user access to the hardware.) 85.08 87.67 T
+FMENDPAGE
+%%EndPage: "1" 1
+%%Page: "2" 2
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(2) 536 42.62 T
+4 12 Q
+(\245) 71.33 713.67 T
+0 F
+(An all-to-all, request-reply model of communication.) 85.08 713.67 T
+4 F
+(\245) 71.33 693.67 T
+0 F
+(Careful management of the network state to keep the overhead low) 85.08 693.67 T
+(.) 406.22 693.67 T
+0.44 (This paper describes HP) 71.33 667.67 P
+0.44 (AM. Section 2 describes the requirements of the HP) 188.51 667.67 P
+0.44 (AM layer) 441.2 667.67 P
+0.44 (. Section 3) 487.29 667.67 P
+2.39 (introduces the Active Message abstraction. Section 4 details the HP) 71.33 653.67 P
+2.39 (AM implementation and) 416.39 653.67 P
+0.25 (Medusa interface. Section 5 presents performance measurements and a brief comparison to other) 71.33 639.67 P
+(software layers. The conclusion discusses future directions.) 71.33 625.67 T
+1 16 Q
+(2. Requir) 71.33 585 T
+(ements) 135.04 585 T
+0 12 Q
+1.85 (This section describes the capabilities that HP) 71.33 557.67 P
+1.85 (AM provides to user level programs. HP) 301.99 557.67 P
+1.85 (AM is) 506.98 557.67 P
+2.01 (designed as a set of mechanisms upon which higher level abstractions can be built) 71.33 543.67 P
+3 F
+2.01 (i.e.) 496.8 543.67 P
+0 F
+2.01 (, it is) 511.46 543.67 P
+0.78 (expected to be used by compilers or library writers. W) 71.33 529.67 P
+0.78 (e view the following as essential to meet) 338.7 529.67 P
+(this goal:) 71.33 515.67 T
+1 F
+-0.08 (Composability) 71.33 489.67 P
+-0.08 (.) 145.35 489.67 P
+0 F
+-0.08 ( The implementation of higher level abstractions on top of HP) 148.35 489.67 P
+-0.08 (AM must be simple) 444.41 489.67 P
+0.33 (and straightforward. For example, in order to facilitate construction of a shared memory abstrac-) 71.33 475.67 P
+1 (tion HP) 71.33 461.67 P
+1 (AM provides safe \050deadlock and livelock free\051 request-reply protocols. Other important) 108.24 461.67 P
+(abstractions include message passing and byte streams.) 71.33 447.67 T
+1 F
+0.83 (Reliability) 71.33 421.67 P
+0.83 (.) 124.01 421.67 P
+0 F
+0.83 ( A reliable interface must be presented to the higher level. HP) 127.01 421.67 P
+0.83 (AM handles all book-) 431.68 421.67 P
+0.33 (keeping, time-outs and retransmissions. A failure to deliver a message after a reasonable amount) 71.33 407.67 P
+0.8 (of ef) 71.33 393.67 P
+0.8 (fort is viewed as a catastrophic error) 94.24 393.67 P
+0.8 (. Presenting a reliable interface greatly improves com-) 272.98 393.67 P
+(posability as well.) 71.33 379.67 T
+1 F
+0.62 (Pr) 71.33 353.67 P
+0.62 (otection) 83.78 353.67 P
+0 F
+0.62 (. The HP) 124.43 353.67 P
+0.62 (AM implementation must protect two non-cooperating programs from inter-) 167.57 353.67 P
+0.69 (ference. A parallel program consists of co-operating processes which may be physically distrib-) 71.33 339.67 P
+1.3 (uted on separate processors. HP) 71.33 325.67 P
+1.3 (AM provides trusted communication within a parallel program) 228.41 325.67 P
+(and protection between parallel programs.) 71.33 311.67 T
+1 F
+0.61 (Ef\336ciency) 71.33 285.67 P
+0 F
+0.61 (. A simple and consistent communication cost model must be presented to a compiler) 121.22 285.67 P
+0.19 (or library writer) 71.33 271.67 P
+0.19 (. For example, HP) 147.7 271.67 P
+0.19 (AM abstracts a short message as register) 234.82 271.67 P
+0.19 (-to-network operation,) 431 271.67 P
+1.73 (and a long message as a memory-to-network operation. A compiler can determine when it is) 71.33 257.67 P
+0.72 (appropriate to use the short or long version, given the cost of the register move vs. the memory) 71.33 243.67 P
+(copy) 71.33 229.67 T
+(.) 93.88 229.67 T
+0.89 (W) 71.33 203.67 P
+0.89 (e did not view ordering as an essential property because it is not required for all higher level) 81.7 203.67 P
+-0.04 (communication abstractions. For example, for a shared memory abstraction with explicit comple-) 71.33 189.67 P
+-0.3 (tion events \050Split-C\051 [3], ordering is not as critical a property to support as reliability [9]. Ordering) 71.33 175.67 P
+0.09 (can be implemented cheaply on top of HP) 71.33 161.67 P
+0.09 (AM since the programmer is freed from reliability con-) 272.5 161.67 P
+(cerns.) 71.33 147.67 T
+FMENDPAGE
+%%EndPage: "2" 2
+%%Page: "3" 3
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(3) 536 42.62 T
+1 16 Q
+(3. Abstraction: Active Messages with Request-Reply) 71.33 711 T
+0 12 Q
+1.99 (Active messages present a simple mechanism to the programmer: each message contains the) 71.33 683.67 P
+1.3 (address of a user) 71.33 669.67 P
+1.3 (-level handler \050code segment\051 which is executed on message arrival. Because) 155.29 669.67 P
+-0.07 (handlers run at the priority of the network, blocking the arrival of successive messages, they must) 71.33 655.67 P
+0.59 (run quickly and to completion [10]. The role of the handler is to get the message out of the net-) 71.33 641.67 P
+0.81 (work, either by integrating it into the computation or sending a reply) 71.33 627.67 P
+0.81 (. Programming with active) 408.75 627.67 P
+0.41 (messages is similar to programming interrupt handlers in the operating system. The programmer) 71.33 613.67 P
+(must reason about asynchronous functions invoked within a main body of code.) 71.33 599.67 T
+1.62 (In addition to the basic active message mechanism, HP) 71.33 573.67 P
+1.62 (AM enforces a request-reply model of) 347.47 573.67 P
+1.04 (communication. When invoked, a handler is typed by the system as either a request handler or) 71.33 559.67 P
+0.38 (reply handler) 71.33 545.67 P
+0.38 (. A request handler may only use the network is to issue a reply to the sending pro-) 134.71 545.67 P
+1.81 (cess. Reply handlers cannot use the network. Request handlers which do anything other than) 71.33 531.67 P
+(reply) 71.33 517.67 T
+(, as well as reply handlers which attempt to use the network, generate an error) 95.21 517.67 T
+(.) 468.46 517.67 T
+2.58 (T) 71.33 491.67 P
+2.58 (raditional models,) 78.25 491.67 P
+3 F
+2.58 (e.g.) 173.07 491.67 P
+0 F
+2.58 ( TCP) 190.4 491.67 P
+2.58 (, assume there are two logical one-way streams of information) 216.66 491.67 P
+0.55 (between two communicating entities. The request-reply model, however) 71.33 477.67 P
+0.55 (, assumes there are two,) 422.32 477.67 P
+0.07 (two-way streams. Figure 1 illustrates this using a remote) 71.33 463.67 P
+3 F
+0.07 (r) 346.63 463.67 P
+0.07 (ead) 350.85 463.67 P
+0 F
+0.07 ( operation built upon HP) 368.18 463.67 P
+0.07 (AM. In the) 486.03 463.67 P
+1.31 (example, process 0 initiates the read to fetch a value stored in the address space of process 1.) 71.33 449.67 P
+0.04 (First, the \324main thread\325 of control clears a completion \337ag, then launches a request. On process 1,) 71.33 435.67 P
+-0.05 (the read_handler is called when the message arrives from the network. The read_handler function) 71.33 421.67 P
+1.1 (accesses the value then sends a reply back to process 0. When the reply arrives the read_reply) 71.33 407.67 P
+0.16 (handler is invoked and stores the value into the appropriate location. The read_reply handler also) 71.33 393.67 P
+-0.16 (sets a completion \337ag so the \324main thread\325 can detect the completion of the read. In a like manner) 71.33 379.67 P
+-0.16 (,) 536.17 379.67 P
+-0.14 (process 1 can issue remote reads to process 0.While the restrictions on handlers may seem con\336n-) 71.33 85.67 P
+89.97 109.33 520.53 375.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+118.41 175.33 244.41 241.33 R
+0.5 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+172.41 115.33 460.41 133.33 R
+7 X
+V
+1 10 Q
+0 X
+(FIGURE 1. Logical information \337ow in r) 186.15 126.67 T
+(equest-r) 360.7 126.67 T
+(eply model) 395.52 126.67 T
+0 12 Q
+(Process 1) 414.77 347.15 T
+367.88 298.64 379.41 295.33 367.88 292.03 367.88 295.33 4 Y
+V
+253.41 295.33 367.88 295.33 2 L
+7 X
+V
+0 X
+N
+367.88 163.64 379.41 160.33 367.88 157.03 367.88 160.33 4 Y
+V
+253.41 160.33 367.88 160.33 2 L
+7 X
+V
+0 X
+N
+(Requests to 1 from 0) 262.41 305.15 T
+(Replies from 1 to 0) 269.97 225.27 T
+(Requests to 0 from 1) 271.41 171.94 T
+(Replies from 0 to 1) 271.41 144.94 T
+0 10 Q
+(request\050read_handler) 107.97 293.96 T
+(,local_addr) 191.98 293.96 T
+(,) 236.29 293.96 T
+0 12 Q
+(invoke:) 115.41 243.94 T
+0 10 Q
+(read_reply\050local_addr) 124.8 225.94 T
+(,) 212.7 225.94 T
+(*local_addr=remote_data;) 134.97 204.5 T
+(read\050local_addr) 100.41 315.51 T
+(,remote_addr\051 {) 162.76 315.51 T
+(read_complete=1;) 137.46 195.51 T
+(read_complete=0 ;) 107.97 302.96 T
+98.97 256.33 251.97 328.33 R
+N
+(reply\050read_reply) 395.97 249.51 T
+(,local_addr) 461.96 249.51 T
+(,) 506.27 249.51 T
+0 12 Q
+(invoke:) 379.41 297.94 T
+0 10 Q
+(read_handler\050local_addr) 385.39 279.5 T
+(,) 482.73 279.5 T
+379.41 220.33 514.41 295.33 R
+N
+264.95 166.03 253.41 169.33 264.95 172.64 264.95 169.33 4 Y
+V
+264.95 169.33 379.41 169.33 2 L
+7 X
+V
+0 X
+N
+254.51 237.36 242.97 240.67 254.51 243.97 254.51 240.67 4 Y
+V
+254.51 240.67 377.97 240.67 2 L
+7 X
+V
+0 X
+N
+(}) 386.97 231.51 T
+(}) 103.17 276.5 T
+(}) 125.97 186.51 T
+(remote_addr\051;) 143.97 284.96 T
+(remote_addr\051 {) 435.24 270.51 T
+(remote_data\051;) 422.97 240.51 T
+(remote_data=*remote_addr;) 395.97 258.5 T
+(remote_data\051 {) 166.35 215.5 T
+0 12 Q
+(Process 0) 163.41 348.94 T
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "3" 3
+%%Page: "4" 4
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(4) 536 42.62 T
+0 12 Q
+-0.17 (ing, in practice they have not been. The restrictions were motivated by the need to provide an ef) 71.33 713.67 P
+-0.17 (\336-) 528.5 713.67 P
+(cient interface on top of an unreliable network.) 71.33 699.67 T
+0.35 (HP) 71.33 673.67 P
+0.35 (AM presents separate abstractions for small and lar) 85.57 673.67 P
+0.35 (ge messages. A small message lives in the) 334.07 673.67 P
+1.35 (registers de\336ned by the calling convention used by compilers for the instruction set. The send) 71.33 659.67 P
+-0.2 (operation for a small message is a register) 71.33 645.67 P
+-0.2 (-to-network operation. Conversely) 271.33 645.67 P
+-0.2 (, receiving becomes a) 435.79 645.67 P
+0.92 (network-to-register operation. The) 71.33 631.67 P
+3 F
+0.92 (HP) 242.72 631.67 P
+0.92 (AM_4) 257.17 631.67 P
+0 F
+0.92 ( and) 286.5 631.67 P
+3 F
+0.92 (HP) 311.67 631.67 P
+0.92 (AM_r) 326.12 631.67 P
+0.92 (eply_4) 353.67 631.67 P
+0 F
+0.92 ( calls pass four words from the) 385.66 631.67 P
+1.12 (local call frame to a remote call frame because the P) 71.33 617.67 P
+1.12 (A-RISC calling convention dedicates four) 332.71 617.67 P
+(registers for passing ar) 71.33 603.67 T
+(guments.) 180.09 603.67 T
+0.09 (The) 71.33 577.67 P
+3 F
+0.09 (HP) 93.09 577.67 P
+0.09 (AM_xfer) 107.53 577.67 P
+0 F
+0.09 ( and) 149.52 577.67 P
+3 F
+0.09 (HP) 173.04 577.67 P
+0.09 (AM_r) 187.48 577.67 P
+0.09 (eply_xfer) 215.04 577.67 P
+0 F
+0.09 ( functions support lar) 259.69 577.67 P
+0.09 (ge messages,) 362.07 577.67 P
+3 F
+0.09 (i.e.,) 427.91 577.67 P
+0 F
+0.09 ( bulk transfers. The) 445.58 577.67 P
+0.17 (model they present is a remote memory copy with a noti\336cation on the receiver that the copy has) 71.33 563.67 P
+0.73 (completed. HP) 71.33 549.67 P
+0.73 (AM_xfer copies bytes from the local process\325) 142.29 549.67 P
+0.73 (s memory) 365.94 549.67 P
+0.73 (, starting at the local base) 413.55 549.67 P
+0.33 (address, to the remote processes\325) 71.33 535.67 P
+0.33 (s memory starting at the remote address. Once the copy is com-) 230.28 535.67 P
+-0 (pleted, the handler is invoked on the remote node with a pointer to the data, the length, and a user) 71.33 521.67 P
+1.29 (supplied ar) 71.33 507.67 P
+1.29 (gument. Likewise, request handlers can use HP) 125.4 507.67 P
+1.29 (AM_reply_xfer to transfer bulk data) 359.36 507.67 P
+0.95 (back to the requesting process. HP) 71.33 493.67 P
+0.95 (AM does not provide segmentation and re-assembly because) 240.93 493.67 P
+0.92 (many transfers will \336t into a single FDDI packet, which is up to 4500 bytes. Higher layers can) 71.33 479.67 P
+(compose segmentation and re-assembly easily since HP) 71.33 465.67 T
+(AM guarantees packet delivery) 338.19 465.67 T
+(.) 487.7 465.67 T
+1 16 Q
+(4. Implementation) 71.33 425 T
+0 12 Q
+0.62 (This section explains the current HP) 71.33 397.67 P
+0.62 (AM implementation. It begins with a quick overview of the) 247.63 397.67 P
+0.05 (Medusa card, then describes the all-to-all request-reply protocol used, and how it provides safety) 71.33 383.67 P
+0.05 (.) 536.17 383.67 P
+0.21 (The section concludes by explaining how the \336nite resource model exposed by the HP) 71.33 369.67 P
+0.21 (AM proto-) 487.29 369.67 P
+(col can be used to provide protection.) 71.33 355.67 T
+1 14 Q
+(4.1  Medusa overview) 71.33 322.33 T
+0 12 Q
+1.33 (The Medusa card was designed for high bandwidth TCP connections [1]. The card sits on the) 71.33 295.67 P
+0.37 (graphics bus \050SGC bus\051 in place of the frame buf) 71.33 281.67 P
+0.37 (fer) 310.09 281.67 P
+0.37 (, and has one megabyte of on-board VRAM.) 322.93 281.67 P
+0.45 (The VRAM is divided into \336xed sized \0508 Kbyte\051 blocks, each of which may contain one packet.) 71.33 267.67 P
+2.22 (Four memory mapped FIFOs control access to the card \050see Figure 2\051. An entry in a FIFO) 71.33 253.67 P
+-0.02 (encodes a <block number/length> pair for one packet in VRAM. Stores are pipelined on the SGC) 71.33 239.67 P
+0.89 (bus, and can be issued every 2 cycles. On a 99 MHz HP 9000/735 with a 33 MHz Medusa the) 71.33 225.67 P
+0.93 (latency of a load instruction from the VRAM is 42 cycles. The bandwidth available from main) 71.33 211.67 P
+-0.29 (memory into the card is 38 MB/s. Using straightforward programmed I/O, the bandwidth from the) 71.33 197.67 P
+0.2 (Medusa VRAM into main memory is only 10 MB/s. W) 71.33 183.67 P
+0.2 (ith the assistance of a special block-move) 338.67 183.67 P
+(unit, the processor can move data at a rate of 18 MB/s from VRAM to main memory) 71.33 169.67 T
+(.) 477.5 169.67 T
+0.36 (T) 71.33 143.67 P
+0.36 (o send a packet is simple. The processor constructs the FDDI header and payload in a block on) 77.82 143.67 P
+4.78 (the VRAM. The processor then stores the encoded <block number/length> pair to the) 71.33 129.67 P
+0.85 (TX_READY FIFO, causing the card to start transmitting the packet into the network. Once the) 71.33 115.67 P
+2.14 (packet has been transmitted, the card places the block number on the TX_FREE FIFO. The) 71.33 101.67 P
+(VRAM is not altered by packet transmission.) 71.33 87.67 T
+FMENDPAGE
+%%EndPage: "4" 4
+%%Page: "5" 5
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(5) 536 42.62 T
+0 12 Q
+1.32 (When receiving a packet, the card pops the next entry of) 71.33 319.64 P
+1.32 (f the RX_FREE FIFO and writes the) 355.25 319.64 P
+0.11 (FDDI header) 71.33 305.64 P
+0.11 (, payload and trailer into the corresponding block of VRAM. If RX_FREE is empty) 133.94 305.64 P
+0.11 (,) 536.17 305.64 P
+0.16 (the card drops the packet. Once the entire packet arrives, the Medusa places the descriptor on the) 71.33 291.64 P
+-0.09 (RX_READY FIFO. T) 71.33 277.64 P
+-0.09 (o receive a packet, the processor loads the next <block number/length> pair) 176.65 277.64 P
+0.33 (from the RX_READY FIFO, and then accesses the corresponding VRAM block. Message trans-) 71.33 263.64 P
+1.86 (mission and reception are atomic, since a single load or store instruction sends or receives a) 71.33 249.64 P
+0.94 (packet. The FIFOs control ownership of the blocks. Blocks in the TX_READY and RX_FREE) 71.33 235.64 P
+0.06 (FIFOs are logically owned by the card; the processor logically owns blocks in the TX_FREE and) 71.33 221.64 P
+1.29 (RX_READY FIFOs. However) 71.33 207.64 P
+1.29 (, nothing in the card hardware checks for the consistency of the) 221.08 207.64 P
+1.35 (FIFOs. The card can interrupt the processor when the RX_READY FIFO goes from empty to) 71.33 193.64 P
+(non-empty) 71.33 179.64 T
+(.) 122.55 179.64 T
+1 14 Q
+(4.2  HP) 71.33 146.3 T
+(AM implementation) 114.24 146.3 T
+0 12 Q
+2.63 (This sub-section describes the current HP) 71.33 119.64 P
+2.63 (AM implementation on the Medusa. Although the) 283.03 119.64 P
+-0.22 (Medusa uses FDDI as the physical layer) 71.33 105.64 P
+-0.22 (, this work is independent of any particular physical layer) 262.84 105.64 P
+-0.22 (.) 536.17 105.64 P
+0.85 (Many of the ideas in HP) 71.33 91.64 P
+0.85 (AM are applicable to communications software as long as the physical) 191.44 91.64 P
+-0.03 (network exhibits the properties described below) 71.33 77.64 P
+-0.03 (. First, the assumptions underlying the implemen-) 300.69 77.64 P
+100.48 339.63 510.02 721.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+304.17 638.13 307.48 649.67 310.79 638.13 307.48 638.13 4 Y
+3 X
+0 0 0 1 0 0 0 K
+V
+338.65 550.67 338.65 595.67 307.48 595.67 307.48 638.13 4 L
+0.5 H
+2 Z
+N
+250.17 638.13 253.48 649.67 256.79 638.13 253.48 638.13 4 Y
+V
+239.48 522.17 239.48 630.05 253.48 630.05 253.48 638.13 4 L
+N
+0 12 Q
+0 X
+(Processor) 107.85 659.49 T
+(TX_READY) 262.48 545.27 T
+(TX_FREE) 264.73 518.26 T
+(RX_READY) 263.16 491.24 T
+(RX_FREE) 264.47 464.26 T
+235.48 488.65 343.48 506.65 R
+0 Z
+N
+235.48 461.65 343.48 479.65 R
+N
+235.48 542.67 343.48 560.67 R
+N
+235.48 515.67 343.48 533.67 R
+N
+343.48 551.67 397.48 551.67 2 L
+2 Z
+N
+223.95 554.97 235.48 551.67 223.95 548.36 223.95 551.67 4 Y
+V
+172.48 551.67 223.95 551.67 2 L
+0 Z
+N
+355.02 494.35 343.48 497.65 355.02 500.96 355.02 497.65 4 Y
+V
+343.48 470.65 397.48 470.65 397.48 497.65 355.02 497.65 4 L
+2 Z
+N
+184.02 494.35 172.48 497.65 184.02 500.96 184.02 497.65 4 Y
+V
+235.48 497.65 184.02 497.65 2 L
+0 Z
+N
+223.95 473.96 235.48 470.65 223.95 467.35 223.95 470.65 4 Y
+V
+172.48 470.65 223.95 470.65 2 L
+N
+235.48 649.67 343.48 676.67 R
+N
+262.48 676.67 262.48 649.67 2 L
+N
+289.48 676.67 289.48 649.67 2 L
+N
+316.48 676.67 316.48 649.67 2 L
+N
+(VRAM) 269.87 695.49 T
+334.48 479.65 334.48 461.65 2 L
+N
+325.48 479.65 325.48 461.65 2 L
+N
+253.48 533.67 253.48 515.67 2 L
+N
+226.48 352.67 379.48 370.67 R
+7 X
+V
+1 10 Q
+0 X
+(FIGURE 2. Medusa Card) 240.23 364 T
+355.02 521.36 343.48 524.67 355.02 527.97 355.02 524.67 4 Y
+V
+397.48 551.67 397.48 524.67 355.02 524.67 3 L
+N
+184.02 521.36 172.48 524.67 184.02 527.97 184.02 524.67 4 Y
+V
+235.48 524.67 184.02 524.67 2 L
+N
+244.48 533.67 244.48 515.67 2 L
+N
+0 F
+(FDDI) 446.17 660.84 T
+0 12 Q
+(Control Flow) 251.82 413.33 T
+(Buf) 250.15 383.83 T
+(fer descriptors \050Pointers\051) 267.93 383.83 T
+(blocks) 274.54 686.49 T
+253.48 506.65 253.48 488.65 2 L
+N
+244.48 506.65 244.48 488.65 2 L
+N
+334.48 560.67 334.48 542.67 2 L
+N
+325.48 560.67 325.48 542.67 2 L
+N
+(Data Flow) 253.48 434.67 T
+(Control FIFOs) 255.18 572.27 T
+215.3 440.45 235.48 434.67 215.3 428.88 215.3 434.67 4 Y
+V
+172.48 434.67 215.3 434.67 2 L
+V
+3 H
+2 Z
+N
+(38 MB/s) 175.83 679.27 T
+(18 MB/s) 175.83 652.27 T
+(12.5 MB/s) 361.48 679.27 T
+(12.5 MB/s) 364.83 652.27 T
+0.5 H
+90 450 27 40.5 460.48 663.17 A
+(header) 361.48 623.49 T
+(payload) 361.48 601.67 T
+(trailer) 359.84 580.27 T
+352.48 577.67 406.48 631.67 R
+N
+215.3 682.46 235.48 676.67 215.3 670.88 215.3 676.67 4 Y
+V
+154.48 676.67 215.3 676.67 2 L
+3 H
+N
+174.67 643.88 154.48 649.67 174.67 655.46 174.67 649.67 4 Y
+V
+174.67 649.67 235.48 649.67 2 L
+N
+413.3 682.46 433.48 676.67 413.3 670.88 413.3 676.67 4 Y
+V
+343.48 676.67 413.3 676.67 2 L
+N
+363.67 643.88 343.48 649.67 363.67 655.46 363.67 649.67 4 Y
+V
+363.67 649.67 433.48 649.67 2 L
+N
+316.48 649.67 352.48 577.67 2 L
+1 H
+8 X
+N
+352.48 622.67 406.48 622.67 2 L
+0 X
+V
+0.5 H
+N
+353.32 591.67 407.32 591.67 2 L
+V
+N
+343.48 649.67 406.48 631.67 2 L
+8 X
+N
+277.17 638.13 280.48 649.67 283.79 638.13 280.48 638.13 4 Y
+3 X
+V
+249.32 523.67 249.32 622.67 280.48 622.67 280.48 638.13 4 L
+N
+0 X
+90 450 1.67 2.92 248.75 523.25 G
+90 450 1.67 2.92 248.75 523.25 A
+90 450 1.67 2.92 240.42 523.25 G
+90 450 1.67 2.92 240.42 523.25 A
+90 450 1.67 2.92 339.58 549.08 G
+90 450 1.67 2.92 339.58 549.08 A
+223.95 418.97 235.48 415.67 223.95 412.36 223.95 415.67 4 Y
+V
+172.48 415.67 223.95 415.67 2 L
+0 Z
+N
+223.95 391.97 235.48 388.67 223.95 385.36 223.95 388.67 4 Y
+3 X
+V
+172.48 388.67 223.95 388.67 2 L
+N
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "5" 5
+%%Page: "6" 6
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(6) 536 42.62 T
+0 12 Q
+0.69 (tation and its novel properties are described. Next, a simple all-to-all request-reply protocol and) 71.33 713.67 P
+0.11 (an augmented higher bandwidth protocol are described, followed by a discussion of how the pro-) 71.33 699.67 P
+(tocol is safe.) 71.33 685.67 T
+0.37 (The HP) 71.33 659.67 P
+0.37 (AM layer is optimized under the following two key assumptions which dif) 107.6 659.67 P
+0.37 (fer from tradi-) 469.78 659.67 P
+(tional LAN software:) 71.33 645.67 T
+4 F
+(\245) 71.33 625.67 T
+0 F
+(The probability of packet loss is very small, but not completely negligible.) 85.08 625.67 T
+4 F
+(\245) 71.33 605.67 T
+0 F
+(The network hardware will not duplicate packets or deliver packets to the wrong destination.) 85.08 605.67 T
+4 F
+(\245) 71.33 585.67 T
+0 F
+(The network characteristics \050latency) 85.08 585.67 T
+(, bandwidth, round trip time\051 are roughly constant) 258.57 585.67 T
+(throughout the duration of the communication.) 85.08 571.67 T
+1.27 (W) 71.33 545.67 P
+1.27 (e believe these assumptions make sense in a high performance LAN environment where the) 81.7 545.67 P
+0.21 (communicating entities and network fall under the same administrative control. For example, the) 71.33 531.67 P
+1.2 (current implementation is optimized for case where the processes are constituents of a parallel) 71.33 517.67 P
+0.35 (program and are running at the same time. The common case is thus that the arriving message is) 71.33 503.67 P
+(for the currently running process, so no context switch is needed on message arrival.) 71.33 489.67 T
+(The novel properties of HP) 71.33 463.67 T
+(AM are:) 200.87 463.67 T
+4 F
+(\245) 71.33 443.67 T
+0 F
+(The protocol assumes an all-to-all communications model, as opposed to a point-to-point) 85.08 443.67 T
+(model.) 85.08 429.67 T
+4 F
+(\245) 71.33 409.67 T
+0 F
+(The request-reply model allows for a low overhead implementation using simple tables.) 85.08 409.67 T
+(HP) 85.08 395.67 T
+(AM does not use pointer based data structures, instead it trades memory for computation.) 99.31 395.67 T
+4 F
+(\245) 71.33 375.67 T
+0 F
+(All state is explicit in the protocol, and kept at the endpoints. This forms the basis for the pro-) 85.08 375.67 T
+(tection mechanism.) 85.08 361.67 T
+4 F
+(\245) 71.33 341.67 T
+0 F
+(A process owns the network device while it is running. HP) 85.08 341.67 T
+(AM maps the Medusa into the pro-) 366.27 341.67 T
+-0.08 (cess\325) 85.08 327.67 P
+-0.08 (s address space to avoid the overhead of a kernel trap. A scheduler external to the layer is) 108.41 327.67 P
+(responsible for protecting the network state of a process to allow multiple processes to share) 85.08 313.67 T
+(the card.) 85.08 299.67 T
+1 F
+(4.2.1  Low overhead: single r) 71.33 267.67 T
+(equest-r) 218.78 267.67 T
+(eply pr) 260.55 267.67 T
+(otocol) 296.67 267.67 T
+0 F
+0.19 (This section describes an all-to-all, single request-reply protocol. The \336rst HP) 71.33 241.67 P
+0.19 (AM prototype used) 445.45 241.67 P
+0.23 (this protocol, and it serves to illustrate the core ideas. The basic idea of the protocol is simple. In) 71.33 227.67 P
+1.48 (an all-to-all model, a communicating entity \050process\051 communicates with) 71.33 213.67 P
+1 F
+1.48 (P) 439.24 213.67 P
+0 F
+1.48 (-1 other processes.) 446.57 213.67 P
+0.93 (Each process reserves) 71.33 199.67 P
+1 F
+0.93 (P) 182.41 199.67 P
+0 F
+0.93 (-1 request buf) 189.75 199.67 P
+0.93 (fers \050VRAM blocks\051, one for every other communication) 258.04 199.67 P
+0.66 (partner) 71.33 185.67 P
+0.66 (. A process also reserves) 104.66 185.67 P
+1 F
+0.66 (P) 229.24 185.67 P
+0 F
+0.66 (-1 reply buf) 236.57 185.67 P
+0.66 (fers, one to store the reply for each request it may) 294.32 185.67 P
+1.13 (receive from another process. All request and replies are saved in buf) 71.33 171.67 P
+1.13 (fers corresponding to the) 416.13 171.67 P
+-0.07 (destination, and exist for the duration of the program. Both request and reply buf) 71.33 157.67 P
+-0.07 (fers are for send-) 457.77 157.67 P
+0.58 (ing,) 71.33 143.67 P
+3 F
+0.58 ( i.e.,) 89.67 143.67 P
+0 F
+0.58 ( out-bound messages. In addition, at least 2\050) 110.92 143.67 P
+1 F
+0.58 (P) 326.63 143.67 P
+0 F
+0.58 (-1\051 buf) 333.97 143.67 P
+0.58 (fers are reserved for in-bound mes-) 367.32 143.67 P
+0.31 (sages. A simple linear data structure, the) 71.33 129.67 P
+3 F
+0.31 (descriptor table) 271.11 129.67 P
+0 F
+0.31 (, describes the state of each request and) 347.74 129.67 P
+0.03 (reply buf) 71.33 115.67 P
+0.03 (fer) 114.81 115.67 P
+0.03 (. This state includes status, such as whether the buf) 127.47 115.67 P
+0.03 (fer is in-use, the sequence number) 372.52 115.67 P
+0.03 (,) 536.17 115.67 P
+0.01 (and time-out information. In-bound buf) 71.33 101.67 P
+0.01 (fers form a pool; they do not have descriptor table entries.) 260.8 101.67 P
+1.21 (The following example shown in Figure 3 walks though a request-reply operation, such as the) 71.33 87.67 P
+(remote read described in Figure 1.) 71.33 73.67 T
+FMENDPAGE
+%%EndPage: "6" 6
+%%Page: "7" 7
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(7) 536 42.62 T
+0 12 Q
+(1.) 71.33 713.67 T
+0.07 (Before launching a request to process) 85.08 713.67 P
+3 F
+0.07 (i) 268.76 713.67 P
+0 F
+0.07 (, HP) 272.1 713.67 P
+0.07 (AM acquires the request buf) 292.4 713.67 P
+0.07 (fer reserved for) 429.08 713.67 P
+0.76 (process) 85.08 699.67 P
+3 F
+0.76 (i) 124.83 699.67 P
+0 F
+0.76 (\050step 1.a\051. In the read example this would be the request buf) 131.93 699.67 P
+0.76 (fer reserved for) 427.69 699.67 P
+0.59 (process 1. The request buf) 85.08 685.67 P
+0.59 (fer is free if the last outstanding request received a reply) 213.53 685.67 P
+0.59 (. If) 488.58 685.67 P
+0.22 (the request buf) 85.08 671.67 P
+0.22 (fer is free, HP) 156.62 671.67 P
+0.22 (AM constructs a packet \050complete with sequence number) 223.49 671.67 P
+0.22 (,) 500.17 671.67 P
+0.18 (etc.\051 containing the request in the Medusa buf) 85.08 657.67 P
+0.18 (fer and stores the pointer/length pair into) 306.1 657.67 P
+-0.25 (the TX_READY FIFO to send the packet \050step 1.b\051. Finally) 85.08 643.67 P
+-0.25 (, HP) 369.74 643.67 P
+-0.25 (AM marks the buf) 389.72 643.67 P
+-0.25 (fer as) 477.1 643.67 P
+1.11 (in-use and timestamps the request by copying the value of the interval timer register) 85.08 629.67 P
+1.92 (into the descriptor table entry \050step 1.c\051. A cheap timer mechanism) 85.08 615.67 P
+0 9.6 Q
+1.54 (1) 424.92 620.47 P
+0 12 Q
+1.92 ( is essential to) 429.73 615.67 P
+1.91 (maintain low overhead, as noted in [2]. Returning to the remote read example, the) 85.08 601.67 P
+0.03 (HP) 85.08 587.67 P
+0.03 (AM_4 call will store the ar) 99.31 587.67 P
+0.03 (gument registers of the call frame into the Medusa buf) 228.87 587.67 P
+0.03 (fer) 489.85 587.67 P
+(then send and mark the buf) 85.08 573.67 T
+(fer) 215.17 573.67 T
+(.) 227.83 573.67 T
+0.25 (If the request buf) 85.08 547.67 P
+0.25 (fer is marked as in-use, the process enters a time-out and re-transmis-) 167.94 547.67 P
+0.69 (sion loop, stalling on the request until the reply corresponding to the previous request) 85.08 533.67 P
+0.02 (for this buf) 85.08 519.67 P
+0.02 (fer is received. While stalled, the processor continues to service the network) 138.23 519.67 P
+-0.12 (\050both requests and replies\051, but will not return from the request. T) 85.08 505.67 P
+-0.12 (ime-outs and re-trans-) 398.27 505.67 P
+0.91 (missions use an exponential back-of) 85.08 491.67 P
+0.91 (f scheme. If the remote process does not respond) 262.47 491.67 P
+(within 30 seconds, HP) 85.08 477.67 T
+(AM gives up and signals an error) 191.97 477.67 T
+(.) 351.29 477.67 T
+(2.) 71.33 457.67 T
+1.74 (The in-bound buf) 85.08 457.67 P
+1.74 (fer pool \050the RX_READY FIFO\051 holds all unprocessed messages.) 172.32 457.67 P
+0.21 (When a message arrives, the HP) 85.08 443.67 P
+0.21 (AM layer must \336rst determine the type of the message) 240.32 443.67 P
+1.35 (\050request or reply\051 and the sender in order to match the sequence number) 85.08 429.67 P
+1.35 (. All that is) 445.79 429.67 P
+0.46 (required to perform the matching operation \050steps 2.a and b\051 is an index by the sender) 85.08 415.67 P
+0.58 (into the descriptor table followed by a compare. A signi\336cant number of other checks) 85.08 401.67 P
+0.66 (\050detailed in section 5\051 must pass as well. If the match was successful, HP) 85.08 387.67 P
+0.66 (AM invokes) 442.84 387.67 P
+1.33 (the request handler \050step 2.c\051, then returns the buf) 85.08 373.67 P
+1.33 (fer to the in-bound buf) 334.1 373.67 P
+1.33 (fer pool by) 447.85 373.67 P
+0.35 (storing the block number in the RX_FREE FIFO. If the handler responds with a reply) 85.08 359.67 P
+0.35 (,) 500.17 359.67 P
+1.1 (the reply packet is stored in the corresponding reply buf) 85.08 345.67 P
+1.1 (fer) 363.04 345.67 P
+1.1 (, overwriting the previous) 375.88 345.67 P
+0.56 (reply \050step 2.e\051. In the read example, if the sequence numbers matched for the remote) 85.08 331.67 P
+0.96 (read request HP) 85.08 317.67 P
+0.96 (AM would next load the ar) 162.54 317.67 P
+0.96 (guments to the read_handler call from the) 296.77 317.67 P
+(Medusa buf) 85.08 303.67 T
+(fer into registers and branch to the read_handler function.) 141.85 303.67 T
+1.16 (If a request handler does not reply) 71.33 277.67 P
+1.16 (, HP) 241.47 277.67 P
+1.16 (AM generates an empty acknowledgment automatically) 262.86 277.67 P
+1.16 (.) 536.17 277.67 P
+0.08 (Request handlers that do anything but reply to the sender cause an error and the operation returns) 71.33 263.67 P
+(a failure code.) 71.33 249.67 T
+(3.) 71.33 229.67 T
+1.07 (When the reply arrives, HP) 85.08 229.67 P
+1.07 (AM must again match the sequence number based on the) 219.23 229.67 P
+1.03 (sender and type of the message \050step 3.a and b\051. If the sequence numbers match, the) 85.08 215.67 P
+0.82 (reply handler is invoked \050step 3.c\051. After the reply handler returns, the corresponding) 85.08 201.67 P
+0.5 (request buf) 85.08 187.67 P
+0.5 (fer is marked as free, invalidating the timestamp \050step 3.d\051. Reply handlers) 139.02 187.67 P
+(which attempt to use the network generate an error) 85.08 173.67 T
+(.) 328.35 173.67 T
+71.33 111 539.17 131 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+71.33 119 203.33 119 2 L
+0.25 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+0 0 612 792 C
+0 10 Q
+0 X
+0 0 0 1 0 0 0 K
+(1.  On the HP 735, the P) 71.33 104.33 T
+(A- RISC interval timer is a 32 bit register updated every cycle [5]. Using the interval timer) 167.91 104.33 T
+(greatly reduces the cost of timer management; the system call) 71.33 92.33 T
+3 F
+(gettimeofday) 320.73 92.33 T
+0 F
+( costs 18) 372.39 92.33 T
+2 F
+( m) 407.39 92.33 T
+0 F
+(sec, while the interval timer) 415.65 92.33 T
+(costs 1 cycle to read.) 71.33 80.33 T
+FMENDPAGE
+%%EndPage: "7" 7
+%%Page: "8" 8
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(8) 536 42.62 T
+0 12 Q
+1.35 (The protocol is very similar to an alternating bit protocol; the sequence numbers only need to) 71.33 223 P
+-0.14 (range from 0-1 for the protocol to work. The following paragraphs describe how the protocol pro-) 71.33 209 P
+(tects against loss and duplicate packets.) 71.33 195 T
+-0.26 (A free request buf) 71.33 169 P
+-0.26 (fer means that both the previous request and reply were successful, so a request-) 157.3 169 P
+2.05 (ing process can re-use the request buf) 71.33 155 P
+2.05 (fer) 264.06 155 P
+2.05 (. A valid new request means the previous reply got) 276.72 155 P
+(through, so a process can re-use the reply buf) 71.33 141 T
+(fer) 288.73 141 T
+(.) 301.39 141 T
+0.52 (An invalid request means that either the corresponding reply was lost or the requestor timed-out) 71.33 115 P
+0.47 (and sent a duplicate. The receiver) 71.33 101 P
+0.47 (, however) 234.48 101 P
+0.47 (, cannot distinguish a dropped reply from a duplicate) 281.78 101 P
+1.26 (request. Therefore when receiving an invalid request the correct action is to re-send the previ-) 71.33 87 P
+-0.2 (ously stored reply) 71.33 73 P
+-0.2 (. Suppose in the example read, the packet containing the read reply was dropped) 156.15 73 P
+76.64 243 533.86 721.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+130.92 271.67 472.92 289.67 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 10 Q
+0 X
+(FIGURE 3. Connection state maintained by single r) 144.66 283 T
+(equest-r) 365.04 283 T
+(eply pr) 399.85 283 T
+(otocol) 429.95 283 T
+0 12 Q
+(Process 0) 202.92 695.49 T
+(Process 1) 391.28 697.27 T
+184.92 622.67 292.92 640.67 R
+0.5 H
+0 Z
+N
+1 14 Q
+(P) 230.09 676.29 T
+211.92 640.67 211.92 622.67 2 L
+N
+238.92 640.67 238.92 622.67 2 L
+N
+265.92 640.67 265.92 622.67 2 L
+N
+(P) 419.37 562.6 T
+0 12 Q
+(0) 196.64 668.49 T
+(1) 223.64 668.49 T
+(2) 253.65 668.49 T
+(3) 286.64 668.49 T
+364.92 433.67 472.92 451.67 R
+N
+391.92 451.67 391.92 433.67 2 L
+N
+418.92 451.67 418.92 433.67 2 L
+N
+445.92 451.67 445.92 433.67 2 L
+N
+(0) 373.92 454.27 T
+(1) 400.92 454.27 T
+(2) 430.92 454.27 T
+(3) 463.92 454.27 T
+( a. Acquire if free) 93.01 643.27 T
+(b. Send) 94.64 623.49 T
+310.2 602.72 319.92 595.67 307.94 596.5 309.08 599.61 4 Y
+V
+220.92 631.67 309.08 599.61 2 L
+2 Z
+N
+(Request to 1) 223.95 587.49 T
+286.89 407.5 274.92 406.67 284.63 413.72 285.76 410.61 4 Y
+V
+373.92 442.67 285.76 410.61 2 L
+N
+(Reply to 0) 301.92 445.27 T
+371.38 391.97 382.92 388.67 371.38 385.36 371.38 388.67 4 Y
+V
+346.92 388.67 371.38 388.67 2 L
+N
+355.92 334.67 382.92 343.67 R
+3 X
+V
+0 Z
+0 X
+N
+(Message) 391.92 380.49 T
+(In-use buf) 392.55 335.48 T
+(fer) 441.32 335.48 T
+(c. Mark & timestamp) 94.64 607.27 T
+355.64 352.67 382.64 361.67 R
+N
+(Descriptor table entry) 391.92 355.27 T
+(Step 1:) 85.64 659.48 T
+(Step 2:) 364.92 614.48 T
+301.92 604.67 364.92 604.67 364.92 586.67 301.92 586.67 4 L
+2 Z
+N
+355.92 604.67 355.92 586.67 2 L
+N
+(a. Index by sender) 391.64 598.27 T
+(b. Check request sequence #) 391.64 580.27 T
+(c. Invoke handler) 391.64 515.48 T
+(d. Handler replies) 391.64 497.48 T
+(e. Buf) 391.64 479.48 T
+(fer reply) 420.75 479.48 T
+(, send) 460.95 479.48 T
+346.92 604.67 346.92 586.67 2 L
+N
+364.92 595.67 391.92 595.67 2 L
+N
+382.64 595.67 382.64 547 2 L
+N
+0 10 Q
+(RX_READY) 301.92 606.84 T
+364.64 541.67 472.64 550.67 R
+0 Z
+N
+391.64 550.67 391.64 541.67 2 L
+N
+445.64 550.67 445.64 541.67 2 L
+N
+0 12 Q
+(0) 373.92 551.48 T
+(1) 400.92 551.48 T
+(2) 430.92 551.48 T
+(3) 463.92 551.48 T
+220.92 370.67 247.92 379.67 R
+3 X
+V
+N
+193.92 370.67 301.92 379.67 R
+0 X
+N
+247.92 379.67 247.92 370.67 2 L
+N
+274.92 379.67 274.92 370.67 2 L
+N
+(0) 202.92 380.48 T
+(1) 229.92 380.48 T
+(2) 259.92 380.48 T
+(3) 292.92 380.48 T
+(c. Invoke handler) 94.64 353.49 T
+(d. Free request buf) 94.64 337.27 T
+(fer) 184.4 337.27 T
+220.92 379.67 220.92 370.67 2 L
+4 X
+V
+0 X
+N
+(Step 3:) 85.64 427.27 T
+247.92 415.68 247.92 397.68 2 L
+2 Z
+N
+301.92 415.68 238.92 415.68 238.92 397.68 301.92 397.68 4 L
+N
+256.92 415.68 256.92 397.68 2 L
+N
+0 10 Q
+(RX_READY) 247.92 417.85 T
+0 12 Q
+(a. Index by sender) 95.66 409.27 T
+(b. Check reply) 96.32 389.48 T
+(sequence #) 104.66 380.48 T
+184.64 406.67 238.64 406.67 2 L
+N
+224.64 406.67 224.64 373.67 2 L
+N
+184.64 658.67 292.64 667.67 R
+N
+211.92 667.67 211.92 658.67 2 L
+0 Z
+N
+265.92 667.67 265.92 658.67 2 L
+N
+238.64 667.67 238.64 658.67 2 L
+N
+418.64 550.67 418.64 541.67 2 L
+N
+355.64 307.67 382.64 325.67 R
+2 Z
+N
+(Medusa Buf) 391.64 307.67 T
+(fer) 450.42 307.67 T
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "8" 8
+%%Page: "9" 9
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(9) 536 42.62 T
+0 12 Q
+-0.1 (by the network. Process 0 would time-out waiting for the reply) 71.33 713.67 P
+-0.1 (, and re-send the request. Process 1) 371.16 713.67 P
+0.2 (would have processed the \336rst request and have the reply stored in the reply buf) 71.33 699.67 P
+0.2 (fer) 457.14 699.67 P
+0.2 (. Upon receiv-) 469.8 699.67 P
+-0.09 (ing the duplicate request, HP) 71.33 685.67 P
+-0.09 (AM would \324re\337ect back\325 the previously reply instead of invoking the) 208.83 685.67 P
+1.02 (handler) 71.33 671.67 P
+1.02 (. Handlers cannot be invoked twice, because an active message may not be idempotent.) 106.66 671.67 P
+0.35 (Consider a fetch-and-add operation rather than a simple read. If the requestor timed-out and sent) 71.33 657.67 P
+-0.15 (two requests, HP) 71.33 643.67 P
+-0.15 (AM would send two replies, causing the requestor to see a duplicate reply) 151.6 643.67 P
+-0.15 (, which) 503.99 643.67 P
+(it drops.) 71.33 629.67 T
+-0.09 (The protocol will never lose packets due to buf) 71.33 603.67 P
+-0.09 (fer over\337ow) 296.37 603.67 P
+-0.09 (. A most) 354.48 603.67 P
+1 F
+-0.09 (P) 398.22 603.67 P
+0 F
+-0.09 (-1 requests can be outstand-) 405.55 603.67 P
+1.12 (ing to a given process at a time. By reserving 2\050) 71.33 589.67 P
+1 F
+1.12 (P) 312.2 589.67 P
+0 F
+1.12 (-1\051 buf) 319.54 589.67 P
+1.12 (fers in the in-bound pool, all possible) 353.43 589.67 P
+1.03 (requests and replies can be held pending in the Medusa card.) 71.33 575.67 P
+0 9.6 Q
+0.82 (1) 377.24 580.47 P
+0 12 Q
+1.03 ( In the worst case, all processes) 382.04 575.67 P
+0.79 (may make a request to the same process, consuming) 71.33 561.67 P
+1 F
+0.79 (P) 332.37 561.67 P
+0 F
+0.79 (-1 in-bound buf) 339.7 561.67 P
+0.79 (fers. That process in turn) 416.38 561.67 P
+(may make) 71.33 547.67 T
+1 F
+(P) 123.99 547.67 T
+0 F
+(-1 requests as well, requiring an additional) 131.32 547.67 T
+1 F
+(P) 338.62 547.67 T
+0 F
+(-1 in-bound buf) 345.95 547.67 T
+(fers for replies.) 421.06 547.67 T
+0.37 (HP) 71.33 521.67 P
+0.37 (AM uses polling instead of interrupts because of the high cost of an interrupt. The cost for an) 85.57 521.67 P
+-0.22 (interrupt and the kernel\325) 71.33 507.67 P
+-0.22 (s \336rst level interrupt service routine is 10) 186.33 507.67 P
+2 F
+-0.22 (m) 384.57 507.67 P
+0 F
+-0.22 (sec. All HP) 391.48 507.67 P
+-0.22 (AM functions auto-) 444.94 507.67 P
+0.66 (matically poll, but the user must be careful in compute only loops, since the process is ignoring) 71.33 493.67 P
+(the network.) 71.33 479.67 T
+1.94 (Since the combination of the descriptor table and Medusa buf) 71.33 453.67 P
+1.94 (fers hold all the network state,) 384.17 453.67 P
+1.18 (HP) 71.33 439.67 P
+1.18 (AM implements reliability by checking the time-out value of a single request descriptor for) 85.57 439.67 P
+0.43 (each poll. If the descriptor has timed out, HP) 71.33 425.67 P
+0.43 (AM doubles the length of the timer and resends the) 288.98 425.67 P
+1.83 (message. A continuous circular walk though the requests in the descriptor table is enough to) 71.33 411.67 P
+-0.07 (ensure all packets get re-transmitted in case of loss. Replies never time-out since they are only re-) 71.33 397.67 P
+(transmitted in responses to requests.) 71.33 383.67 T
+1 F
+(4.2.2  Full bandwidth: multiple r) 71.33 351.67 T
+(equest-r) 238.15 351.67 T
+(eply pr) 279.92 351.67 T
+(otocol.) 316.04 351.67 T
+0 F
+0.54 (Although the simple request-reply protocol has very low overhead, it cannot realize the full net-) 71.33 325.67 P
+1.66 (work bandwidth between pairs of processes because each pair can have only one outstanding) 71.33 311.67 P
+-0.15 (request. T) 71.33 297.67 P
+-0.15 (o obtain the full network bandwidth, HP) 118.33 297.67 P
+-0.15 (AM replicates the single request-reply protocol.) 309.97 297.67 P
+0.46 (The number of replications needed to realize the full bandwidth of the network between pairs of) 71.33 283.67 P
+1.4 (nodes is the network depth,) 71.33 269.67 P
+1 F
+1.4 (D) 213.01 269.67 P
+0 F
+1.4 (. For the Medusa,) 221.67 269.67 P
+1 F
+1.4 (D) 314.62 269.67 P
+0 F
+1.4 (=4. Most a high performance LANs have a) 323.28 269.67 P
+(small hardware network depth.) 71.33 255.67 T
+-0.05 (The new protocol is an all-to-all) 71.33 229.67 P
+1 F
+-0.05 (D) 228.34 229.67 P
+0 F
+-0.05 (-way request-reply protocol. The protocol is very similar to the) 237 229.67 P
+0.32 (single request-reply protocol. The descriptor table is now 2-dimensional, with indices by proces-) 71.33 215.67 P
+0.44 (sor and instance number) 71.33 201.67 P
+0.44 (. The basic match must include the instance number of the protocol \050see) 188.96 201.67 P
+1.67 (\336gure 4\051 as well as the processor and sequence number) 71.33 187.67 P
+1.67 (. Because HP) 349.96 187.67 P
+1.67 (AM replicates the single) 416.51 187.67 P
+(request-reply protocol, it does not preserve ordering.) 71.33 173.67 T
+(The new operations for a remote read are:) 71.33 147.67 T
+71.33 103.67 539.17 123.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+71.33 111.67 203.33 111.67 2 L
+0.25 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+0 0 612 792 C
+0 10 Q
+0 X
+0 0 0 1 0 0 0 K
+-0.04 (1.  Due to a bug in the MAC chip of the Medusa, HP) 71.33 97 P
+-0.04 (AM may drop a packet due to buf) 281.32 97 P
+-0.04 (fer over\337ow) 416.14 97 P
+-0.04 (. For every packet) 464.61 97 P
+(sent on the FDDI ring, the MAC chip generates a status packet in the RX_READY FIFO of all stations on the ring.) 71.33 85 T
+(Thus, a station\325) 71.33 73 T
+(s RX_READY FIFO can \336ll up with status packets even if the station is not communicating.) 132.72 73 T
+FMENDPAGE
+%%EndPage: "9" 9
+%%Page: "10" 10
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(10) 532 42.62 T
+0 12 Q
+(1.) 71.33 202 T
+1.12 (First, acquire a free request buf) 85.08 202 P
+1.12 (fer) 240.39 202 P
+1.12 (. Any buf) 253.05 202 P
+1.12 (fer for the desired destination will do, so) 300.72 202 P
+-0.04 (HP) 85.08 188 P
+-0.04 (AM maintains a \324hint pointer) 99.31 188 P
+-0.04 (\325. If the buf) 239.61 188 P
+-0.04 (fer pointed to by the hint is not free, HP) 293.93 188 P
+-0.04 (AM) 483.83 188 P
+0.74 (searches the descriptor table, starting at the top in linear order) 85.08 174 P
+0.74 (, for a free buf) 388.3 174 P
+0.74 (fer) 460.03 174 P
+0.74 (. If no) 472.69 174 P
+0.21 (free buf) 85.08 160 P
+0.21 (fer is found, the request stalls and enters a time-out loop waiting for the hint to) 122.72 160 P
+(point to a free buf) 85.08 146 T
+(fer) 170.84 146 T
+(.) 183.5 146 T
+(2.) 71.33 126 T
+1.66 (The tuple that de\336nes a valid match is now a triple: <processor) 85.08 126 P
+1.66 (, instance, sequence) 404.55 126 P
+2.92 (number>. Thus, the match is logically a two-dimensional lookup. Each of the) 85.08 112 P
+1 F
+2.92 (D) 494.5 112 P
+0 F
+0.46 (instances of basic protocol have a distinct sequence number space. Thus HP) 85.08 98 P
+0.46 (AM is not) 453.58 98 P
+0.11 (preserving ordering of the requests. Imagine the read request was dropped. HP) 85.08 84 P
+0.11 (AM will) 462.06 84 P
+75.26 216 535.24 721.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+256.32 313.98 283.32 331.98 R
+3 X
+0 0 0 1 0 0 0 K
+V
+0.5 H
+0 Z
+N
+202.32 313.98 229.32 331.98 R
+V
+N
+229.32 331.98 256.32 349.98 R
+V
+N
+255.26 586.47 282.26 604.47 R
+V
+N
+228.26 604.47 255.26 622.47 R
+V
+N
+126.77 226.67 477.77 244.67 R
+7 X
+V
+1 10 Q
+0 X
+(FIGURE 4. Connection state maintained by the all-to-all D-way pr) 140.52 238 T
+(otocol) 424.22 238 T
+0 12 Q
+(Process 0) 213.61 696.27 T
+(Process 1) 399.26 697.27 T
+(Request Descriptors) 198.23 678.27 T
+174.26 568.47 282.26 640.47 R
+N
+1 14 Q
+(P) 220.01 658.29 T
+(D) 156.26 604.47 T
+201.26 640.47 201.26 568.47 2 L
+N
+228.26 640.47 228.26 568.47 2 L
+N
+255.26 640.47 255.26 568.47 2 L
+N
+174.26 622.47 282.26 622.47 2 L
+N
+174.26 604.47 282.26 604.47 2 L
+N
+174.26 586.47 282.26 586.47 2 L
+N
+(P) 429.19 481.61 T
+0 12 Q
+(Reply Descriptors) 388.7 679.27 T
+174.26 541.47 282.26 550.47 R
+N
+201.26 550.47 201.26 541.47 2 L
+N
+228.26 550.47 228.26 541.47 2 L
+N
+255.26 550.47 255.26 541.47 2 L
+N
+(Hint Pointers) 201.26 524.29 T
+(0) 183.26 643.07 T
+(1) 210.26 643.07 T
+(2) 240.26 643.07 T
+(3) 273.26 643.07 T
+383.32 397.68 491.32 469.68 R
+N
+1 14 Q
+(D) 365.32 433.68 T
+410.32 469.68 410.32 397.68 2 L
+N
+437.32 469.68 437.32 397.68 2 L
+N
+464.32 469.68 464.32 397.68 2 L
+N
+383.32 451.68 491.32 451.68 2 L
+N
+383.32 433.68 491.32 433.68 2 L
+N
+383.32 415.68 491.32 415.68 2 L
+N
+0 12 Q
+(0) 392.32 472.28 T
+(1) 419.32 472.28 T
+(2) 449.32 472.28 T
+(3) 482.32 472.28 T
+(Aquire buf) 93.26 641.48 T
+(fer) 145.36 641.48 T
+(.) 158.02 641.48 T
+(Send.) 95.26 625.27 T
+362.84 540.12 372.25 532.67 360.32 534.01 361.58 537.06 4 Y
+V
+219.26 595.67 361.59 537.06 2 L
+2 Z
+N
+(Match buf) 407.85 526.27 T
+(fers, sequence #) 457.29 526.27 T
+(Buf) 408.26 506.49 T
+(fer reply) 426.04 506.49 T
+(, send reply) 466.24 506.49 T
+1 14 Q
+(P) 228.26 382.61 T
+(D) 157.32 336.69 T
+0 12 Q
+(Hint Pointers) 201.69 253.59 T
+(0) 184.32 370.59 T
+(1) 211.32 370.59 T
+(2) 241.32 370.59 T
+(3) 274.32 370.59 T
+(Match buf) 84.26 400.27 T
+(fers, sequence #) 133.7 400.27 T
+(Invoke handler) 84.26 382.27 T
+(Free request buf) 84.26 364.27 T
+(fer) 162.02 364.27 T
+(Advance) 93.26 607.27 T
+(hint pointer) 93.26 596.48 T
+(.) 148.26 596.48 T
+(Request to 1) 303.29 569.49 T
+303.25 397.46 291.26 397.68 301.55 403.85 302.4 400.66 4 Y
+V
+392.32 424.68 302.4 400.65 2 L
+N
+(Reply to 0) 300.26 418.27 T
+398.8 333.81 410.33 330.5 398.8 327.19 398.8 330.5 4 Y
+V
+374.33 330.5 398.8 330.5 2 L
+N
+374.33 285.5 401.33 303.5 R
+3 X
+V
+0 Z
+0 X
+N
+398.8 315.81 410.33 312.5 398.8 309.19 398.8 312.5 4 Y
+3 X
+V
+374.33 312.5 398.8 312.5 2 L
+4 X
+V
+2 Z
+3 X
+N
+0 X
+(Message) 413.36 324.1 T
+(Hint pointer) 411.68 306.1 T
+(In-use buf) 412.28 288.1 T
+(fer) 461.04 288.1 T
+175.32 295.98 283.32 367.98 R
+0 Z
+N
+202.32 367.98 202.32 295.98 2 L
+N
+229.32 367.98 229.32 295.98 2 L
+N
+256.32 367.98 256.32 295.98 2 L
+N
+175.32 349.98 283.32 349.98 2 L
+N
+175.32 331.98 283.32 331.98 2 L
+N
+175.32 313.98 283.32 313.98 2 L
+N
+175.32 268.98 283.32 277.98 R
+N
+202.32 268.98 202.32 277.98 2 L
+N
+229.32 268.98 229.32 277.98 2 L
+N
+256.32 268.98 256.32 277.98 2 L
+N
+206.95 583.93 210.26 595.47 213.57 583.93 210.26 583.93 4 Y
+3 X
+V
+210.26 546.3 210.26 583.93 2 L
+V
+2 Z
+N
+260.95 618.27 264.26 629.8 267.57 618.27 264.26 618.27 4 Y
+V
+264.26 546.3 264.26 618.27 2 L
+V
+N
+208.01 293.45 211.32 304.98 214.62 293.45 211.32 293.45 4 Y
+V
+211.32 274.82 211.32 293.45 2 L
+V
+N
+235.28 583.93 238.59 595.47 241.9 583.93 238.59 583.93 4 Y
+V
+238.59 546.3 238.59 583.93 2 L
+V
+N
+236.34 311.61 239.65 323.15 242.96 311.61 239.65 311.61 4 Y
+V
+239.65 273.98 239.65 311.61 2 L
+V
+N
+262.01 345.95 265.32 357.48 268.62 345.95 265.32 345.95 4 Y
+V
+265.32 273.98 265.32 345.95 2 L
+V
+N
+0 X
+90 450 1.67 2.33 238.12 545.8 G
+90 450 1.67 2.33 238.12 545.8 A
+90 450 1.67 2.33 211.45 545.14 G
+90 450 1.67 2.33 211.45 545.14 A
+90 450 1.67 2.33 264.12 545.8 G
+90 450 1.67 2.33 264.12 545.8 A
+90 450 1.67 2.33 212.51 273.32 G
+90 450 1.67 2.33 212.51 273.32 A
+90 450 1.67 2.33 239.17 273.32 G
+90 450 1.67 2.33 239.17 273.32 A
+90 450 1.67 2.33 265.17 273.98 G
+90 450 1.67 2.33 265.17 273.98 A
+(Step1:) 84.26 659.48 T
+(Step2:) 399.26 553.27 T
+(Step3:) 80.58 427.27 T
+327.26 541.67 390.26 541.67 390.26 523.66 327.26 523.66 4 L
+N
+381.26 541.67 381.26 523.67 2 L
+N
+372.26 541.67 372.26 523.67 2 L
+N
+318.26 406.68 255.26 406.68 255.26 388.67 318.26 388.67 4 L
+N
+264.26 406.68 264.26 388.68 2 L
+N
+273.26 406.68 273.26 388.68 2 L
+N
+399.26 424.67 399.26 532.67 2 L
+N
+408.26 532.67 390.26 532.67 2 L
+N
+219.26 325.67 219.26 397.67 2 L
+N
+255.26 397.67 210.26 397.67 2 L
+N
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "10" 10
+%%Page: "11" 11
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(1) 532.3 42.62 T
+(1) 536 42.62 T
+0 12 Q
+0.15 (later re-transmit the request packet \050containing the read_handler\051, but that will not pre-) 85.08 713.67 P
+0.95 (vent HP) 85.08 699.67 P
+0.95 (AM from invoking sucessive request handlers. However) 123.92 699.67 P
+0.95 (, HP) 400.09 699.67 P
+0.95 (AM still guaran-) 421.27 699.67 P
+(tees all handlers are invoked exactly once.) 85.08 685.67 T
+(3.) 71.33 665.67 T
+1.12 (When a reply frees a request, the hint pointer is changed to point to the newly freed) 85.08 665.67 P
+-0.04 (buf) 85.08 651.67 P
+-0.04 (fer) 100.86 651.67 P
+-0.04 (. If the processes was stalled on a request, changing the hint will allow the stalled) 113.52 651.67 P
+(request to immediately use the newly freed request buf) 85.08 637.67 T
+(fer) 348.14 637.67 T
+(.) 360.8 637.67 T
+0.13 (The above protocol provides a simple form of \337ow control; at most) 71.33 611.67 P
+1 F
+0.13 (D) 398.88 611.67 P
+0 F
+0.13 ( requests to a given proces-) 407.54 611.67 P
+0.25 (sor can be outstanding at any given time. The overhead needed to support \337ow control in HP) 71.33 597.67 P
+0.25 (AM) 519.83 597.67 P
+1.52 (is very low) 71.33 583.67 P
+1.52 (, as shown in section 5. Any form of \337ow control must have a mechanism to free) 126.92 583.67 P
+0.09 (resources based on arriving messages. Because HP) 71.33 569.67 P
+0.09 (AM enforces a request-reply model, the match) 315.03 569.67 P
+1.17 (needed to implement the \337ow control is kept extremely simple. Instead of complicated pointer) 71.33 555.67 P
+0.2 (structures, HP) 71.33 541.67 P
+0.2 (AM maintains a simple two dimensional table \050see Figure 4\051. The two dimensional) 138.42 541.67 P
+0.18 (nature of the protocol means every process must reserve) 71.33 527.67 P
+3 F
+0.18 (O) 345.84 527.67 P
+0 F
+0.18 (\0502*) 354.51 527.67 P
+1 F
+0.18 (P) 370.5 527.67 P
+0 F
+0.18 (*) 377.83 527.67 P
+1 F
+0.18 (D) 383.83 527.67 P
+0 F
+0.18 (\051 space for out-bound commu-) 392.5 527.67 P
+0.36 (nication. In addition,) 71.33 513.67 P
+3 F
+0.36 (O) 175.41 513.67 P
+0 F
+0.36 (\0502*) 184.08 513.67 P
+1 F
+0.36 (P) 200.07 513.67 P
+0 F
+0.36 (*) 207.4 513.67 P
+1 F
+0.36 (D) 213.4 513.67 P
+0 F
+0.36 (\051 Medusa buf) 222.07 513.67 P
+0.36 (fers must be reserved as in-bound buf) 286.56 513.67 P
+0.36 (fers to prevent) 469.13 513.67 P
+(packet loss due to buf) 71.33 499.67 T
+(fer over\337ow) 175.77 499.67 T
+(.) 233.97 499.67 T
+1.33 (HP) 71.33 473.67 P
+1.33 (AM obtains reliability in the same way as the single-request reply protocol, except that the) 85.57 473.67 P
+(walk through the request descriptors is 2-dimensional.) 71.33 459.67 T
+0.92 (In normal operation, if replies come in from the network in order and no packets are lost, each) 71.33 433.67 P
+1.54 (hint pointer cycles sequentially through the a column of the descriptor table. The hint pointer) 71.33 419.67 P
+1.11 (always points to a free buf) 71.33 405.67 P
+1.11 (fer unless the processor has used up its allocated bandwidth. In that) 203.65 405.67 P
+1.29 (case, the processor may unnecessarily search the descriptor table, however) 71.33 391.67 P
+1.29 (, the process cannot) 440.66 391.67 P
+0.06 (send anyway) 71.33 377.67 P
+0.06 (. Complicated schemes to buf) 132.93 377.67 P
+0.06 (fer the message and try again later would add a signi\336-) 275.28 377.67 P
+(cant amount of overhead without improving bandwidth.) 71.33 363.67 T
+0.77 (Many protocol implementations always put out-bound data on a time-out list, only to remove it) 71.33 337.67 P
+-0.13 (later when the acknowledgment arrives without the packet ever timing out. HP) 71.33 323.67 P
+-0.13 (AM expects packet) 446.78 323.67 P
+0.27 (loss to be the infrequent case. By not maintaining an explicit time-out list, HP) 71.33 309.67 P
+0.27 (AM makes the fre-) 447.39 309.67 P
+(quent case faster) 71.33 295.67 T
+(, at the expense of the infrequent case when a packet is dropped.) 150.82 295.67 T
+1 F
+(4.2.3  Request-r) 71.33 263.67 T
+(eply: solving safety) 151.77 263.67 T
+(.) 248.44 263.67 T
+0 F
+-0.29 (Any request-reply protocol must guard against possible deadlock or livelock arising from the two-) 71.33 237.67 P
+1.74 (phased nature of the operation. This problem is described well for networks which guarantee) 71.33 223.67 P
+1.06 (delivery in [8]. For networks which may drop packets, the problem manifests itself as follows.) 71.33 209.67 P
+-0.02 (Suppose a single pool of buf) 71.33 195.67 P
+-0.02 (fers holds all in-bound and out-bound data, and all data is buf) 208.01 195.67 P
+-0.02 (fered at) 502.87 195.67 P
+0.75 (the sender until an acknowledgment is received. Between two processes, both buf) 71.33 181.67 P
+0.75 (fer pools may) 471.67 181.67 P
+0.09 (become full, each process requiring a reply from the other to free some buf) 71.33 167.67 P
+0.09 (fers. However) 432.18 167.67 P
+0.09 (, neither) 499.75 167.67 P
+-0.26 (process can send a reply because the buf) 71.33 153.67 P
+-0.26 (fer pool is full. Thus, the two processes are deadlocked. If) 263.54 153.67 P
+0.59 (the underlying layer attempts to re-transmit the requests, the requests must be dropped since the) 71.33 139.67 P
+1.54 (buf) 71.33 125.67 P
+1.54 (fer pools are full; the processes become livelocked. HP) 87.11 125.67 P
+1.54 (AM is safe because no process can) 362.63 125.67 P
+0.52 (attempt to use the network unless resources, both request and reply buf) 71.33 111.67 P
+0.52 (fers, are available for the) 417.46 111.67 P
+-0.05 (entire path of a communication. Since reply handlers cannot use the network, a path consists of at) 71.33 97.67 P
+(most two hops.) 71.33 83.67 T
+FMENDPAGE
+%%EndPage: "11" 11
+%%Page: "12" 12
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(12) 532 42.62 T
+1 14 Q
+(4.3  Pr) 71.33 712.33 T
+(otection) 110.35 712.33 T
+0 12 Q
+0.41 (HP) 71.33 685.67 P
+0.41 (AM recognizes a parallel program as a collection of mutually trusting processes and provides) 85.57 685.67 P
+0.84 (protection between programs. A key is associated with a given parallel program. All out-bound) 71.33 671.67 P
+0.96 (messages from a process of the program are stamped with the key) 71.33 657.67 P
+0.96 (. For in-bound messages, the) 397.35 657.67 P
+(key must match the process\325) 71.33 643.67 T
+(s key before a message can be accepted.) 207.32 643.67 T
+0.43 (HP) 71.33 617.67 P
+0.43 (AM relies on a scheduling daemon, external to the layer) 85.57 617.67 P
+0.43 (, to ensure that only one process may) 358.21 617.67 P
+0.51 (use the Medusa at a time. The process given access to the Medusa is the \324active process\325, and is) 71.33 603.67 P
+0.5 (allowed to run. The scheduling daemon stops all other processes which need to use the Medusa.) 71.33 589.67 P
+0.53 (The daemon swaps network state into and out of the card when switching the active process. T) 71.33 575.67 P
+0.53 (o) 533.17 575.67 P
+0.2 (save the network state, the daemon walks the descriptor tables, copying out all active state out of) 71.33 561.67 P
+-0.27 (the Medusa buf) 71.33 547.67 P
+-0.27 (fers and into a per) 145.24 547.67 P
+-0.27 (-process save area. Restoring the state is the reverse, copying the) 230.57 547.67 P
+-0.17 (old state back into the Medusa. The scheduler must copy the active state because HP) 71.33 533.67 P
+-0.17 (AM maps the) 474.17 533.67 P
+(card into the process\325) 71.33 519.67 T
+(s address space to avoid the overhead of a kernel trap.) 173.65 519.67 T
+0.78 (The scheduler does not guarantee that all arriving messages are for the active process, although) 71.33 493.67 P
+0.29 (this is the expected case. The HP) 71.33 479.67 P
+0.29 (AM library and the scheduler negotiate two queues per process:) 230.28 479.67 P
+0.59 (an input queue the process uses to accept messages from the scheduler) 71.33 465.67 P
+0.59 (, and an output queue the) 415.58 465.67 P
+0.97 (process uses to send messages to the scheduler) 71.33 451.67 P
+0.97 (. The scheduler associates with each process the) 301.76 451.67 P
+0.81 (key which tags a message as valid for a given process. Before accepting a message, the HP) 71.33 437.67 P
+0.81 (AM) 519.83 437.67 P
+1.04 (library checks the key) 71.33 423.67 P
+1.04 (. If the key in the message mismatches the key of the active process, the) 179.32 423.67 P
+0.51 (message is copied into the output queue. After the daemon suspends the active process, the dae-) 71.33 409.67 P
+0.19 (mon copies all messages in the output queue of the suspended process into the correct processes\325) 71.33 395.67 P
+0.35 (input queues. A process just swapped in by the daemon \336rst checks its input queue for messages) 71.33 381.67 P
+(before checking the Medusa.) 71.33 367.67 T
+0.6 (In the current HP) 71.33 341.67 P
+0.6 (AM implementation, there is a small critical section just after the process pops) 155.01 341.67 P
+0.26 (the RX_READY FIFO when it may be suspended by the scheduling daemon. In this critical sec-) 71.33 327.67 P
+0.44 (tion, the HP) 71.33 313.67 P
+0.44 (AM layer knows the VRAM block number of the received message, but the daemon) 128.79 313.67 P
+0.35 (does not. The daemon is unable to restore the state of the block when changing the network pro-) 71.33 299.67 P
+1.33 (cess. One solution would be to copy the entire contents of the VRAM if the process was sus-) 71.33 285.67 P
+0.28 (pended in the critical section. The current implementation sets a received failed \337ag, which must) 71.33 271.67 P
+1.14 (be checked after each pop from the RX_READY FIFO. If the \337ag is set, HP) 71.33 257.67 P
+1.14 (AM will drop the) 452.09 257.67 P
+1.66 (packet. In future implementations the daemon will manipulate the process\325 state, much like a) 71.33 243.67 P
+(debugger does, to obtain the needed information.) 71.33 229.67 T
+2.36 (Although the current protection mechanisms are adequate in our research environment, they) 71.33 203.67 P
+0.02 (assume a malicious user does not modify the HP) 71.33 189.67 P
+0.02 (AM code or data structures. Mechanisms exist in) 303.72 189.67 P
+-0.1 (the P) 71.33 175.67 P
+-0.1 (A-RISC hardware for providing both protected code and data without invoking the operating) 94.46 175.67 P
+(system [5].) 71.33 161.67 T
+1 16 Q
+(5. Performance) 71.33 121 T
+0 12 Q
+1.04 (This section documents the performance of HP) 71.33 93.67 P
+1.04 (AM, and compares it to TCP on the same hard-) 302.46 93.67 P
+0.33 (ware. First, the section begins with some quick de\336nitions then presents a performance compari-) 71.33 79.67 P
+FMENDPAGE
+%%EndPage: "12" 12
+%%Page: "13" 13
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(13) 532 42.62 T
+0 12 Q
+0.47 (son between HP) 71.33 713.67 P
+0.47 (AM and two TCP implementations. Finally) 149.15 713.67 P
+0.47 (, a detailed measurements of the cost) 359.39 713.67 P
+(to send and receive a packet are presented.) 71.33 699.67 T
+0.74 (Following LogP [4] terminology) 71.33 673.67 P
+0.74 (,) 229.77 673.67 P
+3 F
+0.74 (over) 236.5 673.67 P
+0.74 (head) 257.61 673.67 P
+0 F
+0.74 ( is de\336ned as the processor cycles spent preparing to) 280.94 673.67 P
+-0.16 (send or receive a message.) 71.33 659.67 P
+3 F
+-0.16 (Latency) 201.15 659.67 P
+0 F
+-0.16 ( is de\336ned as the time from when the processes signals the net-) 239.14 659.67 P
+0.7 (work interface that the message is ready to the time the remote network interface is prepared to) 71.33 645.67 P
+(hand the message to the processor) 71.33 631.67 T
+(.) 234.3 631.67 T
+0.31 (For all the measurements, two 99 MHz HP 735 workstations were set up back to back forming a) 71.33 605.67 P
+1.53 (two node ring. A two station ring was used to be consistent with other measurements, and to) 71.33 591.67 P
+0.54 (reduce the network latency to a minimum. No programs were running other than normal system) 71.33 577.67 P
+(daemons during the tests. The stations were connected into the public Ethernet.) 71.33 563.67 T
+0.5 (W) 71.33 537.67 P
+0.5 (e measured the latency of the raw FDDI hardware as a \336xed cost of 8.39) 81.7 537.67 P
+2 F
+0.5 (m) 439.84 537.67 P
+0 F
+0.5 (sec plus 0.08) 446.75 537.67 P
+2 F
+0.5 (m) 513.59 537.67 P
+0 F
+0.5 (sec/) 520.51 537.67 P
+-0.03 (byte. The methodology used was to measure the round trip time \050R) 71.33 523.67 P
+-0.03 (TT\051 of increasing size packets.) 391.64 523.67 P
+1.45 (One process sent a packet and started a timer) 71.33 509.67 P
+1.45 (. The card buf) 298.2 509.67 P
+1.45 (fer was pre-loaded with the FDDI) 369.64 509.67 P
+-0.05 (header) 71.33 495.67 P
+-0.05 (. On the remote end, another process sat in a tight polling loop, sending a pre-loaded buf) 102.65 495.67 P
+-0.05 (fer) 525.85 495.67 P
+-0.14 (to the \336rst station as soon as it popped the packet from the RX_READY FIFO. For a given packet) 71.33 481.67 P
+1.28 (size, the experiment was repeated until a 95% con\336dence interval was achieved. Using a least) 71.33 467.67 P
+-0.3 (squares \336t, the time for a zero length packet represents the \336xed overhead part, and the slope is the) 71.33 453.67 P
+0.3 (cost-per) 71.33 439.67 P
+0.3 (-byte. A zero payload FDDI packet consists of at least 22 bytes, so a lower bound on the) 109.75 439.67 P
+(latency an application can hope to see is 10.15) 71.33 425.67 T
+2 F
+(m) 297.29 425.67 T
+0 F
+(sec) 304.2 425.67 T
+1 14 Q
+(5.1  Comparison to TCP) 71.33 392.33 T
+0 12 Q
+0.5 (This section shows a comparison between HP) 71.33 365.67 P
+0.5 (AM and two implementations of TCP on the same) 293.19 365.67 P
+1.06 (hardware. The two versions of TCP are the \324normal\325 version, and the single copy version. The) 71.33 351.67 P
+-0.26 (single copy stacks are detailed in [1]. The single copy TCP/IP stacks dif) 71.33 337.67 P
+-0.26 (fer from the normal proto-) 413.58 337.67 P
+0.5 (col stacks in that they only make one copy of the data, and they take advantage of the Medusa\325) 71.33 323.67 P
+0.5 (s) 534.5 323.67 P
+(special IP checksum unit.) 71.33 309.67 T
+0.05 (T) 71.33 283.67 P
+0.05 (wo experiments were performed, the \336rst measures the round trip time, the second measures the) 77.82 283.67 P
+1.27 (bandwidth under streaming conditions. For both experiments, the TCP NODELA) 71.33 269.67 P
+1.27 (Y option was) 472.63 269.67 P
+(set, and the socket buf) 71.33 255.67 T
+(fer size was set to 56K bytes.) 178.1 255.67 T
+FMENDPAGE
+%%EndPage: "13" 13
+%%Page: "14" 14
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(14) 532 42.62 T
+1 12 Q
+(5.1.1  Round T) 71.33 713.67 T
+(rip Measur) 146.13 713.67 T
+(ements) 203.57 713.67 T
+0 F
+2.06 (In this experiment, a packet is sent by one station, then echoed by another) 71.33 687.67 P
+2.06 (. The \336rst station) 451.67 687.67 P
+0.45 (records the round trip time. The experiment is repeated for the packet sizes up to 4K bytes. This) 71.33 323.67 P
+-0.15 (experiment models a request-reply type operation. Figure 6 shows the results. A single copy stack) 71.33 309.67 P
+-0.09 (provides little bene\336t over normal TCP) 71.33 295.67 P
+-0.09 (. The measurements show for this implementation, the sin-) 257.89 295.67 P
+0.04 (gle copy stacks have a higher overhead than regular TCP for packets up to 1K bytes. Keeping the) 71.33 281.67 P
+0.02 (overhead low in a request-reply operation is critical to obtaining bandwidth because the overhead) 71.33 267.67 P
+(cannot be overlapped with message transmission.) 71.33 253.67 T
+71.33 64.67 539.17 721.67 C
+83.25 345.67 527.25 683.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 50 50 482 352 432 302 89.25 375.67 FMBEGINEPSF
+%%BeginDocument: <inline>
+%!PS-Adobe-2.0 EPSF-2.0
+%%Creator: gnuplot
+%%DocumentFonts: Times-Roman
+%%BoundingBox: 50 50 482 352
+%%EndComments
+/gnudict 40 dict def
+gnudict begin
+/Color false def
+/Solid false def
+/gnulinewidth 5.000 def
+/vshift -66 def
+/dl {10 mul} def
+/hpt 31.5 def
+/vpt 31.5 def
+/M {moveto} bind def
+/L {lineto} bind def
+/R {rmoveto} bind def
+/V {rlineto} bind def
+/vpt2 vpt 2 mul def
+/hpt2 hpt 2 mul def
+/Lshow { currentpoint stroke M
+  0 vshift R show } def
+/Rshow { currentpoint stroke M
+  dup stringwidth pop neg vshift R show } def
+/Cshow { currentpoint stroke M
+  dup stringwidth pop -2 div vshift R show } def
+/DL { Color {setrgbcolor Solid {pop []} if 0 setdash }
+ {pop pop pop Solid {pop []} if 0 setdash} ifelse } def
+/BL { stroke gnulinewidth 2 mul setlinewidth } def
+/AL { stroke gnulinewidth 2 div setlinewidth } def
+/PL { stroke gnulinewidth setlinewidth } def
+/LTb { BL [] 0 0 0 DL } def
+/LTa { AL [1 dl 2 dl] 0 setdash 0 0 0 setrgbcolor } def
+/LT0 { PL [] 0 1 0 DL } def
+/LT1 { PL [4 dl 2 dl] 0 0 1 DL } def
+/LT2 { PL [2 dl 3 dl] 1 0 0 DL } def
+/LT3 { PL [1 dl 1.5 dl] 1 0 1 DL } def
+/LT4 { PL [5 dl 2 dl 1 dl 2 dl] 0 1 1 DL } def
+/LT5 { PL [4 dl 3 dl 1 dl 3 dl] 1 1 0 DL } def
+/LT6 { PL [2 dl 2 dl 2 dl 4 dl] 0 0 0 DL } def
+/LT7 { PL [2 dl 2 dl 2 dl 2 dl 2 dl 4 dl] 1 0.3 0 DL } def
+/LT8 { PL [2 dl 2 dl 2 dl 2 dl 2 dl 2 dl 2 dl 4 dl] 0.5 0.5 0.5 DL } def
+/P { stroke [] 0 setdash
+  currentlinewidth 2 div sub M
+  0 currentlinewidth V stroke } def
+/D { stroke [] 0 setdash 2 copy vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath stroke
+  P } def
+/A { stroke [] 0 setdash vpt sub M 0 vpt2 V
+  currentpoint stroke M
+  hpt neg vpt neg R hpt2 0 V stroke
+  } def
+/B { stroke [] 0 setdash 2 copy exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath stroke
+  P } def
+/C { stroke [] 0 setdash exch hpt sub exch vpt add M
+  hpt2 vpt2 neg V currentpoint stroke M
+  hpt2 neg 0 R hpt2 vpt2 V stroke } def
+/T { stroke [] 0 setdash 2 copy vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath stroke
+  P  } def
+/S { 2 copy A C} def
+end
+%%EndProlog
+gnudict begin
+gsave
+50 50 translate
+0.050 0.050 scale
+0 setgray
+/Times-Roman findfont 200 scalefont setfont
+newpath
+LTa
+1200 501 M
+7137 0 V
+-7137 0 R
+0 5246 V
+LTb
+1200 501 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(0) Rshow
+1200 1084 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(200) Rshow
+1200 1667 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(400) Rshow
+1200 2250 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(600) Rshow
+1200 2833 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(800) Rshow
+1200 3415 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(1000) Rshow
+1200 3998 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(1200) Rshow
+1200 4581 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(1400) Rshow
+1200 5164 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(1600) Rshow
+1200 5747 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(1800) Rshow
+1200 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(0) Cshow
+2498 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(1000) Cshow
+3795 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(2000) Cshow
+5093 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(3000) Cshow
+6391 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(4000) Cshow
+7688 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(5000) Cshow
+1200 501 M
+7137 0 V
+0 5246 V
+-7137 0 V
+0 -5246 V
+200 3124 M
+currentpoint gsave translate 90 rotate 0 0 M
+(Round Trip Time \(Usec\)) Cshow
+grestore
+4768 101 M
+(Packet Size \(bytes\)) Cshow
+4768 5947 M
+(Round Trip Tests) Cshow
+LT0
+7674 5484 M
+(HPAM) Rshow
+7794 5484 M
+360 0 V
+1205 585 M
+16 15 V
+21 14 V
+41 33 V
+83 62 V
+83 54 V
+83 56 V
+57 36 V
+65 45 V
+65 42 V
+65 45 V
+65 39 V
+65 45 V
+65 39 V
+129 88 V
+130 88 V
+130 81 V
+161 108 V
+358 235 V
+259 171 V
+649 424 V
+649 435 V
+649 422 V
+1298 854 V
+25 19 V
+7914 5484 D
+1205 585 D
+1221 600 D
+1242 614 D
+1283 647 D
+1366 709 D
+1449 763 D
+1532 819 D
+1589 855 D
+1654 900 D
+1719 942 D
+1784 987 D
+1849 1026 D
+1914 1071 D
+1979 1110 D
+2108 1198 D
+2238 1286 D
+2368 1367 D
+2529 1475 D
+2887 1710 D
+3146 1881 D
+3795 2305 D
+4444 2740 D
+5093 3162 D
+6391 4016 D
+6416 4035 D
+LT1
+7674 5284 M
+(1 copy TCP) Rshow
+7794 5284 M
+360 0 V
+1205 1528 M
+16 15 V
+21 23 V
+41 9 V
+78 63 V
+88 214 V
+83 119 V
+57 32 V
+65 52 V
+65 34 V
+65 62 V
+65 35 V
+65 67 V
+65 15 V
+129 99 V
+130 126 V
+130 46 V
+161 145 V
+358 254 V
+259 162 V
+649 468 V
+649 465 V
+649 505 V
+6391 5551 L
+25 -105 V
+7914 5284 A
+1205 1528 A
+1221 1543 A
+1242 1566 A
+1283 1575 A
+1361 1638 A
+1449 1852 A
+1532 1971 A
+1589 2003 A
+1654 2055 A
+1719 2089 A
+1784 2151 A
+1849 2186 A
+1914 2253 A
+1979 2268 A
+2108 2367 A
+2238 2493 A
+2368 2539 A
+2529 2684 A
+2887 2938 A
+3146 3100 A
+3795 3568 A
+4444 4033 A
+5093 4538 A
+6391 5551 A
+6416 5446 A
+LT2
+7674 5084 M
+(normal TCP) Rshow
+7794 5084 M
+360 0 V
+1205 1364 M
+16 1 V
+21 23 V
+41 32 V
+78 57 V
+88 147 V
+83 113 V
+57 43 V
+65 48 V
+65 46 V
+65 113 V
+65 31 V
+65 46 V
+65 61 V
+129 138 V
+130 121 V
+130 125 V
+161 123 V
+358 347 V
+259 219 V
+649 601 V
+649 78 V
+649 628 V
+1298 955 V
+25 9 V
+7914 5084 B
+1205 1364 B
+1221 1365 B
+1242 1388 B
+1283 1420 B
+1361 1477 B
+1449 1624 B
+1532 1737 B
+1589 1780 B
+1654 1828 B
+1719 1874 B
+1784 1987 B
+1849 2018 B
+1914 2064 B
+1979 2125 B
+2108 2263 B
+2238 2384 B
+2368 2509 B
+2529 2632 B
+2887 2979 B
+3146 3198 B
+3795 3799 B
+4444 3877 B
+5093 4505 B
+6391 5460 B
+6416 5469 B
+stroke
+grestore
+end
+showpage
+%%Trailer
+
+%%EndDocument
+FMENDEPSF
+209.25 350.67 443.25 368.67 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 10 Q
+0 X
+(FIGURE 5. Round T) 222.99 362 T
+(rip T) 311.71 362 T
+(ime measur) 333.48 362 T
+(ements) 383.02 362 T
+71.33 64.67 539.17 721.67 C
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "14" 14
+%%Page: "15" 15
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(15) 532 42.62 T
+1 12 Q
+(5.1.2  Bandwidth Measur) 71.33 713.67 T
+(ements) 200.13 713.67 T
+0 F
+0.57 (The second experiment measures bandwidth under ideal conditions. The \336rst station sends 5000) 71.33 687.67 P
+0.13 (packets of a given size to the second station without waiting for an acknowledgment. The second) 71.33 323.67 P
+0.06 (station starts timing after receiving the \336rst packet. After the last packet is received, the receiving) 71.33 309.67 P
+2.68 (station computes the bandwidth. This experiment gives the message layer the best possible) 71.33 295.67 P
+0.35 (chance for obtaining high bandwidth, because the layer can maximize the overlap between over-) 71.33 281.67 P
+(head and message transmission.) 71.33 267.67 T
+0.32 (Since HP) 71.33 239.67 P
+0.32 (AM has very low overhead, it achieves the peak rate\050) 115.55 239.67 P
+0.32 (MB/s\051 quickly) 422.32 239.67 P
+0.32 (, reaching) 491.53 239.67 P
+-0.14 (the half-power point,\050) 71.33 221.22 P
+-0.14 (\051 at 176 bytes. For the TCP single copy stack,) 189.16 221.22 P
+-0.14 ( = 761 bytes, and for the) 422.9 221.22 P
+0.84 (normal TCP stacks) 71.33 195.54 P
+0.84 ( = 1352 bytes. Notice from the measurements that the single copy stacks) 181.32 195.54 P
+0.93 (only provide a performance bene\336t in the regime between 800 and 3000 bytes. This is because) 71.33 169.87 P
+-0.2 (with lar) 71.33 155.87 P
+-0.2 (ger packet sizes, the rate of the normal TCP stacks becomes network limited, but for small) 107.91 155.87 P
+(packets is overhead limited.) 71.33 141.87 T
+71.33 64.67 539.17 721.67 C
+83.25 336.67 527.25 683.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 50 50 482 352 432 302 89.25 375.67 FMBEGINEPSF
+%%BeginDocument: <inline>
+%!PS-Adobe-2.0 EPSF-2.0
+%%Creator: gnuplot
+%%DocumentFonts: Times-Roman
+%%BoundingBox: 50 50 482 352
+%%EndComments
+/gnudict 40 dict def
+gnudict begin
+/Color false def
+/Solid false def
+/gnulinewidth 5.000 def
+/vshift -66 def
+/dl {10 mul} def
+/hpt 31.5 def
+/vpt 31.5 def
+/M {moveto} bind def
+/L {lineto} bind def
+/R {rmoveto} bind def
+/V {rlineto} bind def
+/vpt2 vpt 2 mul def
+/hpt2 hpt 2 mul def
+/Lshow { currentpoint stroke M
+  0 vshift R show } def
+/Rshow { currentpoint stroke M
+  dup stringwidth pop neg vshift R show } def
+/Cshow { currentpoint stroke M
+  dup stringwidth pop -2 div vshift R show } def
+/DL { Color {setrgbcolor Solid {pop []} if 0 setdash }
+ {pop pop pop Solid {pop []} if 0 setdash} ifelse } def
+/BL { stroke gnulinewidth 2 mul setlinewidth } def
+/AL { stroke gnulinewidth 2 div setlinewidth } def
+/PL { stroke gnulinewidth setlinewidth } def
+/LTb { BL [] 0 0 0 DL } def
+/LTa { AL [1 dl 2 dl] 0 setdash 0 0 0 setrgbcolor } def
+/LT0 { PL [] 0 1 0 DL } def
+/LT1 { PL [4 dl 2 dl] 0 0 1 DL } def
+/LT2 { PL [2 dl 3 dl] 1 0 0 DL } def
+/LT3 { PL [1 dl 1.5 dl] 1 0 1 DL } def
+/LT4 { PL [5 dl 2 dl 1 dl 2 dl] 0 1 1 DL } def
+/LT5 { PL [4 dl 3 dl 1 dl 3 dl] 1 1 0 DL } def
+/LT6 { PL [2 dl 2 dl 2 dl 4 dl] 0 0 0 DL } def
+/LT7 { PL [2 dl 2 dl 2 dl 2 dl 2 dl 4 dl] 1 0.3 0 DL } def
+/LT8 { PL [2 dl 2 dl 2 dl 2 dl 2 dl 2 dl 2 dl 4 dl] 0.5 0.5 0.5 DL } def
+/P { stroke [] 0 setdash
+  currentlinewidth 2 div sub M
+  0 currentlinewidth V stroke } def
+/D { stroke [] 0 setdash 2 copy vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath stroke
+  P } def
+/A { stroke [] 0 setdash vpt sub M 0 vpt2 V
+  currentpoint stroke M
+  hpt neg vpt neg R hpt2 0 V stroke
+  } def
+/B { stroke [] 0 setdash 2 copy exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath stroke
+  P } def
+/C { stroke [] 0 setdash exch hpt sub exch vpt add M
+  hpt2 vpt2 neg V currentpoint stroke M
+  hpt2 neg 0 R hpt2 vpt2 V stroke } def
+/T { stroke [] 0 setdash 2 copy vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath stroke
+  P  } def
+/S { 2 copy A C} def
+end
+%%EndProlog
+gnudict begin
+gsave
+50 50 translate
+0.050 0.050 scale
+0 setgray
+/Times-Roman findfont 200 scalefont setfont
+newpath
+LTa
+1200 501 M
+7137 0 V
+-7137 0 R
+0 5246 V
+LTb
+1200 501 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(0) Rshow
+1200 1340 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(2) Rshow
+1200 2180 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(4) Rshow
+1200 3019 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(6) Rshow
+1200 3858 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(8) Rshow
+1200 4698 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(10) Rshow
+1200 5537 M
+63 0 V
+7074 0 R
+-63 0 V
+-7194 0 R
+(12) Rshow
+1200 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(0) Cshow
+2498 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(1000) Cshow
+3795 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(2000) Cshow
+5093 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(3000) Cshow
+6391 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(4000) Cshow
+7688 501 M
+0 63 V
+0 5183 R
+0 -63 V
+0 -5383 R
+(5000) Cshow
+1200 501 M
+7137 0 V
+0 5246 V
+-7137 0 V
+0 -5246 V
+200 3124 M
+currentpoint gsave translate 90 rotate 0 0 M
+(Bandwidth \(MB/s\)) Cshow
+grestore
+4768 101 M
+(Packet Size \(bytes\)) Cshow
+4768 5947 M
+(Bandwidth Tests) Cshow
+LT0
+7674 5484 M
+(HPAM) Rshow
+7794 5484 M
+360 0 V
+1205 610 M
+16 303 V
+21 353 V
+41 563 V
+78 764 V
+88 557 V
+83 367 V
+57 219 V
+65 163 V
+65 157 V
+65 128 V
+65 125 V
+65 109 V
+65 82 V
+129 133 V
+130 99 V
+130 112 V
+161 93 V
+358 140 V
+259 85 V
+649 148 V
+649 82 V
+649 57 V
+1298 71 V
+25 7 V
+7914 5484 D
+1205 610 D
+1221 913 D
+1242 1266 D
+1283 1829 D
+1361 2593 D
+1449 3150 D
+1532 3517 D
+1589 3736 D
+1654 3899 D
+1719 4056 D
+1784 4184 D
+1849 4309 D
+1914 4418 D
+1979 4500 D
+2108 4633 D
+2238 4732 D
+2368 4844 D
+2529 4937 D
+2887 5077 D
+3146 5162 D
+3795 5310 D
+4444 5392 D
+5093 5449 D
+6391 5520 D
+6416 5527 D
+LT1
+7674 5284 M
+(1 copy TCP) Rshow
+7794 5284 M
+360 0 V
+1205 520 M
+16 54 V
+21 76 V
+41 144 V
+78 232 V
+88 269 V
+83 170 V
+57 129 V
+65 189 V
+65 42 V
+65 242 V
+65 195 V
+65 45 V
+65 27 V
+129 480 V
+130 242 V
+130 239 V
+161 311 V
+358 602 V
+259 334 V
+649 828 V
+649 103 V
+649 28 V
+1298 59 V
+25 4 V
+7914 5284 A
+1205 520 A
+1221 574 A
+1242 650 A
+1283 794 A
+1361 1026 A
+1449 1295 A
+1532 1465 A
+1589 1594 A
+1654 1783 A
+1719 1825 A
+1784 2067 A
+1849 2262 A
+1914 2307 A
+1979 2334 A
+2108 2814 A
+2238 3056 A
+2368 3295 A
+2529 3606 A
+2887 4208 A
+3146 4542 A
+3795 5370 A
+4444 5473 A
+5093 5501 A
+6391 5560 A
+6416 5564 A
+LT2
+7674 5084 M
+(normal TCP) Rshow
+7794 5084 M
+360 0 V
+1205 523 M
+16 71 V
+21 59 V
+41 140 V
+78 300 V
+88 95 V
+83 144 V
+57 189 V
+65 265 V
+65 86 V
+65 -30 V
+65 234 V
+65 -106 V
+65 138 V
+129 168 V
+130 361 V
+130 -67 V
+161 177 V
+358 175 V
+259 373 V
+649 247 V
+649 1240 V
+649 413 V
+1298 5 V
+25 9 V
+7914 5084 B
+1205 523 B
+1221 594 B
+1242 653 B
+1283 793 B
+1361 1093 B
+1449 1188 B
+1532 1332 B
+1589 1521 B
+1654 1786 B
+1719 1872 B
+1784 1842 B
+1849 2076 B
+1914 1970 B
+1979 2108 B
+2108 2276 B
+2238 2637 B
+2368 2570 B
+2529 2747 B
+2887 2922 B
+3146 3295 B
+3795 3542 B
+4444 4782 B
+5093 5195 B
+6391 5200 B
+6416 5209 B
+stroke
+grestore
+end
+showpage
+%%Trailer
+
+%%EndDocument
+FMENDEPSF
+218.25 350.67 452.25 368.67 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 10 Q
+0 X
+(FIGURE 6. Bandwidth measur) 231.99 362 T
+(ements) 364.61 362 T
+71.33 64.67 539.17 721.67 C
+0 0 612 792 C
+374.35 231.22 422.32 249.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+3 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(R) 375.35 239.67 T
+2 9 Q
+(\245) 383.14 235.47 T
+0 12 Q
+(1) 408.32 239.67 T
+(2) 414.32 239.67 T
+(=) 395.55 239.67 T
+0 0 612 792 C
+176.04 205.54 189.16 228.97 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+3 9 Q
+0 X
+0 0 0 1 0 0 0 K
+(N) 177.04 221.22 T
+0 7 Q
+(1) 183.52 217.87 T
+(2) 183.52 209.29 T
+(-) 183.52 213.98 T
+(-) 184.69 213.98 T
+(-) 184.69 213.98 T
+0 0 612 792 C
+409.78 205.54 422.9 228.97 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+3 9 Q
+0 X
+0 0 0 1 0 0 0 K
+(N) 410.78 221.22 T
+0 7 Q
+(1) 417.26 217.87 T
+(2) 417.26 209.29 T
+(-) 417.26 213.98 T
+(-) 418.43 213.98 T
+(-) 418.43 213.98 T
+0 0 612 792 C
+168.2 179.87 181.32 203.29 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+3 9 Q
+0 X
+0 0 0 1 0 0 0 K
+(N) 169.2 195.54 T
+0 7 Q
+(1) 175.68 192.2 T
+(2) 175.68 183.62 T
+(-) 175.68 188.31 T
+(-) 176.85 188.31 T
+(-) 176.85 188.31 T
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "15" 15
+%%Page: "16" 16
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(16) 532 42.62 T
+1 14 Q
+(5.2  Detailed Overhead Measur) 71.33 712.33 T
+(ements) 257.34 712.33 T
+0 12 Q
+0.29 (This section isolates the overhead of three features of HP) 71.33 685.67 P
+0.29 (AM: basic features, protection and \337ow) 347.09 685.67 P
+0.7 (control/reliability) 71.33 671.67 P
+0.7 (. Flow control and reliability count as a single feature because HP) 154.55 671.67 P
+0.7 (AM uses the) 477.11 671.67 P
+-0.01 (same mechanisms to accomplish both. A \324basic\325 feature provides the minimal functionality of the) 71.33 657.67 P
+0.57 (HP) 71.33 643.67 P
+0.57 (AM_4 call without reliability or protection. The \324FDDI\325 feature represents a cost which is an) 85.57 643.67 P
+(artifact of FDDI. T) 71.33 629.67 T
+(able 1 shows the total costs of each feature.) 161.8 629.67 T
+0.92 (Figure 5 shows the costs, in cycles, to send a message using the HP) 71.33 484.67 P
+0.92 (AM_4 call. The \336gure also) 405.84 484.67 P
+-0.04 (shows the time an HP) 71.33 470.67 P
+-0.04 (AM_poll call takes to extract the message and invoke the handler) 174.73 470.67 P
+-0.04 (. The costs) 487.59 470.67 P
+(are broken down by step, and each step is assigned a feature.) 71.33 456.67 T
+0.51 (On the sending side, the \336rst step is to acquire a free buf) 71.33 430.67 P
+0.51 (fer) 347.52 430.67 P
+0.51 (. In these tests, the \336rst buf) 360.18 430.67 P
+0.51 (fer exam-) 492.35 430.67 P
+-0.17 (ined was free. It is reasonable to ignore the cost to search for a free buf) 71.33 416.67 P
+-0.17 (fer because the hint pointer) 409.2 416.67 P
+0.69 (will always point to an available buf) 71.33 402.67 P
+0.69 (fer unless a packet was dropped or the process has used all) 249.93 402.67 P
+0.12 (the request buf) 71.33 388.67 P
+0.12 (fers. Next, HP) 142.67 388.67 P
+0.12 (AM marks the card buf) 210.46 388.67 P
+0.12 (fer as in-use so it will be saved by the sched-) 322.69 388.67 P
+-0.09 (uler if the process is switch out. The packet is constructed in the card buf) 71.33 374.67 P
+-0.09 (fer and launched into the) 420.2 374.67 P
+0.68 (network during the \324Store packet\325 step. Most of the \336elds in the descriptor table can be updated) 71.33 360.67 P
+-0.02 (after the packet is sent into the network; this is the \324Update state\325 step. The Medusa card returns a) 71.33 346.67 P
+-0.25 (status packet for every packet sent. The status packet is simply discarded by HP) 71.33 332.67 P
+-0.25 (AM. However) 450.18 332.67 P
+-0.25 (, the) 518.76 332.67 P
+0.38 (cost must be char) 71.33 318.67 P
+0.38 (ged to the send overhead because every send incurs at least one poll of a status) 155.9 318.67 P
+-0 (packet. The \322Service \050poll\051\323 step accounts for this cost. The cost to remove the status packet dou-) 71.33 304.67 P
+(bles the basic send cost.) 71.33 290.67 T
+1.81 (HP) 71.33 264.67 P
+1.81 (AM must go though many checks on the receiving side before invoking the handler) 85.57 264.67 P
+1.81 (. First) 509.35 264.67 P
+-0.08 (HP) 71.33 250.67 P
+-0.08 (AM sets a \337ag which signals the scheduler that the RX_READY FIFO is about to be accessed.) 85.57 250.67 P
+0.08 (After popping the FIFO, HP) 71.33 236.67 P
+0.08 (AM must check if it was just context switched back in, in which case) 206.2 236.67 P
+(the pop operation failed and HP) 71.33 222.67 T
+(AM discards the packet.) 223.21 222.67 T
+1.33 (Next, the packet must be checked to see if it is a status packet from the ring, and the CRC is) 71.33 196.67 P
+0.71 (checked. The CRC check did not count as an FDDI artifact since many network interfaces only) 71.33 182.67 P
+0.74 (signal the processor of a bad CRC rather than discard the packet. The packet must pass the key) 71.33 168.67 P
+0.66 (check, then the type checks for request/reply and 4 word/xfer) 71.33 154.67 P
+0.66 (. The \322dispatch\323 step is the cost to) 370.55 154.67 P
+-0.28 (extract the handler address and four word payload followed by the branch to the handler) 71.33 140.67 P
+-0.28 (. This cost) 490.05 140.67 P
+(is 140 cycles because of the long the latency of a reads from the VRAM.) 71.33 126.67 T
+0.66 (After the handler returns to the HP) 71.33 100.67 P
+0.66 (AM layer) 240.8 100.67 P
+0.66 (, it checks if the handler replied, which is the \322Sent) 287.3 100.67 P
+1.65 (ack?\323 cost. In this case, the handler replied so no ack is sent by the layer) 71.33 86.67 P
+1.65 (. Next, HP) 442.31 86.67 P
+1.65 (AM_poll) 495.16 86.67 P
+2.97 (checks a single request descriptor for time-out. In the current implementation, HP) 71.33 72.67 P
+2.97 (AM_poll) 495.16 72.67 P
+(Feature) 152.14 597 T
+(Cycle Count \050send + receive\051) 325.4 597.67 T
+(Basic \050B\051) 152.14 581 T
+(317) 448.13 579.67 T
+(Flow Control/Reliability \050FC\051) 152.14 563 T
+(245) 448.13 561.67 T
+(Protection) 152.14 545 T
+(219) 448.13 543.67 T
+(FDDI\050FDDI\051) 152.14 527 T
+(215) 448.13 525.67 T
+1 10 Q
+(T) 159.89 510 T
+(ABLE 1. Cost By Featur) 165.82 510 T
+(e) 270.36 510 T
+146.14 613.42 146.14 519.92 2 L
+V
+0.5 H
+0 Z
+N
+309.4 613.92 309.4 519.42 2 L
+V
+N
+472.13 613.42 472.13 519.92 2 L
+V
+N
+145.89 613.67 472.38 613.67 2 L
+V
+N
+145.89 591.67 472.38 591.67 2 L
+V
+3 H
+N
+145.89 573.67 472.38 573.67 2 L
+V
+0.5 H
+N
+145.89 555.67 472.38 555.67 2 L
+V
+N
+145.89 537.67 472.38 537.67 2 L
+V
+N
+145.89 519.67 472.38 519.67 2 L
+V
+N
+FMENDPAGE
+%%EndPage: "16" 16
+%%Page: "17" 17
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(17) 532 42.62 T
+0 12 Q
+0.72 (returns to the top of the \322Lock card\323 step after the \322Sent ack?\323 step, checking for time out only) 71.33 317.67 P
+(after the RX_READY FIFO has been completely emptied.) 71.33 303.67 T
+1.55 (The current HP) 71.33 277.67 P
+1.55 (AM implementation is able to overlap some of the overhead with the network) 147.3 277.67 P
+0.09 (latency) 71.33 263.67 P
+0.09 (. In particular) 105.21 263.67 P
+0.09 (, the \322Service \050poll\051\323, \322Sent ack\323, and \322T) 169.88 263.67 P
+0.09 (imed out\323 steps occur after a packet) 366.69 263.67 P
+0.14 (has been launched into the a network. The total cost of a round trip operation, in this case remote) 71.33 249.67 P
+(read of an integer) 71.33 235.67 T
+(, takes) 155.15 235.67 T
+(29) 189.31 235.67 T
+2 F
+(m) 204.31 235.67 T
+0 F
+(sec to complete.) 211.23 235.67 T
+1 16 Q
+(6. Conclusion) 71.33 195 T
+0 12 Q
+0.62 (The Active Message model, combined with a strong typing of request and replies enables a low) 71.33 167.67 P
+0.3 (overhead implementation of HP) 71.33 153.67 P
+0.3 (AM. Although the network is unreliable, the request-reply proto-) 224.79 153.67 P
+1.84 (col keeps the matching process simple and fast. Also, no complex buf) 71.33 139.67 P
+1.84 (fering is required. The) 426.34 139.67 P
+0.31 (request-reply nature exposed to the compiler or library writer frees the HP) 71.33 125.67 P
+0.31 (AM layer from having) 429.92 125.67 P
+-0.23 (to infer the pattern of communication. If the higher level is sending many replies, the HP) 71.33 111.67 P
+-0.23 (AM layer) 493.08 111.67 P
+0.64 (can take advantage of the two way communication to provide reliability and \337ow control. Like-) 71.33 97.67 P
+0.62 (wise, a user sending a one-way set of requests is signaling the layer that it must generate empty) 71.33 83.67 P
+0.01 (acknowledgments on behalf of the user) 71.33 69.67 P
+0.01 (. As the comparison to TCP shows, sending the empty ack) 259.04 69.67 P
+92.63 325.67 517.87 721.67 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+110.63 514.67 272.63 649.67 R
+0.5 H
+0 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+0 12 Q
+(Acquire buf) 119.63 632.49 T
+(fer) 177.07 632.49 T
+(Mark buf) 119.63 607.27 T
+(fer) 164.41 607.27 T
+(Store packet) 119.63 580.27 T
+(Update state) 119.63 553.27 T
+(Service \050poll\051) 119.63 526.27 T
+110.63 622.67 272.63 622.67 2 L
+7 X
+V
+2 Z
+0 X
+N
+335.63 595.67 497.63 595.67 2 L
+7 X
+V
+0 X
+N
+110.63 568.67 272.63 568.67 2 L
+7 X
+V
+0 X
+N
+(60) 251.64 632.49 T
+(83) 251.64 580.27 T
+(18) 251.64 553.27 T
+(185) 245.64 524.49 T
+(Status packet?) 344.63 578.49 T
+(Key match?) 344.63 524.49 T
+(Request or reply?) 344.63 497.49 T
+(4 word or xfer?) 344.63 470.49 T
+(Dispatch) 344.63 443.49 T
+(Sent ack?) 344.63 416.49 T
+(T) 344.63 389.49 T
+(imed out?) 351.55 389.49 T
+(step) 119.63 668.49 T
+(Send) 173.65 706.27 T
+(Service Network) 380.63 713.49 T
+146.63 334.67 479.63 352.67 R
+7 X
+V
+1 10 Q
+0 X
+(FIGURE 7. Cycle counts to send a message and service the network.) 160.38 346 T
+110.63 541.67 272.63 541.67 2 L
+7 X
+V
+0 X
+N
+0 12 Q
+(\050poll\051) 407.63 697.27 T
+(feature) 194.34 668.49 T
+(count) 245.63 661.27 T
+(step) 344.63 666.71 T
+(feature) 419.34 666.71 T
+(cycle) 469.33 668.49 T
+(count) 470.63 659.49 T
+335.63 379.67 497.63 649.67 R
+0 Z
+N
+(Lock Card) 344.63 632.49 T
+(Pop FIFO &) 344.63 607.27 T
+335.63 622.67 497.63 622.67 2 L
+7 X
+V
+2 Z
+0 X
+N
+110.63 595.67 272.63 595.67 2 L
+7 X
+V
+0 X
+N
+335.63 568.67 497.63 568.67 2 L
+7 X
+V
+0 X
+N
+(CRC ok?) 345.32 551.49 T
+335.63 541.67 497.63 541.67 2 L
+7 X
+V
+0 X
+N
+335.63 514.67 497.63 514.67 2 L
+7 X
+V
+0 X
+N
+335.63 487.67 497.63 487.67 2 L
+7 X
+V
+0 X
+N
+335.63 460.67 497.63 460.67 2 L
+7 X
+V
+0 X
+N
+335.63 406.67 497.63 406.67 2 L
+7 X
+V
+0 X
+N
+(20) 251.64 607.27 T
+335.63 433.67 497.63 433.67 2 L
+7 X
+V
+0 X
+N
+(13) 476.64 634.27 T
+(140) 470.63 605.49 T
+(30) 476.64 580.27 T
+(85) 476.64 553.27 T
+(46) 476.64 526.27 T
+(56) 476.64 499.27 T
+(9) 482.64 472.27 T
+(140) 470.63 445.27 T
+(1) 477.08 418.27 T
+(1) 482.64 418.27 T
+(100) 470.64 391.27 T
+(Unlock) 344.63 596.49 T
+(FC) 209.63 632.49 T
+(P) 209.63 607.27 T
+(FC) 209.63 553.27 T
+(P) 434.63 632.49 T
+(P) 434.63 526.27 T
+(P) 434.63 605.49 T
+(FC) 434.63 497.49 T
+(FC) 434.63 418.27 T
+(FC) 434.63 389.49 T
+(B) 209.63 577.67 T
+(FDDI) 200.63 524.49 T
+(FDDI) 425.63 578.49 T
+(B) 434.63 550.67 T
+(B) 434.63 470.49 T
+(B) 434.63 442.67 T
+(T) 110.63 497.49 T
+(otal send overhead) 117.13 497.49 T
+(T) 334.58 364.27 T
+(otal receive overhead) 341.07 364.27 T
+(366) 245.63 497.49 T
+(630) 470.64 364.27 T
+(cycle) 245.63 670.27 T
+(T) 290.63 686.48 T
+(ime) 297.55 686.48 T
+302.94 544.2 299.63 532.67 296.33 544.2 299.63 544.2 4 Y
+V
+299.63 676.67 299.63 544.2 2 L
+N
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "17" 17
+%%Page: "18" 18
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(18) 532 42.62 T
+0 12 Q
+(packets costs almost nothing. HP) 71.33 713.67 T
+(AM achieves nearly the same peak bandwidth as the single copy) 229.23 713.67 T
+(TCP) 71.33 699.67 T
+(, even sending an empty ack for each data packet.) 92.01 699.67 T
+0.44 (By making all the state explicit in the protocol, HP) 71.33 673.67 P
+0.44 (AM provides a simple protection model. Pro-) 318.2 673.67 P
+-0.2 (tecting communication becomes a matter of protecting state. Thus, HP) 71.33 659.67 P
+-0.2 (AM can avoid costly kernel) 406.68 659.67 P
+(traps because an external scheduler is able to protect the network state.) 71.33 645.67 T
+0.84 (HP) 71.33 619.67 P
+0.84 (AM is able to achieve high performance while maintaining key features by making dif) 85.57 619.67 P
+0.84 (ferent) 511.18 619.67 P
+-0.17 (assumptions that traditional LAN software. HP) 71.33 605.67 P
+-0.17 (AM however) 295.37 605.67 P
+-0.17 (, does not replace TCP in the contexts) 358.37 605.67 P
+1.27 (of highly unreliable, variable delay networks. Networks which have these characteristics, typi-) 71.33 591.67 P
+0.69 (cally W) 71.33 577.67 P
+0.69 (AN internetworks, require more sophisticated mechanisms. Mechanisms associated with) 108.35 577.67 P
+0.64 (TCP) 71.33 563.67 P
+0.64 (, such as slow start and estimating variance of the round trip time [7], are trying to \322second) 92.01 563.67 P
+1.66 (guess\323 the network. In addition to sending data, TCP constructs and dynamically maintains a) 71.33 549.67 P
+1.63 (model of the network. W) 71.33 535.67 P
+1.63 (e believe that with software enforced \337ow control and scheduling, a) 197.22 535.67 P
+0.87 (LAN network can be static enough so that a layer can assume the network characteristics to be) 71.33 521.67 P
+(fairly constant. A layer can exploit that knowledge to realize lar) 71.33 507.67 T
+(ge performance bene\336ts.) 377.38 507.67 T
+0.62 (Future work on HP) 71.33 481.67 P
+0.62 (AM includes improvements in the negotiation between the scheduler and the) 164.4 481.67 P
+0.51 (HP) 71.33 467.67 P
+0.51 (AM layer) 85.57 467.67 P
+0.51 (. For example, the Unix) 131.74 467.67 P
+3 F
+0.51 (ptrace) 251.28 467.67 P
+0 F
+0.51 ( call can be used to allow the scheduler access to the) 281.94 467.67 P
+0.62 (state of the network process. The P) 71.33 453.67 P
+0.62 (A-RISC gateway page mechanism should be used to provide) 242.25 453.67 P
+0.2 (protection to the HP) 71.33 439.67 P
+0.2 (AM code and data from the user level process without incurring the cost of a) 167.82 439.67 P
+-0.15 (kernel trap. The layer should also be hand coded in assembly language to realize the lowest possi-) 71.33 425.67 P
+(ble latency) 71.33 411.67 T
+(.) 122.87 411.67 T
+1 16 Q
+( Acknowledgments) 71.33 371 T
+0 12 Q
+1.1 (The work is part of the Berkeley NOW project. The author wishes the thank Chris Dalton and) 71.33 343.67 P
+2.59 (Greg Buzzard at HP labs for answering many questions about the Medusa card, and Doug) 71.33 329.67 P
+1.03 (Ghormley for writing the scheduler) 71.33 315.67 P
+1.03 (. The author would like to thank David Culler) 244.75 315.67 P
+1.03 (, Kim Keeton) 472.12 315.67 P
+(and Remzi Arpaci for their comments on this document.) 71.33 301.67 T
+1 16 Q
+( Refer) 71.33 261 T
+(ences) 113.24 261 T
+0 12 Q
+(1.) 71.33 233.67 T
+2.34 (D. Banks and M. Prudence, \322A High Performance Network Architecture for a P) 89.33 233.67 P
+2.34 (A-RISC) 499.83 233.67 P
+(W) 89.33 219.67 T
+(orkstation\323,) 99.7 219.67 T
+3 F
+(IEEE Journal on Selected Ar) 159.03 219.67 T
+(eas in Communications) 297.89 219.67 T
+0 F
+(, vol. 1) 410.56 219.67 T
+(1, no. 2, Feb. 1993.) 443.45 219.67 T
+(2.) 71.33 193.67 T
+0.84 (D. Clark, V) 89.33 193.67 P
+0.84 (. Jacobson, J. Romkey) 145.45 193.67 P
+0.84 (, H. Salwen, \322An Analysis of TCP Processing Overhead\323,) 254.51 193.67 P
+3 F
+(IEEE Communications Magazine) 89.33 179.67 T
+0 F
+(. V) 249.99 179.67 T
+(ol. 27, no. 6, June 1989.) 263.11 179.67 T
+(3.) 71.33 153.67 T
+1.43 (D. Culler) 89.33 153.67 P
+1.43 (, A. Dusseau, S. Goldstein, A. Krishnamurthy) 134.95 153.67 P
+1.43 (, S. Lumetta, T) 362.73 153.67 P
+1.43 (. von Eicken and K.) 438.13 153.67 P
+1.83 (Y) 89.33 139.67 P
+1.83 (elick, \322Parallel Programming in Split-C\323,) 96.8 139.67 P
+3 F
+1.83 (Super) 307.6 139.67 P
+1.83 (computing \32493) 335.15 139.67 P
+0 F
+1.83 (, Portland OR. Nov) 406.64 139.67 P
+1.83 (. 1993.) 504.34 139.67 P
+(IEEE Computer Society Press.) 89.33 125.67 T
+(4.) 71.33 99.67 T
+0.79 (D. Culler) 89.33 99.67 P
+0.79 (, R. Karp, D. Patterson, A. Sahay) 134.31 99.67 P
+0.79 (, K. Schauser) 297.57 99.67 P
+0.79 (, E. Santos, R. Subramonian, T) 362.65 99.67 P
+0.79 (. von) 514.38 99.67 P
+1.43 (Eiken. \322LogP: T) 89.33 85.67 P
+1.43 (owards a Realistic Model of Parallel Computation\323, In) 170.35 85.67 P
+3 F
+1.43 (Pr) 446.76 85.67 P
+1.43 (oceedings of the) 458.32 85.67 P
+FMENDPAGE
+%%EndPage: "18" 18
+%%Page: "19" 19
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 8 Q
+0 X
+0 0 0 1 0 0 0 K
+(19) 532 42.62 T
+3 12 Q
+1.72 (Fourth ACM Symp. on Principles and Practice of Parallel Pr) 89.33 713.67 P
+1.72 (ogramming,) 399.68 713.67 P
+0 F
+1.72 ( San Diego, CA) 458.01 713.67 P
+(May 1993.) 89.33 699.67 T
+(5.) 71.33 673.67 T
+0.98 (Hewlett Packard Company) 89.33 673.67 P
+0.98 (, \322P) 219.83 673.67 P
+0.98 (A-RISC 1.1 Architecture and Instruction Set Reference Man-) 237.7 673.67 P
+(ual\323, Manual Part Number 09740-90039.) 89.33 659.67 T
+(6.) 71.33 633.67 T
+0.97 (J. Kay and J. Pasquale, \322A Performance Analysis of TCP/IP and UDP/IP Networking Soft-) 89.33 633.67 P
+(ware for the DECstation 5000\323, Sequoia 2000 T) 89.33 619.67 T
+(echnical Report #92/10, 1992.) 319.79 619.67 T
+(7.) 71.33 593.67 T
+1.63 (S. Lef) 89.33 593.67 P
+1.63 (\337er) 120.08 593.67 P
+1.63 (, M. McKusick, M Karels, J. Quaterman,) 135.6 593.67 P
+3 F
+1.63 (The Design and Implementation of the) 346.67 593.67 P
+-0.05 (4.3BSD UNIX Operating System) 89.33 579.67 P
+0 F
+-0.05 (, Reading, MA: Addison-W) 245.85 579.67 P
+-0.05 (esley Publishing Company) 378.41 579.67 P
+-0.05 (, 1989.) 506.21 579.67 P
+(8.) 71.33 553.67 T
+0.57 (C. Leiserson, et al. \322The Network Architechture of the Connection Machine CM-5\323,) 89.33 553.67 P
+3 F
+0.57 (In Pr) 504.05 553.67 P
+0.57 (o-) 529.17 553.67 P
+(ceedings of the Symposium on Parallel Algorithms and Ar) 89.33 539.67 T
+(chitectur) 368.21 539.67 T
+(es) 410.43 539.67 T
+0 F
+(, 1993.) 420.42 539.67 T
+(9.) 71.33 513.67 T
+-0.26 (Luna, Steve. \322Implementing an Ef) 89.33 513.67 P
+-0.26 (\336cient Portable Global Memory Layer on Distributed Mem-) 252.71 513.67 P
+(ory Multiprocessors\323, UCB T) 89.33 499.67 T
+(echnical report UCB/CSD 94/#810, 1994) 231.15 499.67 T
+(10.) 71.33 473.67 T
+1.54 (T) 89.33 473.67 P
+1.54 (. von Eicken, D. Culler) 95.78 473.67 P
+1.54 (, S. Goldstein, K. Schasuer) 212.46 473.67 P
+1.54 (, \322Active Messages: A Mechanism for) 347.48 473.67 P
+0.33 (Integrated Communication and Computation\323, In) 89.33 459.67 P
+3 F
+0.33 (Pr) 330.31 459.67 P
+0.33 (oceedings of the 19th International Sym-) 341.86 459.67 P
+(posium on Computer Ar) 89.33 445.67 T
+(chitectur) 204.56 445.67 T
+(e,) 246.77 445.67 T
+0 F
+(Gold Coast, Australia, May 1992) 258.1 445.67 T
+FMENDPAGE
+%%EndPage: "19" 19
+%%Trailer
+%%BoundingBox: 0 0 612 792
+%%PageOrder: Ascend
+%%Pages: 19
+%%DocumentFonts: Times-Roman
+%%+ Times-Bold
+%%+ Symbol
+%%+ Times-Italic
+%%+ Courier-Bold
+%%EOF

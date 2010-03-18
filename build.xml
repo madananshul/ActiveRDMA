@@ -1,0 +1,8 @@
+<project name="ActiveRDMA" default="compile" basedir=".">
+  <property name="src" location="src"/>
+  <property name="bin" location="bin"/>
+
+  <target name="compile">
+    <javac srcdir="${src}" destdir="${bin}"/>
+  </target>
+</project>

@@ -1,8 +1,9 @@
 package examples.dht;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import common;
 
-public class DHT_Active implements DHT {
+public class DHT_Active implements examples.dht.DHT {
 
     static final int N = 1024;
 
@@ -66,7 +67,7 @@ public class DHT_Active implements DHT {
             }
 
             int h = hash(args, 1);
-            mem[newPtr + 1].put(val);
+            mem[newPtr + 1].set(val);
             for (int i = 0; i < kLen; i++)
                 mem[newPtr + 2 + i].set(args[i + 1]);
 

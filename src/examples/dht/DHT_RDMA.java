@@ -1,6 +1,7 @@
 package examples.dht;
 
 import client.Client;
+import common.*;
 
 //import client.Client;
 
@@ -11,10 +12,10 @@ import client.Client;
 
 public class DHT_RDMA implements DHT {
 
-	private Client m_client;
+	private ExtActiveRDMA m_client;
 	private int N;
 	
-	public DHT_RDMA(Client client, int _N)
+	public DHT_RDMA(ExtActiveRDMA client, int _N)
 	{
 		m_client = client;
 		N = _N;

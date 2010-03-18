@@ -1,7 +1,7 @@
 package examples.dht;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import common;
+import common.*;
 
 public class DHT_Active implements examples.dht.DHT {
 
@@ -43,13 +43,50 @@ public class DHT_Active implements examples.dht.DHT {
         }
     }
 
+    public static class DHT_Active_Has {
+        static final int N = 1024;
+
+        protected ExtActiveRDMA m_c;
+
+        public static class DHT_Active_Get {
+
+            static int hash(int[] key) {
+                int t = 0;
+                for (int i = 0; i < key.length; i++) t ^= key[i];
+                return t % N;
+            }
+
+            static boolean compareKey(AtomicInteger[] mem, int ptr, int[] args) {
+                for (int i = 0; i < args.length; i++)
+                    if (mem[ptr + 2 + i].get() != args[i]) return false;
+
+                return true;
+            }
+
+            public static int execute(AtomicInteger[] mem, int[] args) {
+            
+                // args[] is the key
+            
+                int h = hash(args);
+                int ptr = mem[N + h].get();
+                while (ptr != 0)
+                {
+                    if (compareKey(mem, ptr, args)) break;
+                    ptr = mem[ptr].get();
+                }
+
+                return ptr != 0 ? 1 : 0;
+            }
+        }
+    }
+
     public static class DHT_Active_Put {
 
         static int hash(int[] key, int off) {
             int t = 0;
             for (int i = off; i < key.length; i++) t ^= key[i];
             return t % N;
-	}
+        }
 
         public static int execute(AtomicInteger[] mem, int[] args) {
             
@@ -117,6 +154,8 @@ public class DHT_Active implements examples.dht.DHT {
 
     public boolean has(String key) {
         int[] k = stringToInt(key);
+        
+        return m_c.run(DHT_Active_Has.class, k) != 0;
     }
 
     public void put(String key, int val) {

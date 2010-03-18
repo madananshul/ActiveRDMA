@@ -2,7 +2,13 @@
   <property name="src" location="src"/>
   <property name="bin" location="bin"/>
 
+  <path id="classpath">
+    <pathelement location="/usr/share/java/junit.jar"/>
+  </path>
+
   <target name="compile">
-    <javac srcdir="${src}" destdir="${bin}"/>
+    <javac srcdir="${src}" destdir="${bin}">
+      <classpath refid="classpath"/>
+    </javac>
   </target>
 </project>

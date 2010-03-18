@@ -5,9 +5,7 @@ import junit.framework.TestCase;
 
 import common.ExtActiveRDMA;
 import client.Client;
-import examples.dht;
-
-
+import examples.dht.*;
 
 public class DHTTest extends TestCase {
 
@@ -19,7 +17,7 @@ public class DHTTest extends TestCase {
         DHT d = new DHT_RDMA(client, 1024);
 
         d.put("asdf", 42);
-        assertEquals(d.get("asdf", 42));
+        assertEquals(d.get("asdf"), 42);
     }
 
 }

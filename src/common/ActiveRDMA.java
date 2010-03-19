@@ -2,7 +2,6 @@ package common;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.concurrent.atomic.AtomicInteger;
 
 //FIXME: there is no specified result for when the address is out of bounds!
 //FIXME: or when the execution fails... use error handlers?
@@ -75,29 +74,22 @@ public abstract class ActiveRDMA {
 	//should not be used for anything else... or we will have bugs.
 	//FIXME: memory is never reclaimed! dealloc()?
 	
-	//@MobileCode //TODO: use annotations to, at runtime (up)load lib code?
 	public static class Alloc{
 		static final int MEM_COUNTER = 0;
-		public static int execute(AtomicInteger[] mem, int size) {
-			int c = mem[MEM_COUNTER].get();
+		public static int execute(ActiveRDMA a, int[] args) {
+			int size = args[0];
+			int c = a.r(Alloc.MEM_COUNTER);
 			//retry until we were able to increase the claimed memory by 'size'
-			while( !mem[MEM_COUNTER].compareAndSet(c, c+size) ){
+			while( a.cas(Alloc.MEM_COUNTER,c,c+size) == 0 ){
 				//failed, get the new value
-				c = mem[MEM_COUNTER].get();
+				c = a.r(Alloc.MEM_COUNTER);
 			}
 			return c;
 		}
 	}
 	
-	//TODO: should this be on the server side instead?
 	public int alloc(int size){
-		int c = r(Alloc.MEM_COUNTER);
-		//retry until we were able to increase the claimed memory by 'size'
-		while( cas(Alloc.MEM_COUNTER,c,c+size) == 0 ){
-			//failed, get the new value
-			c = r(Alloc.MEM_COUNTER);
-		}
-		return c;
+		return Alloc.execute(this, new int[]{size});
 	}
 	
 	/*

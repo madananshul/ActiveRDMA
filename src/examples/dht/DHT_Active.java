@@ -1,7 +1,6 @@
 package examples.dht;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import common.*;
+import common.ActiveRDMA;
 
 public class DHT_Active implements examples.dht.DHT {
 
@@ -17,27 +16,27 @@ public class DHT_Active implements examples.dht.DHT {
 			return t % N;
 		}
 
-		static boolean compareKey(AtomicInteger[] mem, int ptr, int[] args) {
+		static boolean compareKey(ActiveRDMA c, int ptr, int[] args) {
 			for (int i = 0; i < args.length; i++)
-				if (mem[ptr + 2 + i].get() != args[i]) return false;
+				if (c.r(ptr + 2 + i) != args[i]) return false;
 
 			return true;
 		}
 
-		public static int execute(AtomicInteger[] mem, int[] args) {
+		public static int execute(ActiveRDMA c, int[] args) {
 
 			// args[] is the key
 
 			int h = hash(args);
-			int ptr = mem[N + h].get();
+			int ptr = c.r(N + h);
 			while (ptr != 0)
 			{
-				if (compareKey(mem, ptr, args)) break;
-				ptr = mem[ptr].get();
+				if (compareKey(c, ptr, args)) break;
+				ptr = c.r(ptr);
 			}
 
 			if (ptr != 0)
-				return mem[ptr + 1].get();
+				return c.r(ptr + 1);
 			else
 				return 0;
 		}
@@ -54,23 +53,23 @@ public class DHT_Active implements examples.dht.DHT {
 				return t % N;
 			}
 
-			static boolean compareKey(AtomicInteger[] mem, int ptr, int[] args) {
+			static boolean compareKey(ActiveRDMA c, int ptr, int[] args) {
 				for (int i = 0; i < args.length; i++)
-					if (mem[ptr + 2 + i].get() != args[i]) return false;
+					if (c.r( ptr + 2 + i ) != args[i]) return false;
 
 				return true;
 			}
 
-			public static int execute(AtomicInteger[] mem, int[] args) {
+			public static int execute(ActiveRDMA c, int[] args) {
 
 				// args[] is the key
 
 				int h = hash(args);
-				int ptr = mem[N + h].get();
+				int ptr = c.r( N + h );
 				while (ptr != 0)
 				{
-					if (compareKey(mem, ptr, args)) break;
-					ptr = mem[ptr].get();
+					if (compareKey(c, ptr, args)) break;
+					ptr = c.r( ptr );
 				}
 
 				return ptr != 0 ? 1 : 0;
@@ -86,7 +85,7 @@ public class DHT_Active implements examples.dht.DHT {
 			return t % N;
 		}
 
-		public static int execute(AtomicInteger[] mem, int[] args) {
+		public static int execute(ActiveRDMA c, int[] args) {
 
 			// args[0] is the value, args[1...] is the key
 			int val = args[0];
@@ -96,21 +95,21 @@ public class DHT_Active implements examples.dht.DHT {
 			int newPtr = 0;
 			while (true)
 			{
-				newPtr = mem[0].get();
-				if (mem[0].compareAndSet(newPtr, newPtr + 2 + kLen))
+				newPtr = c.r(0);
+				if (c.cas(0, newPtr, newPtr + 2 + kLen) !=0)
 					break;
 			}
 
 			int h = hash(args, 1);
-			mem[newPtr + 1].set(val);
+			c.w(newPtr+1, val);
 			for (int i = 0; i < kLen; i++)
-				mem[newPtr + 2 + i].set(args[i + 1]);
+				c.w(newPtr + 2 + i, args[i+1]);
 
 			while (true)
 			{
-				int head = mem[N + h].get();
-				mem[newPtr].set(head);
-				if (mem[N + h].compareAndSet(head, newPtr))
+				int head = c.r( N + h );
+				c.w(newPtr, head);
+				if (c.cas(N + h, head, newPtr) != 0 )
 					break;
 			}
 

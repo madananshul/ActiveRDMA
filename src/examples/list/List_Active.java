@@ -1,65 +1,74 @@
 package examples.list;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import common.ExtActiveRDMA;
+import common.ActiveRDMA;
 
 public class List_Active implements List{
 
-	public static class List_Active_AddNode{
-		public static int execute(AtomicInteger[] mem, int[] args) {
-			int pos = args[1];
-			while( !mem[pos+1].compareAndSet(NULL, args[0]) ){
+	public static class List_AddNode{
+		public static int execute(ActiveRDMA c, int[] args) {
+			int value = args[0];
+			int root_ptr = args[1];
+			//new node
+			int node = c.alloc(2);
+			c.w(node, value); // node[0] = content
+			c.w(node+1, NULL);  // node[1] = link
+
+			//now try to put it at the end
+			int pos = root_ptr;
+			while( c.cas(pos+1,NULL,node) == 0 ){
 				//link was not NULL
 				//follow the link of the node
-				pos = mem[pos+1].get();
+				pos = c.r(pos+1);
 			}
-			return args[0];
+
+			return node;
 		}
 	}
 	
-	public static class List_Active_GetNode{
-		public static int execute(AtomicInteger[] mem, int[] args) {
-			int pos = mem[args[1]+1].get();
+	public static class List_GetNode{
+		public static int execute(ActiveRDMA c, int[] args) {
+			int n = args[0];
+			int root_ptr = args[1];
 			
+			int pos = c.r(root_ptr+1);
+
 			if( pos==NULL )
 				return NULL;
 			
-			while( args[0]-- > 0 && pos!=NULL ){
-				pos = mem[pos+1].get();
+			while( n-- > 0 && pos!=NULL ){
+				pos = c.r( pos+1 );
 			}
-			
-			return pos!=NULL ? mem[pos].get() : NULL;
+
+			return pos!=NULL ? c.r(pos) : NULL;
 		}
 	}
 	
-	protected final ExtActiveRDMA c;
+	public static int makeRoot(ActiveRDMA c){
+		int root = c.alloc(2);
+		//slot 0 never used
+		c.w(root+1, NULL);
+		return root;
+	}
+	
+	protected final ActiveRDMA c;
 	protected final int root_ptr;
 	
 	static final int NULL = -1;
 	
-	public List_Active(ExtActiveRDMA c){
+	public List_Active(ActiveRDMA c){
 		this.c = c;
-		this.root_ptr = c.alloc(2);
+		this.root_ptr = makeRoot(c);
 		
-		c.load(List_Active_AddNode.class);
-		c.load(List_Active_GetNode.class);
-		
-		//slot 0 never used
-		c.w(root_ptr+1, NULL);
+		c.load(List_AddNode.class);
+		c.load(List_GetNode.class);
 	}
 	
 	public int add(int value) {
-		//new node
-		int node = c.alloc(2);
-		c.w(node, value); // node[0] = content
-		c.w(node+1, NULL);  // node[1] = link
-		
-		return c.run(List_Active_AddNode.class, new int[]{node,root_ptr});
+		return c.run(List_AddNode.class, new int[]{value,root_ptr});
 	}
 
 	public int get(int n) {
-		return c.run(List_Active_GetNode.class, new int[]{n,root_ptr});
+		return c.run(List_GetNode.class, new int[]{n,root_ptr});
 	}
 
 }

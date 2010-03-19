@@ -3,7 +3,7 @@ package tests;
 import junit.framework.TestCase;
 import client.Client;
 
-import common.ExtActiveRDMA;
+import common.ActiveRDMA;
 
 import examples.list.List;
 import examples.list.List_Active;
@@ -36,7 +36,7 @@ public class ListTest extends TestCase {
     }
 
     public void tests_List() throws Exception {
-        ExtActiveRDMA client = new Client(server);
+        ActiveRDMA client = new Client(server);
 
         List d;
         d = new List_RDMA(client);
@@ -46,7 +46,7 @@ public class ListTest extends TestCase {
     }
     
     public void tests_List_RDMA() throws Exception {
-        ExtActiveRDMA client = new Client(server);
+        ActiveRDMA client = new Client(server);
         
         List list = new List_RDMA(client);
         for (int i = 0; i < 10; i++)
@@ -59,7 +59,7 @@ public class ListTest extends TestCase {
     }
     
     public void tests_List_Active() throws Exception {
-        ExtActiveRDMA client = new Client(server);
+        ActiveRDMA client = new Client(server);
         
         List list = new List_Active(client);
         for (int i = 0; i < 10; i++)

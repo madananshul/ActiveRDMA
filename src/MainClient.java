@@ -1,14 +1,14 @@
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import client.Client;
+
+import common.ActiveRDMA;
 
 public class MainClient {
 
 	public static class MobileCode {
-		public static int execute(AtomicInteger[] mem, int[] i) {
-			mem[i[0]].set(42);
-			return mem[i[0]].get();
+		public static int execute(ActiveRDMA a, int[] i) {
+			a.w(i[0], 42);
+			return a.r(i[0]);
 		}
 	}
 	

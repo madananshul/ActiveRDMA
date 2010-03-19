@@ -9,3 +9,4 @@ The src/tests uses JUnit (again Eclipse includes this by default but you may nee
 
 TODO: error codes
 TODO: test hidden links static calls between loaded classes.
+TODO: packet size for UDP, error when sending larger classes?

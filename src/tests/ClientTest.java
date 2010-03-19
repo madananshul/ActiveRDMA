@@ -1,18 +1,16 @@
 package tests;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import common.ExtActiveRDMA;
-
-import client.Client;
 import junit.framework.TestCase;
+import client.Client;
+
+import common.ActiveRDMA;
 
 public class ClientTest extends TestCase {
 
-	static public class MobileCodeTest{
-		public static int execute(AtomicInteger[] mem, int[] i) {
-			mem[i[0]].set(42);
-			return mem[i[0]].get();
+	static public class MobileCodeTest {
+		public static int execute(ActiveRDMA a, int[] i) {
+			a.w(i[0], 42);
+			return a.r(i[0]);
 		}
 	}
 	
@@ -22,7 +20,7 @@ public class ClientTest extends TestCase {
 	final String server = "localhost";
 	
 	public void tests_R_W_CAS() throws Exception {
-		ExtActiveRDMA client = new Client(server);
+		ActiveRDMA client = new Client(server);
 
 		client.w(0,0);
 		assertEquals( client.r(0) , 0 );
@@ -35,7 +33,7 @@ public class ClientTest extends TestCase {
 	}
 	
 	public void tests_Load_Run() throws Exception{
-		ExtActiveRDMA client = new Client(server);
+		ActiveRDMA client = new Client(server);
 
 		client.w(7,0);
 		assertEquals( client.r(7) , 0 );

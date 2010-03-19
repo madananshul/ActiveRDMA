@@ -3,7 +3,7 @@ package tests;
 import junit.framework.TestCase;
 import client.Client;
 
-import common.ExtActiveRDMA;
+import common.ActiveRDMA;
 
 import examples.dht.DHT;
 import examples.dht.DHT_Active;
@@ -44,7 +44,7 @@ public class DHTTest extends TestCase {
     }
 
     public void tests_DHT_RDMA() throws Exception {
-        ExtActiveRDMA client = new Client(server);
+        ActiveRDMA client = new Client(server);
 
         DHT d;
 

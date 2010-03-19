@@ -7,7 +7,7 @@ public class DHT_Active implements examples.dht.DHT {
 
 	static final int N = 1024;
 
-	protected ExtActiveRDMA m_c;
+	protected ActiveRDMA m_c;
 
 	public static class DHT_Active_Get {
 
@@ -118,7 +118,7 @@ public class DHT_Active implements examples.dht.DHT {
 		}
 	}
 
-	public DHT_Active(ExtActiveRDMA c) {
+	public DHT_Active(ActiveRDMA c) {
 		m_c = c;
 
 		c.load(DHT_Active_Get.class);

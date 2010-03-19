@@ -11,10 +11,9 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
 import common.ActiveRDMA;
-import common.ExtActiveRDMA;
 import common.messages.MessageFactory;
 
-public class Client extends ExtActiveRDMA{
+public class Client extends ActiveRDMA{
 
 	protected InetAddress server;
 	
@@ -57,7 +56,7 @@ public class Client extends ExtActiveRDMA{
 			//TODO: append UID?
 			op.write(out);
 			out.close();
-			
+			//TODO: over size packets!
 			byte[] ar = b.toByteArray();
 			DatagramPacket p = new DatagramPacket(ar, ar.length);
 

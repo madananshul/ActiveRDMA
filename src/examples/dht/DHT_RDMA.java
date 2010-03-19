@@ -11,10 +11,10 @@ import common.*;
 
 public class DHT_RDMA implements DHT {
 
-	private ExtActiveRDMA m_client;
+	private ActiveRDMA m_client;
 	private int N;
 	
-	public DHT_RDMA(ExtActiveRDMA client, int _N)
+	public DHT_RDMA(ActiveRDMA client, int _N)
 	{
 		m_client = client;
 		N = _N;

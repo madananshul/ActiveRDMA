@@ -25,13 +25,14 @@ import common.messages.MessageFactory.Read;
 import common.messages.MessageFactory.Run;
 import common.messages.MessageFactory.Write;
 
-public class Server extends ClassLoader implements MessageVisitor<DatagramPacket>
+public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 {
 
 	final protected AtomicInteger[] memory;
 	final protected Map<String,Class<?>> map;
 	final protected BlockingQueue<Job> queue;
 	final protected DatagramSocket socket;
+	final protected MobileClassLoader loader;
 	
 	class Job{
 		InetAddress address;
@@ -49,6 +50,7 @@ public class Server extends ClassLoader implements MessageVisitor<DatagramPacket
 	
 	public Server(int memory_size, int workers) throws IOException {
 		super();
+		loader = new MobileClassLoader();
 		socket = new DatagramSocket(ActiveRDMA.SERVER_PORT);
 		map = new TreeMap<String, Class<?>>();
 		memory = new AtomicInteger[memory_size];
@@ -79,7 +81,7 @@ public class Server extends ClassLoader implements MessageVisitor<DatagramPacket
 		Class<?> c = map.get(job.name);
 		try {
 			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
-			result = (Integer) m.invoke(null, new Object[]{memory,job.arg});
+			result = (Integer) m.invoke(null, new Object[]{this,job.arg});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -135,17 +137,15 @@ public class Server extends ClassLoader implements MessageVisitor<DatagramPacket
 	 */
 	
 	public int visit(Read read, DatagramPacket context) {
-		return memory[read.address].get();
+		return r(read.address);
 	}
 
 	public int visit(Write write, DatagramPacket context) {
-		int old = memory[write.address].get();
-		memory[write.address].set(write.value);
-		return old;
+		return w(write.address,write.value);
 	}
 
 	public int visit(CAS cas, DatagramPacket context) {
-		return memory[cas.address].compareAndSet(cas.test, cas.value) ? 1 : 0;
+		return cas(cas.address,cas.test,cas.value);
 	}
 
 	public int visit(Run run, DatagramPacket context) {
@@ -159,8 +159,20 @@ public class Server extends ClassLoader implements MessageVisitor<DatagramPacket
 	}
 
 	public int visit(Load load, DatagramPacket context) {
+		return load(load.code);
+	}
+
+	/*
+	 * ActiveRDMA stuff
+	 */
+	
+	public int cas(int address, int test, int value) {
+		return memory[address].compareAndSet(test, value) ? 1 : 0;
+	}
+
+	public int load(byte[] code) {
 		try{
-			Class<?> c = defineClass(null, load.code, 0, load.code.length);
+			Class<?> c = loader.loadMobileCode( code );
 			//indexes by the name of the class TODO: index by md5 instead?
 			//this will actually never return false, if there is a previous
 			//class with the same name LinkageError will occur.
@@ -169,6 +181,28 @@ public class Server extends ClassLoader implements MessageVisitor<DatagramPacket
 			//problems loading
 			return 0;
 		}
+	}
+
+	public int r(int address) {
+		return memory[address].get();
+	}
+
+	public int run(String name, int[] arg) {
+		//note that this is calling locally, thus should NOT be queued
+		Class<?> c = map.get(name);
+		try {
+			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
+			return (Integer) m.invoke(null, new Object[]{this,arg});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public int w(int address, int value) {
+		int old = memory[address].get();
+		memory[address].set(value);
+		return old;
 	}
 
 }

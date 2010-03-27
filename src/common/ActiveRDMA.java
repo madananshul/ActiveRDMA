@@ -76,6 +76,11 @@ public abstract class ActiveRDMA {
 	
 	public static class Alloc{
 		static final int MEM_COUNTER = 0;
+		
+		public static void init(ActiveRDMA a){
+			a.w(MEM_COUNTER, 1);
+		}
+		
 		public static int execute(ActiveRDMA a, int[] args) {
 			int size = args[0];
 			int c = a.r(Alloc.MEM_COUNTER);

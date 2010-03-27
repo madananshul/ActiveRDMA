@@ -84,6 +84,7 @@ public abstract class ActiveRDMA {
 				//failed, get the new value
 				c = a.r(Alloc.MEM_COUNTER);
 			}
+			//System.out.println("Memcounter "+Alloc.MEM_COUNTER+" allocated "+c);
 			return c;
 		}
 	}

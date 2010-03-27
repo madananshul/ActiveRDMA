@@ -56,6 +56,7 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		memory = new AtomicInteger[memory_size];
 		for(int i=0; i<memory.length; ++i)
 			memory[i] = new AtomicInteger(0);
+		memory[0] = new AtomicInteger(1);
 		queue = new LinkedBlockingQueue<Job>();
 		
 		//the worker pool

@@ -4,9 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-//TODO: wasteful allocations?
 public class MessageFactory {
-
+	
+	public static enum ErrorCode{ OK, OUT_OF_BOUNDS, TIME_OUT, UNKNOWN_CODE, DUPLCIATED_CODE, ERROR };
 	enum OpCode{ READ, WRITE, CAS, RUN, LOAD };
 	
 	static public Operation makeRead(int address){
@@ -64,9 +64,41 @@ public class MessageFactory {
 	/*
 	 * 
 	 */
+	
+	public static class Result {
+		public int result;
+		public ErrorCode error;
+		
+		public Result(){
+			error = ErrorCode.ERROR;
+			result = -1;
+		}
+		
+		public Result(int value){
+			result = value;
+			error = ErrorCode.OK;
+		}
+		
+		public Result(ErrorCode prob){
+			if( prob == ErrorCode.OK )
+				throw new IllegalArgumentException("Should not be OK.");
+			error = prob;
+			result = -1; //should be ignored
+		}
+
+		public void write(DataOutputStream s) throws IOException {
+			s.writeInt(error.ordinal());
+			s.writeInt(result);
+		}
+		
+		public void read(DataInputStream s) throws IOException {
+			error = ErrorCode.values()[s.readInt()];
+			result = s.readInt();
+		}
+	}
 
 	public static interface Operation {
-		<T> int visit(MessageVisitor<T> v, T context);
+		<T> Result visit(MessageVisitor<T> v, T context);
 
 		void write(DataOutputStream s) throws IOException;
 		void read(DataInputStream s) throws IOException;
@@ -75,7 +107,7 @@ public class MessageFactory {
 	public static class Read implements Operation {
 		public int address;
 
-		public <C> int visit(MessageVisitor<C> v, C context) {
+		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
 		}
 
@@ -93,7 +125,7 @@ public class MessageFactory {
 		public int address;
 		public int value;
 	
-		public <C> int visit(MessageVisitor<C> v, C context) {
+		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
 		}
 		
@@ -114,7 +146,7 @@ public class MessageFactory {
 		public int test;
 		public int value;
 		
-		public <C> int visit(MessageVisitor<C> v, C context) {
+		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
 		}
 		
@@ -136,7 +168,7 @@ public class MessageFactory {
 		public String name;
 		public int[] arg;
 		
-		public <C> int visit(MessageVisitor<C> v, C context) {
+		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
 		}
 
@@ -160,7 +192,7 @@ public class MessageFactory {
 	public static class Load implements Operation {
 		public byte[] code;
 		
-		public <C> int visit(MessageVisitor<C> v, C context) {
+		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
 		}
 		

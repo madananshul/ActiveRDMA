@@ -59,6 +59,7 @@ public class List_Active implements List{
 		this.c = c;
 		this.root_ptr = makeRoot(c);
 		
+		//FIXME: throws exception when loading duplicated class
 		c.load(List_AddNode.class);
 		c.load(List_GetNode.class);
 	}

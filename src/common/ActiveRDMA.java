@@ -3,6 +3,8 @@ package common;
 import java.io.File;
 import java.io.FileInputStream;
 
+import common.messages.MessageFactory.Result;
+
 //FIXME: there is no specified result for when the address is out of bounds!
 //FIXME: or when the execution fails... use error handlers?
 public abstract class ActiveRDMA {
@@ -18,14 +20,14 @@ public abstract class ActiveRDMA {
 	 * @param address - offset of the memory location
 	 * @return value of memory location *at the time of the read*
 	 */
-	public abstract int r(int address);
+	public abstract Result _r(int address);
 	
 	/** Writes the value into the server's memory.
 	 * @param address - offset of the memory location
 	 * @param value - the new value to be store
 	 * @return old value
 	 */
-	public abstract int w(int address, int value);
+	public abstract Result _w(int address, int value);
 	
 	/** Compare-And-Swap, if test is true it will atomically write value into 
 	 * the memory at location address.
@@ -33,15 +35,15 @@ public abstract class ActiveRDMA {
 	 * @param test - condition that must be true for the assignment to occur
 	 * @param value - the new value to be store
 	 * @return boolean as int (0 - false, else - true) with the test result
-	 */ //TODO: returning int simplifies the interface?
-	public abstract int cas(int address, int test, int value);
+	 */
+	public abstract Result _cas(int address, int test, int value);
 
 	/*
 	 * Active operations
 	 */
 	
 	// mobile code interface expected to be:
-	// static public int execute(AtomicInteger[] mem, int arg); 
+	// static public int execute(ActiveRDMA ardma, int arg); 
 	final public static String METHOD = "execute";
 	final public static Class<?>[] SIGNATURE = new Class[]{ActiveRDMA.class,int[].class};
 
@@ -50,14 +52,51 @@ public abstract class ActiveRDMA {
 	 * @param arg - argument supplied to the executing code
 	 * @result result of the executed method.
 	 */
-	public abstract int run(String name, int[] arg);
+	public abstract Result _run(String name, int[] arg);
 	
 	/** Loads the code of a class
 	 * @param code - the bytecode of a class, not its serialization!
 	 * @return boolean as int (0 - false, else - true) with load success result
 	 */ //TODO: the return value is not all that well defined, what is success?
-	public abstract int load(byte[] code);
+	public abstract Result _load(byte[] code);
 	
+	/*
+	 * exception based wrappers
+	 */
+	
+	protected int unwrap(Result r){
+		switch(r.error){
+		case OUT_OF_BOUNDS:
+		case TIME_OUT:
+		case UNKNOWN_CODE:
+		case DUPLCIATED_CODE:
+		case ERROR:
+			throw new RuntimeException("Error: "+r.error);
+		case OK:
+		default:
+		}
+		return r.result;
+	}
+	
+	public int r(int address){
+		return unwrap( _r(address) );
+	}
+	
+	public int w(int address, int value){
+		return unwrap( _w(address,value) );
+	}
+	
+	public int cas(int address, int test, int value){
+		return unwrap( _cas(address,test,value) );		
+	}
+	
+	public int run(String name, int[] arg){
+		return unwrap( _run(name,arg) );	
+	}
+	
+	public int load(byte[] code){
+		return unwrap( _load(code) );
+	}
 	
 	/* ==============================================================
 	 * all these methods should just use/extend the above "interface"
@@ -130,6 +169,5 @@ public abstract class ActiveRDMA {
 	public int load(Class<?> c) {
 		return load(c.getName().replaceAll("\\.", "/")+".class");
 	}
-	
 	
 }

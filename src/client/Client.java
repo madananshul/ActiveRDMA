@@ -54,7 +54,7 @@ public class Client extends ActiveRDMA{
 			
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream( b );
-			//TODO: append UID?
+			
 			op.write(out);
 			out.close();
 			byte[] ar = b.toByteArray();

@@ -3,10 +3,9 @@ package common;
 import java.io.File;
 import java.io.FileInputStream;
 
+import common.messages.MessageFactory.ErrorCode;
 import common.messages.MessageFactory.Result;
 
-//FIXME: there is no specified result for when the address is out of bounds!
-//FIXME: or when the execution fails... use error handlers?
 public abstract class ActiveRDMA {
 	
 	final public static int REQUEST_TIMEOUT = 5000; //5000ms = 5s
@@ -57,7 +56,7 @@ public abstract class ActiveRDMA {
 	/** Loads the code of a class
 	 * @param code - the bytecode of a class, not its serialization!
 	 * @return boolean as int (0 - false, else - true) with load success result
-	 */ //TODO: the return value is not all that well defined, what is success?
+	 */
 	public abstract Result _load(byte[] code);
 	
 	/*
@@ -145,7 +144,7 @@ public abstract class ActiveRDMA {
 	 * @param name - must be the full name for the resource, not modifications
 	 * are done before calling getResource(name).
 	 */
-	public int load(String name){
+	public Result load(String name){
 		try {
 			File classfile = new File( ActiveRDMA.class.getClassLoader().getResource(name).toURI() );
 
@@ -155,10 +154,9 @@ public abstract class ActiveRDMA {
 			i.read(bytes, 0, len);
 			i.close();
 
-			return load(bytes);
+			return _load(bytes);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
+			return new Result(ErrorCode.ERROR);
 		}
 	}
 
@@ -167,6 +165,10 @@ public abstract class ActiveRDMA {
 	}
 
 	public int load(Class<?> c) {
+		return unwrap( _load(c) );
+	}
+	
+	public Result _load(Class<?> c) {
 		return load(c.getName().replaceAll("\\.", "/")+".class");
 	}
 	

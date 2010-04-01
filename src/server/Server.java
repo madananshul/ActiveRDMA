@@ -37,12 +37,14 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	final protected MobileClassLoader loader;
 	
 	class Job{
+		long timestamp;
 		InetAddress address;
 		int port;
 		String name;
 		int[] arg;
 		
-		public Job(InetAddress address, int port, String name, int[] arg){
+		public Job(long timestamp, InetAddress address, int port, String name, int[] arg){
+			this.timestamp = timestamp;
 			this.address = address;
 			this.port = port;
 			this.name = name;
@@ -80,6 +82,11 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	
 	protected void work() throws Exception {
 		Job job = queue.take();
+		
+		//TODO: define a proper boundary for timeouts...
+		if( (System.currentTimeMillis()-job.timestamp) > ActiveRDMA.REQUEST_TIMEOUT )
+			return;
+		
 		Result result = _run(job.name,job.arg);
 
 		ByteArrayOutputStream oub = new ByteArrayOutputStream();
@@ -143,7 +150,7 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	}
 
 	public Result visit(Run run, DatagramPacket context) {
-		Job job = new Job(context.getAddress(),context.getPort(),run.name,run.arg);
+		Job job = new Job(System.currentTimeMillis(),context.getAddress(),context.getPort(),run.name,run.arg);
 		try {
 			queue.put(job);
 		} catch (InterruptedException e) {

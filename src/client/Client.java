@@ -12,6 +12,7 @@ import java.net.SocketTimeoutException;
 
 import common.ActiveRDMA;
 import common.messages.MessageFactory;
+import common.messages.MessageFactory.ErrorCode;
 import common.messages.MessageFactory.Result;
 
 public class Client extends ActiveRDMA{
@@ -83,7 +84,8 @@ public class Client extends ActiveRDMA{
 			}
 			
 			if( n_retry == -1 ){
-				throw new RuntimeException("The server is dead, Jim.");
+				result = new Result(ErrorCode.TIME_OUT);
+				return result;
 			}
 			
 			DataInputStream in = new DataInputStream(new ByteArrayInputStream(p.getData()));

@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 //FIXME: or when the execution fails... use error handlers?
 public abstract class ActiveRDMA {
 	
-	final public static int REQUEST_TIMEOUT = 5000; //5000ms = 5s
+	final public static int REQUEST_TIMEOUT = 20000; //5000ms = 5s
 	final public static int SERVER_PORT = 15712;
 	
 	/*

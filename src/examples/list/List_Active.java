@@ -59,8 +59,9 @@ public class List_Active implements List{
 		this.c = c;
 		this.root_ptr = makeRoot(c);
 		
-		c.load(List_AddNode.class);
-		c.load(List_GetNode.class);
+		//ignores result!
+		c._load(List_AddNode.class);
+		c._load(List_GetNode.class);
 	}
 	
 	public int add(int value) {

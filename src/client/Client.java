@@ -12,6 +12,8 @@ import java.net.SocketTimeoutException;
 
 import common.ActiveRDMA;
 import common.messages.MessageFactory;
+import common.messages.MessageFactory.ErrorCode;
+import common.messages.MessageFactory.Result;
 
 public class Client extends ActiveRDMA{
 
@@ -21,23 +23,23 @@ public class Client extends ActiveRDMA{
 		this.server = InetAddress.getByName(server);
 	}
 	
-	public int cas(int address, int test, int value) {
+	public Result _cas(int address, int test, int value) {
 		return exchange( MessageFactory.makeCAS(address, test, value));
 	}
 
-	public int w(int address, int value) {
+	public Result _w(int address, int value) {
 		return exchange( MessageFactory.makeWrite(address, value));
 	}
 	
-	public int r(int address) {
+	public Result _r(int address) {
 		return exchange( MessageFactory.makeRead(address));
 	}
 
-	public int run(String name, int[] arg) {
+	public Result _run(String name, int[] arg) {
 		return exchange( MessageFactory.makeRun(name, arg));
 	}
 	
-	public int load(byte[] code) {
+	public Result _load(byte[] code) {
 		return exchange( MessageFactory.makeLoad(code));
 	}
 
@@ -45,24 +47,28 @@ public class Client extends ActiveRDMA{
 	 * Communication stuff
 	 */
 	
-	protected int exchange(MessageFactory.Operation op){
-		int result = 0;
+	protected Result exchange(MessageFactory.Operation op){
+		Result result = new Result();
 		try {
-			//FIXME: creates a new socket for each request, a bit wasteful
 			DatagramSocket socket = new DatagramSocket();
 			
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream( b );
-			//TODO: append UID?
+			
 			op.write(out);
 			out.close();
-			//TODO: over size packets!
 			byte[] ar = b.toByteArray();
+			//over size packets get rejected
+			if( ar.length > socket.getSendBufferSize() )
+				throw new RuntimeException("Too large:"+
+						ar.length +" max:"+socket.getSendBufferSize() );
+			
+			
 			DatagramPacket p = new DatagramPacket(ar, ar.length);
 
 			p.setAddress(server);
 			p.setPort(ActiveRDMA.SERVER_PORT);
-
+			
 			socket.send(p);
 			
 			int n_retry = 3;
@@ -78,11 +84,12 @@ public class Client extends ActiveRDMA{
 			}
 			
 			if( n_retry == -1 ){
-				throw new RuntimeException("The server is dead, Jim.");
+				result = new Result(ErrorCode.TIME_OUT);
+				return result;
 			}
 			
 			DataInputStream in = new DataInputStream(new ByteArrayInputStream(p.getData()));
-			result = in.readInt();
+			result.read(in);
 
 			socket.close();
 			

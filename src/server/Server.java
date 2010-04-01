@@ -19,9 +19,11 @@ import common.ActiveRDMA;
 import common.messages.MessageFactory;
 import common.messages.MessageVisitor;
 import common.messages.MessageFactory.CAS;
+import common.messages.MessageFactory.ErrorCode;
 import common.messages.MessageFactory.Load;
 import common.messages.MessageFactory.Operation;
 import common.messages.MessageFactory.Read;
+import common.messages.MessageFactory.Result;
 import common.messages.MessageFactory.Run;
 import common.messages.MessageFactory.Write;
 
@@ -35,12 +37,14 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	final protected MobileClassLoader loader;
 	
 	class Job{
+		long timestamp;
 		InetAddress address;
 		int port;
 		String name;
 		int[] arg;
 		
-		public Job(InetAddress address, int port, String name, int[] arg){
+		public Job(long timestamp, InetAddress address, int port, String name, int[] arg){
+			this.timestamp = timestamp;
 			this.address = address;
 			this.port = port;
 			this.name = name;
@@ -56,7 +60,7 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		memory = new AtomicInteger[memory_size];
 		for(int i=0; i<memory.length; ++i)
 			memory[i] = new AtomicInteger(0);
-		memory[0] = new AtomicInteger(1);
+		Alloc.init(this);
 		queue = new LinkedBlockingQueue<Job>();
 		
 		//the worker pool
@@ -78,18 +82,16 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	
 	protected void work() throws Exception {
 		Job job = queue.take();
-		int result = 0;
-		Class<?> c = map.get(job.name);
-		try {
-			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
-			result = (Integer) m.invoke(null, new Object[]{this,job.arg});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		//TODO: define a proper boundary for timeouts...
+		if( (System.currentTimeMillis()-job.timestamp) > ActiveRDMA.REQUEST_TIMEOUT )
+			return;
+		
+		Result result = _run(job.name,job.arg);
 
 		ByteArrayOutputStream oub = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(oub);
-		out.writeInt(result);
+		result.write(out);
 		out.close();
 		
 		byte[] bb = oub.toByteArray();
@@ -109,16 +111,14 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 				
 				DataInputStream in = new DataInputStream(new ByteArrayInputStream(packet.getData()));
 				Operation op = MessageFactory.read(in);
-				int result = op.visit(this, packet);
+				Result result = op.visit(this, packet);
 				
-				//FIXME: ARGHH ugly code!
-				//don't close socket if it's a Run operation
-				if( op instanceof MessageFactory.Run )
+				if( result == null )
 					continue;
 
 				ByteArrayOutputStream oub = new ByteArrayOutputStream();
 				DataOutputStream out = new DataOutputStream(oub);
-				out.writeInt(result);
+				result.write(out);
 				out.close();
 				
 				byte[] bb = oub.toByteArray();
@@ -137,73 +137,103 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	 * Visit each operation
 	 */
 	
-	public int visit(Read read, DatagramPacket context) {
-		return r(read.address);
+	public Result visit(Read read, DatagramPacket context) {
+		return _r(read.address);
 	}
 
-	public int visit(Write write, DatagramPacket context) {
-		return w(write.address,write.value);
+	public Result visit(Write write, DatagramPacket context) {
+		return _w(write.address,write.value);
 	}
 
-	public int visit(CAS cas, DatagramPacket context) {
-		return cas(cas.address,cas.test,cas.value);
+	public Result visit(CAS cas, DatagramPacket context) {
+		return _cas(cas.address,cas.test,cas.value);
 	}
 
-	public int visit(Run run, DatagramPacket context) {
-		Job job = new Job(context.getAddress(),context.getPort(),run.name,run.arg);
+	public Result visit(Run run, DatagramPacket context) {
+		Job job = new Job(System.currentTimeMillis(),context.getAddress(),context.getPort(),run.name,run.arg);
 		try {
 			queue.put(job);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return 0;
+		return null;
 	}
 
-	public int visit(Load load, DatagramPacket context) {
-		return load(load.code);
+	public Result visit(Load load, DatagramPacket context) {
+		return _load(load.code);
 	}
 
 	/*
 	 * ActiveRDMA stuff
 	 */
 	
-	public int cas(int address, int test, int value) {
-		return memory[address].compareAndSet(test, value) ? 1 : 0;
+	public Result _cas(int address, int test, int value) {
+		Result result = new Result();
+		try{
+			result.result = memory[address].compareAndSet(test, value) ? 1 : 0;
+			result.error = ErrorCode.OK;
+		}catch(ArrayIndexOutOfBoundsException exc){
+			result.error = ErrorCode.OUT_OF_BOUNDS;
+			result.result = address;
+		}
+		return result;
 	}
 
-	public int load(byte[] code) {
+	public Result _load(byte[] code) {
+		Result result = new Result();
 		try{
 			Class<?> c = loader.loadMobileCode( code );
 			//indexes by the name of the class TODO: index by md5 instead?
 			//this will actually never return false, if there is a previous
 			//class with the same name LinkageError will occur.
-			return map.put(c.getName(),c) == null ? 1 : 0;
+			result.result = map.put(c.getName(),c) == null ? 1 : 0;
+			result.error = ErrorCode.OK;
 		}catch(LinkageError e){
 			//problems loading
-			return 0;
+			result.error = ErrorCode.DUPLCIATED_CODE;
 		}
+		return result;
 	}
 
-	public int r(int address) {
-		return memory[address].get();
+	public Result _r(int address) {
+		Result result = new Result();
+		try{
+			result.result =  memory[address].get();
+			result.error = ErrorCode.OK;
+		}catch(ArrayIndexOutOfBoundsException exc){
+			result.error = ErrorCode.OUT_OF_BOUNDS;
+			result.result = address;
+		}
+		return result;
 	}
 
-	public int run(String name, int[] arg) {
+	public Result _run(String name, int[] arg) {
+		Result result = new Result();
 		//note that this is calling locally, thus should NOT be queued
 		Class<?> c = map.get(name);
 		try {
 			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
-			return (Integer) m.invoke(null, new Object[]{this,arg});
+			result.result =  (Integer) m.invoke(null, new Object[]{this,arg});
+			result.error = ErrorCode.OK;
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.result = -1;
+			result.error = ErrorCode.ERROR;
 		}
-		return -1;
+		return result;
 	}
 
-	public int w(int address, int value) {
-		int old = memory[address].get();
-		memory[address].set(value);
-		return old;
+	public Result _w(int address, int value) {
+		Result result = new Result();
+		try{
+			result.result = memory[address].get();
+			memory[address].set(value);
+			result.error = ErrorCode.OK;
+		}catch(ArrayIndexOutOfBoundsException exc){
+			result.error = ErrorCode.OUT_OF_BOUNDS;
+			result.result = address;
+		}
+		return result;
 	}
 
 }

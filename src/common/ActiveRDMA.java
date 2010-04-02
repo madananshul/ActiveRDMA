@@ -2,13 +2,17 @@ package common;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.Map;
 
 import common.messages.MessageFactory.ErrorCode;
 import common.messages.MessageFactory.Result;
 
 public abstract class ActiveRDMA {
 	
-	final public static int REQUEST_TIMEOUT = 20000; //5000ms = 5s
+	//FIXME: why the increase to 20s??
+	final public static int REQUEST_TIMEOUT = 20000; //20s ?!?!
 	final public static int SERVER_PORT = 15712;
 	
 	/*
@@ -51,7 +55,7 @@ public abstract class ActiveRDMA {
 	 * @param arg - argument supplied to the executing code
 	 * @result result of the executed method.
 	 */
-	public abstract Result _run(String name, int[] arg);
+	public abstract Result _run(byte[] md5, int[] arg);
 	
 	/** Loads the code of a class
 	 * @param code - the bytecode of a class, not its serialization!
@@ -89,8 +93,8 @@ public abstract class ActiveRDMA {
 		return unwrap( _cas(address,test,value) );		
 	}
 	
-	public int run(String name, int[] arg){
-		return unwrap( _run(name,arg) );	
+	public int run(byte[] md5, int[] arg){
+		return unwrap( _run(md5,arg) );	
 	}
 	
 	public int load(byte[] code){
@@ -140,28 +144,36 @@ public abstract class ActiveRDMA {
 	 * Simplification of load and run commands
 	 */
 	
-	/**
-	 * @param name - must be the full name for the resource, not modifications
-	 * are done before calling getResource(name).
-	 */
-	public Result load(String name){
-		try {
-			File classfile = new File( ActiveRDMA.class.getClassLoader().getResource(name).toURI() );
+	protected Map<String,ByteArray> class_to_md5 = new HashMap<String, ByteArray>();
+	protected Map<ByteArray,Class<?>> md5_to_class = new HashMap<ByteArray, Class<?>>();
+	
+	public static byte[] getCode(Class<?> cl) throws Exception{
+		String name = cl.getName().replaceAll("\\.", "/")+".class";
+		File classfile = new File( ActiveRDMA.class.getClassLoader().getResource(name).toURI() );
 
-			int len = (int)(classfile.length());
-			byte[] bytes = new byte[len];
-			FileInputStream i = new FileInputStream(classfile);
-			i.read(bytes, 0, len);
-			i.close();
+		int len = (int)(classfile.length());
+		byte[] bytes = new byte[len];
+		FileInputStream i = new FileInputStream(classfile);
+		i.read(bytes, 0, len);
+		i.close();
 
-			return _load(bytes);
-		} catch (Exception e) {
-			return new Result(ErrorCode.ERROR);
-		}
+		return bytes;
 	}
 
+	protected boolean tableClassAndMd5(Class<?> cl, byte[] code){
+		if( !class_to_md5.containsKey(cl.getName()) ){
+			MessageDigest digest = ByteArray.getDigest();
+			ByteArray hash = new ByteArray( code , digest );
+			class_to_md5.put(cl.getName(), hash);
+			md5_to_class.put(hash, cl);
+			return true;
+		}
+		//already contains
+		return false;
+	}
+	
 	public int run(Class<?> c, int[] arg) {
-		return run(c.getName(),arg);
+		return run(class_to_md5.get( c.getName() ).array(),arg);
 	}
 
 	public int load(Class<?> c) {
@@ -169,7 +181,13 @@ public abstract class ActiveRDMA {
 	}
 	
 	public Result _load(Class<?> c) {
-		return load(c.getName().replaceAll("\\.", "/")+".class");
+		try {
+			byte[] code = getCode(c);
+			tableClassAndMd5(c,code);
+			return _load( code );
+		} catch (Exception e) {
+			return new Result(ErrorCode.ERROR);
+		}
 	}
 	
 }

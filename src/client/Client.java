@@ -9,8 +9,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
+import java.util.HashMap;
+import java.util.Map;
 
 import common.ActiveRDMA;
+import common.ByteArray;
 import common.messages.MessageFactory;
 import common.messages.MessageFactory.ErrorCode;
 import common.messages.MessageFactory.Result;
@@ -18,9 +21,11 @@ import common.messages.MessageFactory.Result;
 public class Client extends ActiveRDMA{
 
 	protected InetAddress server;
+	protected Map<String,ByteArray> map;
 	
 	public Client(String server) throws IOException{
 		this.server = InetAddress.getByName(server);
+		this.map = new HashMap<String, ByteArray>();
 	}
 	
 	public Result _cas(int address, int test, int value) {
@@ -35,14 +40,14 @@ public class Client extends ActiveRDMA{
 		return exchange( MessageFactory.makeRead(address));
 	}
 
-	public Result _run(String name, int[] arg) {
-		return exchange( MessageFactory.makeRun(name, arg));
+	public Result _run(byte[] md5, int[] arg) {
+		return exchange( MessageFactory.makeRun(md5, arg));
 	}
 	
 	public Result _load(byte[] code) {
 		return exchange( MessageFactory.makeLoad(code));
 	}
-
+	
 	/*
 	 * Communication stuff
 	 */

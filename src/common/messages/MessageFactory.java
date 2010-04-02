@@ -30,9 +30,9 @@ public class MessageFactory {
 		return r;
 	}
 
-	static public Operation makeRun(String name, int[] arg){
+	static public Operation makeRun(byte[] md5, int[] arg){
 		Run r = new Run();
-		r.name = name;
+		r.md5 = md5;
 		r.arg = arg;
 		return r;
 	}
@@ -165,7 +165,7 @@ public class MessageFactory {
 	}
 	
 	public static class Run implements Operation {
-		public String name;
+		public byte[] md5;
 		public int[] arg;
 		
 		public <C> Result visit(MessageVisitor<C> v, C context) {
@@ -174,15 +174,21 @@ public class MessageFactory {
 
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(OpCode.RUN.ordinal());
-			s.writeUTF(name);
+			s.writeInt(md5.length);
+			for(int i=0;i<md5.length;++i)
+				s.writeByte(md5[i]);
 			s.writeInt(arg.length);
 			for(int i=0;i<arg.length;++i)
 				s.writeInt(arg[i]);
 		}
 
 		public void read(DataInputStream s) throws IOException {
-			name = s.readUTF();
 			int n = s.readInt();
+			md5 = new byte[n];
+			for(int i=0;i<md5.length;++i)
+				md5[i] = s.readByte();
+
+			n = s.readInt();
 			arg = new int[n];
 			for(int i=0;i<arg.length;++i)
 				arg[i] = s.readInt();

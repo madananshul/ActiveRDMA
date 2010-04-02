@@ -9,13 +9,12 @@ import java.lang.reflect.Method;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import common.ActiveRDMA;
+import common.ByteArray;
 import common.messages.MessageFactory;
 import common.messages.MessageVisitor;
 import common.messages.MessageFactory.CAS;
@@ -29,9 +28,8 @@ import common.messages.MessageFactory.Write;
 
 public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 {
-
+	
 	final protected AtomicInteger[] memory;
-	final protected Map<String,Class<?>> map;
 	final protected BlockingQueue<Job> queue;
 	final protected DatagramSocket socket;
 	final protected MobileClassLoader loader;
@@ -40,14 +38,14 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		long timestamp;
 		InetAddress address;
 		int port;
-		String name;
+		byte[] md5;
 		int[] arg;
 		
-		public Job(long timestamp, InetAddress address, int port, String name, int[] arg){
+		public Job(long timestamp, InetAddress address, int port, byte[] md5, int[] arg){
 			this.timestamp = timestamp;
 			this.address = address;
 			this.port = port;
-			this.name = name;
+			this.md5 = md5;
 			this.arg = arg;
 		}
 	}
@@ -56,7 +54,6 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		super();
 		loader = new MobileClassLoader();
 		socket = new DatagramSocket(ActiveRDMA.SERVER_PORT);
-		map = new TreeMap<String, Class<?>>();
 		memory = new AtomicInteger[memory_size];
 		for(int i=0; i<memory.length; ++i)
 			memory[i] = new AtomicInteger(0);
@@ -87,7 +84,7 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		if( (System.currentTimeMillis()-job.timestamp) > ActiveRDMA.REQUEST_TIMEOUT )
 			return;
 		
-		Result result = _run(job.name,job.arg);
+		Result result = _run(job.md5,job.arg);
 
 		ByteArrayOutputStream oub = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(oub);
@@ -150,7 +147,7 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	}
 
 	public Result visit(Run run, DatagramPacket context) {
-		Job job = new Job(System.currentTimeMillis(),context.getAddress(),context.getPort(),run.name,run.arg);
+		Job job = new Job(System.currentTimeMillis(),context.getAddress(),context.getPort(),run.md5,run.arg);
 		try {
 			queue.put(job);
 		} catch (InterruptedException e) {
@@ -186,7 +183,7 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 			//indexes by the name of the class TODO: index by md5 instead?
 			//this will actually never return false, if there is a previous
 			//class with the same name LinkageError will occur.
-			result.result = map.put(c.getName(),c) == null ? 1 : 0;
+			result.result = tableClassAndMd5(c,code) ? 1 : 0;
 			result.error = ErrorCode.OK;
 		}catch(LinkageError e){
 			//problems loading
@@ -207,10 +204,10 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		return result;
 	}
 
-	public Result _run(String name, int[] arg) {
+	public Result _run(byte[] md5, int[] arg) {
 		Result result = new Result();
 		//note that this is calling locally, thus should NOT be queued
-		Class<?> c = map.get(name);
+		Class<?> c = md5_to_class.get(new ByteArray(md5));
 		try {
 			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
 			result.result =  (Integer) m.invoke(null, new Object[]{this,arg});

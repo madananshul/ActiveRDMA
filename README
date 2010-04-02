@@ -1,12 +1,17 @@
 
-The current version uses separate bin/ and src/ (did the old one also use this?)
-So the code is expected to read .class from bin/ and not the source.
+The current version uses separate bin/ and src/
 
 FIXME tags point to stuff that needs/should be improved in future versions (Eclipse has a way of tracking this).
 
 The src/tests uses JUnit (again Eclipse includes this by default but you may need to have junit.jar in your classpath otherwise).
 
-TODO: error codes
 TODO: test hidden links static calls between loaded classes.
-TODO: packet size for UDP, error when sending larger classes?
 TODO: DFS.
+
+load(T) -> map<name,hash>
+   - send load(byte[])
+run(T) -> get<name>.hash
+   - send run(byte[])
+
+load(T) -> map<hash,code>
+run(T) -> get<hash>.code

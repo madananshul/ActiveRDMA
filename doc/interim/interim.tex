@@ -9,7 +9,7 @@
 
 \maketitle
 
-\section{Idea}
+\section{Introduction}
 
 Traditional distributed services have built upon RPC or RPC-like
 interfaces at the network level. In these systems, a server exports a
@@ -31,18 +31,78 @@ linked list in memory), the cost of multiple round-trips over the
 network can be extreme compared to performing the computation locally
 at the server.
 
-The proposal in~\cite{thekkath94} gets around this limitation by also
-allowing RPC in some cases (e.g., when their nameserver implementation
-cannot find an entry after a certain number of hash-table
-probes). However, we see a better way. In the spirit of Active
-Networks~\cite{AN-survey}, we propose to allow clients to send code to
-the server to execute directly against the shared data structures. We
-call this \textbf{Active RDMA}. This functionality will allow for the
-\emph{flexibility} and \emph{client-driven intelligence} of RDMA while
-providing the \emph{data locality} advantages of traditional
-server-side code.
+We attempt to retain the benefits of both designs by building a
+hybrid. In the spirit of Active Networks~\cite{AN-survey}, we propose
+to allow clients to send code to the server to execute directly
+against the shared data structures. We call this \textbf{Active
+  RDMA}. This functionality will allow for the \emph{flexibility} and
+\emph{client-driven intelligence} of RDMA while providing the
+\emph{data locality} advantages of traditional server-side code.
 
-This proposal differs in several ways from previous work and other
+In order to narrow the scope of our project, we focus specifically on
+environments in which security is not an explicit concern. This seems
+strange at first in the context of a network-centric proposal, but
+such environments do exist. For example, large computing clusters or
+datacenters with a single owner, in which all machines or network
+devices are trusted and performance is the paramount concern, are one
+possible application domain.
+
+Furthermore, the assumption that security is externally provided
+(whole-cluster access control) or otherwise an orthogonal problem
+allows us to push Active RDMA's code execution to a lower level,
+bypassing layers for higher performance. We plan to define our
+interface to be sufficiently low-level that it could hypothetically
+execute directly on a network interface card, interacting with shared
+memory via DMA. This would allow for extremely low latency.
+
+A secondary benefit to this, and one that we explore, lies in the
+flexibility of executing arbitrary code segments on the server,
+defined by an application. For example, a ``grep''-like operation to
+search through some shared data structure is significantly faster when
+executed on the server than when querying a fixed interface from the
+client side.
+
+Our work consists of several main contributions:
+
+\begin{itemize} \itemsep -2pt
+
+\item Defining a low-level interface for remote code based on Java
+  class-file shipping and word-level shared memory access; defining a
+  protocol and building reference implementations of a server and a
+  client library to enable use of this ActiveRDMA interface.
+
+\item Building a simulation infrastructure to examine the performance
+  tradeoffs of the performance split. We base this infrastructure on a
+  conglomeration of the Bochs x86 simulator and the Kaffe open-source
+  JVM with a timing model, in order to give some level of fidelity to
+  our comparison results.
+
+\item Building a network filesystem on top of this infrastructure,
+  keeping data in-memory for simplicity, and evaluating against
+  existing network filesystems both on traditional workloads and on
+  those with application-specific remote code optimizations. We will
+  use FUSE on the client side and expose full Unix semantics in order
+  to make comparison with traditional network filesystems possible.
+
+\end{itemize}
+
+\section{Background and Related Work}
+
+As discussed above, the primary advantage of a basic RDMA system is
+that there is low latency for common data-transfer operations that
+require little actual logic on the server side, and deal with simple
+data structures. However, the inability to execute code on the server
+can lead to unacceptably high cost for some common operations, such as
+a linked list traversal. The proposal in~\cite{thekkath94} gets around
+this limitation by also allowing RPC in some cases (e.g., when their
+nameserver implementation cannot find an entry after a certain number
+of hash-table probes). This is a win for performance, but then
+eliminates the flexibility that client-side logic has for
+application-specific optimizations. Our Active RDMA proposal retains
+this flexibility while attempting to regain some of the server-side
+performance.
+
+Our work differs in several ways from previous work and other
 alternatives:
 
 \begin{itemize} \itemsep -2pt
@@ -71,153 +131,45 @@ alternatives:
 
 \end{itemize}
 
-In order to narrow the scope of our proposal, we plan to focus
-specifically on environments in which security is not an explicit
-concern. This seems strange at first in the context of a
-network-centric proposal, but such environments do exist. For example,
-large computing clusters or datacenters with a single owner, in which
-all machines or network devices are trusted and performance is the
-paramount concern, are one possible application domain.
-
-Furthermore, the assumption that security is externally provided
-(whole-cluster access control) or otherwise an orthogonal problem
-allows us to push Active RDMA's code execution to a lower level,
-bypassing layers for higher performance. We plan to define our
-interface to be sufficiently low-level that it could hypothetically
-execute directly on a network interface card, interacting with shared
-memory via DMA. This would allow for extremely low latency.
-
-A secondary benefit to this, and one that we plan to explore, lies in
-the flexibility of executing arbitrary code segments. A client could
-dynamically generate this code; for example, a ``grep''-like operation
-to search through some shared data structure could employ a
-custom-compiled inner loop. If implemented in the context of a
-distributed filesystem, this would combine the benefits of Active
-Disk-like data locality for filtering with the flexibility of custom
-code generation.
-
-Our proposal thus encompasses these key points:
-
-\begin{itemize} \itemsep -2pt
-
-\item Defining a low-level ISA (instruction-set architecture) for
-  remote code
-
-\item Allowing clients to send remote code to a server to access
-  shared memory directly
-
-\item Demonstrating the capabilities of this architecture to: (i)
-  implement a real distributed system (specifically, a filesystem);
-  (ii) provide unique advantages by allowing arbitrary remote code
-  execution.
-
-\end{itemize}
-
-\section{Work Plan}
-
-We will implement Active RDMA in several stages, detailed below:
-
-\subsection{Specifications}
-
-We must first specify the interface that the Active RDMA mechanism
-provides. This will encompass an ISA specification for the remote code
-as well as the user-level APIs to (i) export memory on the server side
-and (ii) send remote code to a server on the client side.
-
-We plan to base our ISA specification on the low-level JVM bytecode
-format, primarily in order to take advantage of existing
-infrastructure and tools. There are several open-source JVMs from
-which we can borrow a JIT engine, for example Kaffe.
-
-\subsection{Execution Engine}
-
-In order to make the prototype development feasible, we will not
-initially pursue an optimized implementation of Active RDMA either in
-a network interface card or in low-level system software. Rather, we
-will prototype in userland. As mentioned above, we plan to base the
-execution engine on a JVM core.
-
-\subsection{Mobile Code Toolchain}
-
-In order to use mobile code, clients need to be able to write it
-efficiently. As a first pass, we can implement a simple assembler for
-the bytecode format. It might be possible to adapt a simplified
-compiler to this backend if we find ourselves with more time. However,
-we expect that for our demonstration applications, mobile code
-segments will either be relatively easy to construct by hand, or else
-will be generated dynamically.
-
-\subsection{Applications}
-
-We will demonstrate Active RDMA's capabilities with a distributed
-filesystem application. We can start by implementing basic
-functionality to access files in a simple backing store, provided by
-hooks on the server. Then, once that is complete, we can build a few
-specific demonstrations of the flexibility of Active RDMA's mobile
-code -- at least the canonical example of remote-grep, and perhaps
-others.
-
-\subsection{Distributed Filesystem Evaluation}
-
-Given this distributed filesystem application, we will evaluate
-performance against NFS and AFS. We will evaluate raw I/O performance,
-and we will also develop benchmarks that take advantage of our unique
-mobile-code features to showcase the strengths of our implementation.
-
-\subsection{Additional Demos}
-
-If time allows, we will develop additional (small) demonstration
-applications that use mobile code in some way to implement some
-distributed functionality.
-
-\subsection{Goals}
-
-As a baseline, 75\% goal, we hope to at least implement Active RDMA
-and get a simple filesystem to work on top of it.
-
-Our 100\% goal, and the one that we expect to achieve, is to build
-specific mobile-code filesystem applications such as remote-grep and
-demonstrate the strengths of our proposal.
-
-If time allows and we wish to go much further, we will investigate (i)
-implementing further applications that do interesting things with
-mobile code, perhaps generating it dynamically, (ii) a more complete
-toolchain for mobile code, and (iii) kernel-level implementations of
-the Active RDMA execution engine.
-
-\section{Resources}
-
-We will require several network-connected machines to evaluate this
-proposal. In development, we can use either a set of virtual machines
-or our personal workstations. In the final evaluation, we may look
-into finding a more complete, larger test network to stress-test the
-implementation.
-
-\section{Intended Outline}
+\section{Evaluation Section}
 
 \begin{itemize}
-\item Introduction and RPC-RDMA Tradeoff
-\item Related Work
-\item Active RDMA
-  \begin{itemize}
-  \item ISA specifications
-  \item several small examples of remote code segments (data structure manipulation)
-  \end{itemize}
-\item Active RDMA Filesystem (ARF)
-  \begin{itemize}
-    \item Shared data structures
-    \item Server-side hooks
-    \item Client-server partitioning tradeoff
-    \end{itemize}
-\item Dynamic Mobile Code: Remote Grep
-  \begin{itemize}
-  \item Mechanism: how to generate code
-  \end{itemize}
-\item Evaluation
-\item Future Work
+\item Basic performance: sequential read, write, Modified Andrew Benchmark
+\begin{itemize}
+\item Compare against NFS, AFS
+\item Warm the pagecache for NFS, AFS comparisons to make in-memory
+  comparison fair
+\end{itemize}
+\item Scaling performance: read/write bandwidth as number of clients grows
+\item Performance as JVM speed varies: sweep the JVM speed relative to
+  the main CPU speed
+\item Performance as DMA cost varies: sweep the cost of memory access
+  from the NIC
+\item Performance as network latency varies: sweep the round-trip time
+\item Custom code-assisted applications (compare against NFS, AFS)
+\begin{itemize}
+\item Remote grep, remote find
+\item Large-tree file copy
+\end{itemize}
 \end{itemize}
 
-\bibliography{interim}
-\bibliographystyle{abbrv}
+As an important note, in order to achieve accurate timing results, the
+benchmark clients (which report execution times) must be run in the
+same ``virtual time'' realm as the Bochs-simulated
+server. Importantly, wall-clock time taken by Bochs+JVM for a given
+operation does not correspond to the counted cycles for that
+operation. We will solve this issue one of two ways, depending on
+implementation feasibility: either run the clients on the same or
+another Bochs instance, clock-synchronized to the server, or else
+somehow query ``server time'' before and after each benchmark run
+(through a Bochs backdoor, for example) and report that number. The
+latter option is much simpler, and only has the potential inaccuracy
+that clients appear much faster than they would if everything were
+running in the same clock domain; but as long as all filesystems are
+evaluated this way, it is still fair in some sense. As a side-benefit,
+such an evaluation will minimize the impact of our userspace
+(FUSE-based) filesystem client that will be used by the benchmarks.
+
+\bibliography{interim} \bibliographystyle{abbrv}
 
 \end{document}

@@ -131,10 +131,78 @@ alternatives:
 
 \end{itemize}
 
-\section{Evaluation Section}
+\section{Progress So Far}
+
+So far, we have built a prototype implementation of Active RDMA in
+Java, as well as several simple test applications, and we plan to move
+onto a full system simulator-based evaluation framework and a
+FUSE-based client filesystem interface so that we can more accurately
+evaluate performance. Our progress can be summarized by these
+accomplishments so far:
 
 \begin{itemize}
-\item Basic performance: sequential read, write, Modified Andrew Benchmark
+\item Defined an Active RDMA client-server interface, at the API level
+  and at the wire protocol level. The interface allows direct memory
+  access as well as code migration (using Java bytecode), and supports the following basic operations:
+  \begin{itemize}
+  \item Read, Write, Compare-and-Swap -- as in original RDMA, these
+    allow for direct memory access over the network.
+  \item Load(bytecode) -- loads a Java class file into the remote
+    environment.
+  \item Execute(code, param) -- Executes previously-loaded remote code
+    (referenced by MD5 hash), giving it direct access to the host
+    memory.
+  \end{itemize}
+\item Build a prototype implementation of this system in Java. The
+  server consists of a single large array representing host memory and
+  an implementation of the wire protocol and Java environment (class
+  loader, etc). The client consists of a library that allows the user
+  to easily load classes and call them remotely.
+\item Built three demo/test applications on this prototype framework:
+  a simple hash table, a basic in-memory filesystem (built on the hash
+  table), and a locking (mutual exclusion) service with FCFS lock
+  ordering.
+\end{itemize}
+
+By the end of the semester, we plan to do the following:
+
+\begin{itemize}
+\item Integrate the Kaffe JVM into the Bochs full system simulator's
+  network card (PCI ne2000) implementation. This will be a first
+  approximation of what our proposed hardware would actually look
+  like. The network card will look for ``magic packets'' of a certain
+  format, probably UDP packets to a particular port, and steal them
+  from the packet stream, interpreting them as Active RDMA
+  commands. The JVM will execute the remote code. We will implement a
+  unified timing framework between Bochs (which has an instrumentation
+  interface for such things) and Kaffe (likely just counting opcodes
+  as they execute), defining certain costs for host memory access in
+  order to establish an interesting tradeoff. We will build a simple
+  client to query ``server time'' (current cycle count) so that
+  benchmarks can be timed on this virtual timeline rather than by
+  wallclock time (which may not correspond directly to simulated
+  cycles). \emph{Estimated time:}~\textbf{2 weeks}
+
+\item Build a FUSE wrapper around our simple in-memory filesystem,
+  allowing us to run ``real'' benchmarks against it. \emph{Estimated
+    time:}~\textbf{1 week} (in parallel to the above task)
+
+\item Build custom remote-code \emph{grep} and \emph{find} utilities,
+  and a remote-code-based file copy utility, to execute on top of our
+  Active RDMA filesystem. \emph{Estimated time:}~\textbf{1 week}
+
+\item Evaluate several common filesystem benchmarks on our filesystem,
+  as well as NFS served from a Linux instance running on our simulator
+  (serving with a warm page cache). \emph{Estimated time:}~\textbf{A
+    few days}
+
+\end{itemize}
+
+\section{Evaluation Sketch}
+
+\begin{itemize}
+\item Basic performance: sequential read, write, Modified Andrew
+  Benchmark
 \begin{itemize}
 \item Compare against NFS, AFS
 \item Warm the pagecache for NFS, AFS comparisons to make in-memory
@@ -152,23 +220,6 @@ alternatives:
 \item Large-tree file copy
 \end{itemize}
 \end{itemize}
-
-As an important note, in order to achieve accurate timing results, the
-benchmark clients (which report execution times) must be run in the
-same ``virtual time'' realm as the Bochs-simulated
-server. Importantly, wall-clock time taken by Bochs+JVM for a given
-operation does not correspond to the counted cycles for that
-operation. We will solve this issue one of two ways, depending on
-implementation feasibility: either run the clients on the same or
-another Bochs instance, clock-synchronized to the server, or else
-somehow query ``server time'' before and after each benchmark run
-(through a Bochs backdoor, for example) and report that number. The
-latter option is much simpler, and only has the potential inaccuracy
-that clients appear much faster than they would if everything were
-running in the same clock domain; but as long as all filesystems are
-evaluated this way, it is still fair in some sense. As a side-benefit,
-such an evaluation will minimize the impact of our userspace
-(FUSE-based) filesystem client that will be used by the benchmarks.
 
 \bibliography{interim} \bibliographystyle{abbrv}
 

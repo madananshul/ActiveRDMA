@@ -2,7 +2,7 @@
 \usepackage{fullpage}
 \usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 
-\title{15-712 Project Interim Proposal: Active RDMA}
+\title{15-712 Project Interim Report: Active RDMA}
 \author{Chris Fallin, Anshul Madan, Filipe Milit\~{a}o}
 \date{}
 \begin{document}
@@ -41,7 +41,7 @@ against the shared data structures. We call this \textbf{Active
 
 In order to narrow the scope of our project, we focus specifically on
 environments in which security is not an explicit concern. This seems
-strange at first in the context of a network-centric proposal, but
+strange at first in the context of a network-centric project, but
 such environments do exist. For example, large computing clusters or
 datacenters with a single owner, in which all machines or network
 devices are trusted and performance is the paramount concern, are one
@@ -99,8 +99,8 @@ this limitation by also allowing RPC in some cases (e.g., when their
 nameserver implementation cannot find an entry after a certain number
 of hash-table probes). This is a win for performance, but then
 eliminates the flexibility that client-side logic has for
-application-specific optimizations. Our Active RDMA proposal retains
-this flexibility while attempting to regain some of the server-side
+application-specific optimizations. Our Active RDMA idea retains this
+flexibility while attempting to regain some of the server-side
 performance.
 
 Our work differs in several ways from previous work and other
@@ -125,7 +125,7 @@ alternatives:
 
 \item Mobile code~\cite{mobile} is the name for a general research
   thrust of code migration over networks in order to build distributed
-  systems. This is the most similar to our proposal. However, mobile
+  systems. This is the most similar to our idea. However, mobile
   code is generally a higher-level abstraction that does not provide
   direct access to a shared memory segment, for example, and provides
   more sandboxing and security that remove many of the potential

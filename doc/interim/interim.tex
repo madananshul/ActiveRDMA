@@ -50,10 +50,12 @@ possible application domain.
 Furthermore, the assumption that security is externally provided
 (whole-cluster access control) or otherwise an orthogonal problem
 allows us to push Active RDMA's code execution to a lower level,
-bypassing layers for higher performance. We plan to define our
-interface to be sufficiently low-level that it could hypothetically
-execute directly on a network interface card, interacting with shared
-memory via DMA. This would allow for extremely low latency.
+bypassing layers for higher performance. 
+
+We plan to define our interface to be sufficiently low-level that
+it could hypothetically execute directly on a network interface
+card~\cite{nic-basedreduction}, interacting with shared memory via DMA.
+This would allow for extremely low latency.
 
 A secondary benefit to this, and one that we explore, lies in the
 flexibility of executing arbitrary code segments on the server,
@@ -113,12 +115,13 @@ alternatives:
 
 \item Active Disks~\cite{AD2,AD} execute code at a disk controller,
   increasing data locality for certain types of data preprocessing in
-  the same way as Active RDMA will allow for storage
-  applications. However, Active Disks are limited in scope to this
-  data processing. In contrast, Active RDMA is a generic mechanism
-  that not only will allow for storage applications but any
-  distributed system that requires some shared state at a central
-  server.
+  the same way as Active RDMA will allow for storage applications.
+  However, Active Disks are limited in scope to this data processing.
+  In contrast, Active RDMA is a generic mechanism that not only will
+  allow for storage applications but any distributed system that
+  requires some shared state at a central server. Also, the fact the
+  interface would allow the RDMA code to be executed on the NIC itself, 
+  should improve the performance of network storage applications.
 
 \item Mobile code~\cite{mobile} is the name for a general research
   thrust of code migration over networks in order to build distributed
@@ -136,8 +139,10 @@ So far, we have built a prototype implementation of Active RDMA in
 Java, as well as several simple test applications, and we plan to move
 onto a full system simulator-based evaluation framework and a
 FUSE-based client filesystem interface so that we can more accurately
-evaluate performance. Our progress can be summarized by these
-accomplishments so far:
+evaluate performance. We are also exploring the possibility of using
+a DAFS~\cite{DAFS} like interface for application to directly call
+infiniband like transport resources. Our progress can be summarized by
+these accomplishments so far:
 
 \begin{itemize}
 \item Defined an Active RDMA client-server interface, at the API level
@@ -152,17 +157,18 @@ accomplishments so far:
     (referenced by MD5 hash), giving it direct access to the host
     memory.
   \end{itemize}
-\item Build a prototype implementation of this system in Java. The
+\item Built a prototype implementation of this system in Java. The
   server consists of a single large array representing host memory and
   an implementation of the wire protocol and Java environment (class
   loader, etc). The client consists of a library that allows the user
   to easily load classes and call them remotely.
 \item Built four demo/test applications on this prototype framework: a simple
-hash table, a linked list, a basic in-memory filesystem (built on the hash
-        table), and a locking (mutual exclusion) service with FCFS lock
-ordering.
+  hash table, a linked list, a simple non-hierarchial in-memory filesystem
+  (built on the hash table), and a locking (mutual exclusion) service with
+  FCFS lock ordering~\cite{nic-basedatomic}.
 \item Begun to integrate Kaffe and Bochs in order to build our full
   system simulator (discussed below).
+  \item Begun to design DFS application(discussed below).
 \end{itemize}
 
 By the end of the semester, we plan to do the following:
@@ -184,18 +190,19 @@ By the end of the semester, we plan to do the following:
   wallclock time (which may not correspond directly to simulated
   cycles). \emph{Estimated time:}~\textbf{2 weeks}
 
-\item Build a FUSE wrapper around our simple in-memory filesystem,
-  allowing us to run ``real'' benchmarks against it. \emph{Estimated
-    time:}~\textbf{1 week} (in parallel to the above task)
+\item Build a client side FUSE filesystem, allowing us to run
+  ``real'' benchmarks against it. \emph{Estimated time:
+  }~\textbf{1 week} (in parallel to the above task)
 
-\item Build custom remote-code \emph{grep} and \emph{find} utilities,
-  and a remote-code-based file copy utility, to execute on top of our
-  Active RDMA filesystem. \emph{Estimated time:}~\textbf{1 week}
+\item Build custom remote-code-based \emph{grep} and \emph{find}
+  client side utilities, and a remote-code-based file copy client
+  side utility (that provide higher level file system interfaces
+  to the application), to execute on top of our Active RDMA filesystem.
+  \emph{Estimated time:}~\textbf{1 week}
 
-\item Evaluate several common filesystem benchmarks on our filesystem,
-  as well as NFS served from a Linux instance running on our simulator
-  (serving with a warm page cache). \emph{Estimated time:}~\textbf{A
-    few days}
+\item Evaluate several common distributed filesystem benchmarks on our
+  filesystem, as well as on a Linux NFS server. \emph{Estimated
+  time:}~\textbf{A few days}
 
 \item Implement several optimizations and ease-of-use improvements
   into our system. Among our ideas so far are a more structured

@@ -77,12 +77,11 @@ Our work consists of several main contributions:
   JVM with a timing model, in order to give some level of fidelity to
   our comparison results.
 
-\item Building a network filesystem on top of this infrastructure,
+\item Building a distributed file system on top of this infrastructure,
   keeping data in-memory for simplicity, and evaluating against
-  existing network filesystems both on traditional workloads and on
-  those with application-specific remote code optimizations. We will
-  use FUSE on the client side and expose full Unix semantics in order
-  to make comparison with traditional network filesystems possible.
+  existing commonly used distributed file systems both on traditional
+  workloads and application-specific workloads using higher level
+  interfaces made possible by remote code optimizations.
 
 \end{itemize}
 

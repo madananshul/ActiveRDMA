@@ -9,16 +9,16 @@ public class MessageFactory {
 	public static enum ErrorCode{ OK, OUT_OF_BOUNDS, TIME_OUT, UNKNOWN_CODE, DUPLCIATED_CODE, ERROR };
 	enum OpCode{ READ, WRITE, CAS, RUN, LOAD };
 	
-	static public Operation makeRead(int address){
+	static public Operation makeRead(int[] addresses){
 		Read r = new Read();
-		r.address = address;
+		r.addresses = addresses;
 		return r;
 	}
 	
-	static public Operation makeWrite(int address, int value){
+	static public Operation makeWrite(int[] addresses, int[] values){
 		Write r = new Write();
-		r.address = address;
-		r.value = value;
+		r.addresses = addresses;
+		r.values = values;
 		return r;
 	}
 	
@@ -65,17 +65,36 @@ public class MessageFactory {
 	 * 
 	 */
 	
+	protected static void writeArray(DataOutputStream o, int[] array) throws IOException{
+		o.writeInt( array == null ? -1 : array.length );
+		if( array!= null )
+			for(int i = 0 ; i < array.length ; ++i )
+				o.writeInt(array[i]);
+	}
+	
+	protected static int[] readArray(DataInputStream s) throws IOException {
+		int n = s.readInt();
+		if( n == -1 )
+			return null;
+		else{
+			int[] result = new int[n];
+			for(int i=0;i<result.length;++i)
+				result[i] = s.readInt();
+			return result;
+		}
+	}
+	
 	public static class Result {
-		public int result;
+		public int[] result;
 		public ErrorCode error;
 		
 		public Result(){
 			error = ErrorCode.ERROR;
-			result = -1;
+			result = null;
 		}
 		
-		public Result(int value){
-			result = value;
+		public Result(int[] values){
+			result = values;
 			error = ErrorCode.OK;
 		}
 		
@@ -83,17 +102,17 @@ public class MessageFactory {
 			if( prob == ErrorCode.OK )
 				throw new IllegalArgumentException("Should not be OK.");
 			error = prob;
-			result = -1; //should be ignored
+			result = null;
 		}
 
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(error.ordinal());
-			s.writeInt(result);
+			writeArray(s, result);
 		}
 		
 		public void read(DataInputStream s) throws IOException {
 			error = ErrorCode.values()[s.readInt()];
-			result = s.readInt();
+			result = readArray(s);
 		}
 	}
 
@@ -105,7 +124,7 @@ public class MessageFactory {
 	}
 	
 	public static class Read implements Operation {
-		public int address;
+		public int[] addresses;
 
 		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
@@ -113,17 +132,17 @@ public class MessageFactory {
 
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(OpCode.READ.ordinal());
-			s.writeInt(address);
+			writeArray(s,addresses);
 		}
 		
 		public void read(DataInputStream s) throws IOException {
-			address = s.readInt();
+			addresses = readArray(s);
 		}
 	}
 	
 	public static class Write implements Operation {
-		public int address;
-		public int value;
+		public int[] addresses;
+		public int[] values;
 	
 		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
@@ -131,13 +150,13 @@ public class MessageFactory {
 		
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(OpCode.WRITE.ordinal());
-			s.writeInt(address);
-			s.writeInt(value);
+			writeArray(s, addresses);
+			writeArray(s, values);
 		}
 		
 		public void read(DataInputStream s) throws IOException {
-			address = s.readInt();
-			value = s.readInt();
+			addresses = readArray(s);
+			values = readArray(s);
 		}
 	}
 	
@@ -177,9 +196,7 @@ public class MessageFactory {
 			s.writeInt(md5.length);
 			for(int i=0;i<md5.length;++i)
 				s.writeByte(md5[i]);
-			s.writeInt(arg.length);
-			for(int i=0;i<arg.length;++i)
-				s.writeInt(arg[i]);
+			writeArray(s, arg);
 		}
 
 		public void read(DataInputStream s) throws IOException {
@@ -188,10 +205,7 @@ public class MessageFactory {
 			for(int i=0;i<md5.length;++i)
 				md5[i] = s.readByte();
 
-			n = s.readInt();
-			arg = new int[n];
-			for(int i=0;i<arg.length;++i)
-				arg[i] = s.readInt();
+			arg = readArray(s);
 		}
 	}
 	

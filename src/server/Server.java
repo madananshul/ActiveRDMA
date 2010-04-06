@@ -135,11 +135,11 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	 */
 	
 	public Result visit(Read read, DatagramPacket context) {
-		return _r(read.address);
+		return _r(read.addresses);
 	}
 
 	public Result visit(Write write, DatagramPacket context) {
-		return _w(write.address,write.value);
+		return _w(write.addresses,write.values);
 	}
 
 	public Result visit(CAS cas, DatagramPacket context) {
@@ -167,11 +167,11 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	public Result _cas(int address, int test, int value) {
 		Result result = new Result();
 		try{
-			result.result = memory[address].compareAndSet(test, value) ? 1 : 0;
+			result.result = new int[]{memory[address].compareAndSet(test, value) ? 1 : 0};
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
 			result.error = ErrorCode.OUT_OF_BOUNDS;
-			result.result = address;
+			result.result = new int[]{address};
 		}
 		return result;
 	}
@@ -183,7 +183,7 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 			//indexes by the name of the class TODO: index by md5 instead?
 			//this will actually never return false, if there is a previous
 			//class with the same name LinkageError will occur.
-			result.result = tableClassAndMd5(c,code) ? 1 : 0;
+			result.result = new int[]{tableClassAndMd5(c,code) ? 1 : 0};
 			result.error = ErrorCode.OK;
 		}catch(LinkageError e){
 			//problems loading
@@ -192,10 +192,12 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		return result;
 	}
 
-	public Result _r(int address) {
+	public Result _r(int[] address) {
 		Result result = new Result();
 		try{
-			result.result =  memory[address].get();
+			result.result = new int[address.length];
+			for(int i=0;i<address.length;++i)
+				result.result[i] =  memory[address[i]].get();
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
 			result.error = ErrorCode.OUT_OF_BOUNDS;
@@ -210,21 +212,24 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		Class<?> c = md5_to_class.get(new ByteArray(md5));
 		try {
 			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
-			result.result =  (Integer) m.invoke(null, new Object[]{this,arg});
+			result.result =  new int[]{(Integer) m.invoke(null, new Object[]{this,arg})};
 			result.error = ErrorCode.OK;
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.result = -1;
+			result.result = new int[]{-1};
 			result.error = ErrorCode.ERROR;
 		}
 		return result;
 	}
 
-	public Result _w(int address, int value) {
+	public Result _w(int[] address, int[] value) {
 		Result result = new Result();
 		try{
-			result.result = memory[address].get();
-			memory[address].set(value);
+			result.result = new int[address.length];
+			for(int i=0;i<address.length;++i){
+				result.result[i] = memory[address[i]].get();
+				memory[address[i]].set(value[i]);
+			}
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
 			result.error = ErrorCode.OUT_OF_BOUNDS;

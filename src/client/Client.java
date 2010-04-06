@@ -32,12 +32,12 @@ public class Client extends ActiveRDMA{
 		return exchange( MessageFactory.makeCAS(address, test, value));
 	}
 
-	public Result _w(int address, int value) {
+	public Result _w(int[] address, int[] value) {
 		return exchange( MessageFactory.makeWrite(address, value));
 	}
 	
-	public Result _r(int address) {
-		return exchange( MessageFactory.makeRead(address));
+	public Result _r(int[] addresses) {
+		return exchange( MessageFactory.makeRead(addresses));
 	}
 
 	public Result _run(byte[] md5, int[] arg) {

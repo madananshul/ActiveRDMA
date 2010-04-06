@@ -9,15 +9,16 @@ public class MessageFactory {
 	public static enum ErrorCode{ OK, OUT_OF_BOUNDS, TIME_OUT, UNKNOWN_CODE, DUPLCIATED_CODE, ERROR };
 	enum OpCode{ READ, WRITE, CAS, RUN, LOAD };
 	
-	static public Operation makeRead(int[] addresses){
+	static public Operation makeRead(int address, int size){
 		Read r = new Read();
-		r.addresses = addresses;
+		r.address = address;
+		r.size = size;
 		return r;
 	}
 	
-	static public Operation makeWrite(int[] addresses, int[] values){
+	static public Operation makeWrite(int address, int[] values){
 		Write r = new Write();
-		r.addresses = addresses;
+		r.address = address;
 		r.values = values;
 		return r;
 	}
@@ -124,7 +125,8 @@ public class MessageFactory {
 	}
 	
 	public static class Read implements Operation {
-		public int[] addresses;
+		public int size;
+		public int address;
 
 		public <C> Result visit(MessageVisitor<C> v, C context) {
 			return v.visit(this,context);
@@ -132,16 +134,18 @@ public class MessageFactory {
 
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(OpCode.READ.ordinal());
-			writeArray(s,addresses);
+			s.writeInt(address);
+			s.writeInt(size);
 		}
 		
 		public void read(DataInputStream s) throws IOException {
-			addresses = readArray(s);
+			address = s.readInt();
+			size = s.readInt();
 		}
 	}
 	
 	public static class Write implements Operation {
-		public int[] addresses;
+		public int address;
 		public int[] values;
 	
 		public <C> Result visit(MessageVisitor<C> v, C context) {
@@ -150,12 +154,12 @@ public class MessageFactory {
 		
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(OpCode.WRITE.ordinal());
-			writeArray(s, addresses);
+			s.writeInt(address);
 			writeArray(s, values);
 		}
 		
 		public void read(DataInputStream s) throws IOException {
-			addresses = readArray(s);
+			address = s.readInt();
 			values = readArray(s);
 		}
 	}

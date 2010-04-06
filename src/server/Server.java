@@ -135,11 +135,11 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 	 */
 	
 	public Result visit(Read read, DatagramPacket context) {
-		return _r(read.addresses);
+		return _r(read.address,read.size);
 	}
 
 	public Result visit(Write write, DatagramPacket context) {
-		return _w(write.addresses,write.values);
+		return _w(write.address,write.values);
 	}
 
 	public Result visit(CAS cas, DatagramPacket context) {
@@ -192,16 +192,16 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		return result;
 	}
 
-	public Result _r(int[] address) {
+	public Result _r(int address, int size) {
 		Result result = new Result();
 		try{
-			result.result = new int[address.length];
-			for(int i=0;i<address.length;++i)
-				result.result[i] =  memory[address[i]].get();
+			result.result = new int[size];
+			for(int i=0;i<size;++i)
+				result.result[i] =  memory[address+i].get();
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
 			result.error = ErrorCode.OUT_OF_BOUNDS;
-			result.result = address;
+			result.result = null;
 		}
 		return result;
 	}
@@ -222,18 +222,18 @@ public class Server extends ActiveRDMA implements MessageVisitor<DatagramPacket>
 		return result;
 	}
 
-	public Result _w(int[] address, int[] value) {
+	public Result _w(int address, int[] values) {
 		Result result = new Result();
 		try{
-			result.result = new int[address.length];
-			for(int i=0;i<address.length;++i){
-				result.result[i] = memory[address[i]].get();
-				memory[address[i]].set(value[i]);
+			result.result = new int[values.length];
+			for(int i=0;i<values.length;++i){
+				result.result[i] = memory[address+i].get();
+				memory[address+i].set(values[i]);
 			}
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
 			result.error = ErrorCode.OUT_OF_BOUNDS;
-			result.result = address;
+			result.result = null;
 		}
 		return result;
 	}

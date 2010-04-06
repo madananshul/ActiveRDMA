@@ -11,8 +11,7 @@ import common.messages.MessageFactory.Result;
 
 public abstract class ActiveRDMA {
 	
-	//FIXME: why the increase to 20s??
-	final public static int REQUEST_TIMEOUT = 20000; //20s ?!?!
+	final public static int REQUEST_TIMEOUT = 20000;
 	final public static int SERVER_PORT = 15712;
 	
 	/*
@@ -23,14 +22,14 @@ public abstract class ActiveRDMA {
 	 * @param address - offset of the memory location
 	 * @return value of memory location *at the time of the read*
 	 */
-	public abstract Result _r(int[] addresses);
+	public abstract Result _r(int address, int size);
 	
 	/** Writes the value into the server's memory.
 	 * @param address - offset of the memory location
 	 * @param value - the new value to be store
 	 * @return old value
 	 */
-	public abstract Result _w(int[] addresses, int[] value);
+	public abstract Result _w(int address, int[] values);
 	
 	/** Compare-And-Swap, if test is true it will atomically write value into 
 	 * the memory at location address.
@@ -86,21 +85,21 @@ public abstract class ActiveRDMA {
 	}
 	
 	//batch
-	public int[] r(int[] addresses){
-		return null;
+	public int[] r(int address, int lenght){
+		return unwrap( _r(address,lenght) );
 	}
 	
 	public int r(int address){
-		return unwrap( _r(new int[]{address}) )[0];
+		return unwrap( unwrap( _r(address,1) ) );
 	}
 
 	//batch
-	public int[] w(int[] addresses, int[] values){
-		return null;
+	public int[] w(int address, int[] values){
+		return unwrap( _w(address, values) );
 	}
 	
 	public int w(int address, int value){
-		return unwrap( unwrap( _w(new int[]{address},new int[]{value}) ) );
+		return unwrap( unwrap( _w(address,new int[]{value}) ) );
 	}
 	
 	public int cas(int address, int test, int value){

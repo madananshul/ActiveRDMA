@@ -14,6 +14,12 @@ public class ClientTest extends TestCase {
 		}
 	}
 	
+	static public class MobileCodeTest2 {
+		public static int execute(ActiveRDMA a, int[] i) {
+			return MobileCodeTest.execute(a, i)+1;
+		}
+	}
+	
 	//MainServer should be running before launching tests
 	//only one test at each time or it might fail...
 	
@@ -39,10 +45,13 @@ public class ClientTest extends TestCase {
 		assertEquals( client.r(7) , 0 );
 		
 		assertTrue( client.load(MobileCodeTest.class) != 0 );
+		assertTrue( client.load(MobileCodeTest2.class) != 0 );
 		
 		// sets to [7]42
 		assertEquals( client.run(MobileCodeTest.class,new int[]{7}) , 42 );
 		assertEquals( client.r(7) , 42 );
-
+		
+		assertEquals( client.run(MobileCodeTest2.class,new int[]{6}) , 43 );
+		assertEquals( client.r(6) , 42 );
 	}
 }

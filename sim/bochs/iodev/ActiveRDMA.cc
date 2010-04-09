@@ -21,5 +21,6 @@ void ActiveRDMA_c::send_udp_packet(void *udp_data, int len)
 
 bool ActiveRDMA_c::handle_packet(void *data, int len)
 {
+    printf("packet: length %d\n", len);
     return false;
 }

@@ -18,8 +18,10 @@ class ActiveRDMA_c
         packet_sender m_sender;
         void *m_sender_p;
 
-        void handle_udp_packet(void *udp_data, int len);
-        void send_udp_packet(void *udp_data, int len);
+        bool handle_udp_packet(unsigned char *udp_data, int len);
+        void send_udp_packet(unsigned char *udp_data, int len);
+
+        bool handle_ip_packet(unsigned char *ip_data, int len);
 
         static const int PORT = 15712;
 

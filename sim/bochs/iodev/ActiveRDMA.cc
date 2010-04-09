@@ -31,11 +31,12 @@ static int checksum(void *data, int len)
 ActiveRDMA_c::ActiveRDMA_c()
 {
     JavaVMInitArgs args;
+    args.version = JNI_VERSION_1_4;
     JNI_GetDefaultJavaVMInitArgs(&args);
 
-    JNI_CreateJavaVM(&m_jvm, (void **)&m_jni, &args);
-
-    printf("JVM: %p, JNIEnv: %p\n", m_jvm, m_jni);
+    m_jni = 0;
+    m_jvm = 0;
+    int err = JNI_CreateJavaVM(&m_jvm, (void **)&m_jni, &args);
 }
 
 ActiveRDMA_c::~ActiveRDMA_c()

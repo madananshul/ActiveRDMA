@@ -1,5 +1,7 @@
-* iodev/ActiveRDMA.{cc,h}: ActiveRDMA core. Interfaces to JNI (Kaffe VM), ne2k with rudimentary UDP/IP code.
-
-* iodev/libkaffevm.a, iodev/kaffe/*.h: statically compiled Kaffe 1.1.9 VM (environment and instructions forthcoming)
+* iodev/ActiveRDMA.{cc,h}: ActiveRDMA core. Interfaces to JNI, ne2k with rudimentary UDP/IP code.
 
 * iodev/ne2k.{cc,h}: Bochs ne2000 device (ethernet card) implementation, modified with hooks into ActiveRDMA.
+
+Requires:
+
+gcj-4.4-jdk on Ubuntu: /usr/lib/java-1.5.0-gcj-4.4/{lib,include} for JVM (JNI headers/libraries)

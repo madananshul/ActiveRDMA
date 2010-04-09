@@ -1,0 +1,2 @@
+#!/bin/sh
+LD_LIBRARY_PATH=/usr/lib/jvm/java-1.5.0-gcj-4.4/lib ./bochs "$@"

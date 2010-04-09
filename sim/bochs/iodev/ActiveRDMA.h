@@ -10,6 +10,7 @@ class ActiveRDMA_c
 
     private:
         JNIEnv *m_jni;
+        JavaVM *m_jvm;
 
         char *m_mem;
         int m_mem_size;

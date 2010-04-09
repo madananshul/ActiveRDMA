@@ -95,7 +95,7 @@ CFLAGS = -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS) $(MCH_CFLAGS)
 CXXFLAGS = -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS) $(MCH_CFLAGS) $(FLA_FLAGS)  -DBX_SHARE_PATH='"$(sharedir)"'
 
 LDFLAGS = 
-LIBS =  -lm
+LIBS =  -lm -Liodev -lkaffevm -lkaffe -lpthread -lzzip -lltdl
 # To compile with readline:
 #   linux needs just -lreadline
 #   solaris needs -lreadline -lcurses

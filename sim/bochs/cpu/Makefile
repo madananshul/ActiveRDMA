@@ -139,9 +139,9 @@ all: libcpu.a
 	$(CXX) -c $(BX_INCDIRS) $(CXXFLAGS) $< -o $@
 
 
-libcpu.a: $(OBJS) 
+libcpu.a: $(OBJS) $(OBJS64)
 	rm -f  libcpu.a
-	ar rv $@ $(OBJS) 
+	ar rv $@ $(OBJS) $(OBJS64)
 	$(RANLIB) libcpu.a
 
 $(OBJS): $(BX_INCLUDES)

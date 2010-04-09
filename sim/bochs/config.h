@@ -113,11 +113,11 @@
 // level of some instructions, so they can be tested before
 // the rest of the emulation is up to that level.
 
-#define BX_CPU_LEVEL 5
-#define BX_CPU_LEVEL_HACKED 5
+#define BX_CPU_LEVEL 6
+#define BX_CPU_LEVEL_HACKED 6
 
 // emulate x86-64 instruction set?
-#define BX_SUPPORT_X86_64 0
+#define BX_SUPPORT_X86_64 1
 
 // emulate long physical address (>32 bit)
 #define BX_PHY_ADDRESS_LONG 0
@@ -654,23 +654,23 @@ typedef
 #define BX_ASSERT_ENABLE 0
 
 // limited i440FX PCI support
-#define BX_SUPPORT_PCI 0
+#define BX_SUPPORT_PCI 1
 
 // Bochs VBE display interface
 #define BX_SUPPORT_VBE 1
 
 // CLGD54XX emulation
-#define BX_SUPPORT_CLGD54XX 0
+#define BX_SUPPORT_CLGD54XX 1
 
 // ACPI controller
-#define BX_SUPPORT_ACPI 0
+#define BX_SUPPORT_ACPI 1
 
 #if (BX_SUPPORT_ACPI && !BX_SUPPORT_PCI)
   #error To enable ACPI support, you must also enable PCI
 #endif
 
 // Experimental VGA on PCI
-#define BX_SUPPORT_PCIVGA 0
+#define BX_SUPPORT_PCIVGA 1
 
 // Experimental host PCI device mapping
 #define BX_SUPPORT_PCIDEV 0
@@ -680,8 +680,8 @@ typedef
 #endif
 
 // limited USB on PCI
-#define BX_SUPPORT_USB_UHCI 0
-#define BX_SUPPORT_USB_OHCI 0
+#define BX_SUPPORT_USB_UHCI 1
+#define BX_SUPPORT_USB_OHCI 1
 #define BX_SUPPORT_PCIUSB (BX_SUPPORT_USB_UHCI || BX_SUPPORT_USB_OHCI)
 
 #if (BX_SUPPORT_PCIUSB && !BX_SUPPORT_PCI)
@@ -695,12 +695,12 @@ typedef
 #define BX_SUPPORT_FPU 1
 #define BX_SUPPORT_MMX 1
 #define BX_SUPPORT_3DNOW 0
-#define BX_SUPPORT_SSE 0
+#define BX_SUPPORT_SSE 2
 #define BX_SUPPORT_SSE_EXTENSION 0
 #define BX_SUPPORT_SSE4A 0
 #define BX_SUPPORT_SSE5A 0
 #define BX_SUPPORT_MISALIGNED_SSE 0
-#define BX_SUPPORT_SEP 0
+#define BX_SUPPORT_SEP 1
 #define BX_SUPPORT_POPCNT 0
 #define BX_SUPPORT_MONITOR_MWAIT 0
 #define BX_SUPPORT_XSAVE 0
@@ -709,10 +709,10 @@ typedef
 #define BX_SUPPORT_VMX 0
 #define BX_SUPPORT_1G_PAGES 0
 
-#define BX_SupportRepeatSpeedups 0
+#define BX_SupportRepeatSpeedups 1
 #define BX_SupportHostAsms 0
 
-#define BX_SUPPORT_TRACE_CACHE 0
+#define BX_SUPPORT_TRACE_CACHE 1
 
 #if BX_SUPPORT_3DNOW
   #define BX_CPU_VENDOR_INTEL 0
@@ -814,7 +814,7 @@ typedef
 #endif
 
 // include in APIC models, required for a multiprocessor system.
-#define BX_SUPPORT_APIC 0
+#define BX_SUPPORT_APIC 1
 
 #if BX_CPU_LEVEL == 6 && BX_SUPPORT_SSE >= 2
   #define BX_IMPLEMENT_XAPIC 1
@@ -877,7 +877,7 @@ typedef
 #endif
 
 // set to use fast function calls
-#define BX_FAST_FUNC_CALL 0
+#define BX_FAST_FUNC_CALL 1
 
 // On gcc2.95+ x86 only
 #if BX_FAST_FUNC_CALL && defined(__i386__) && defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))

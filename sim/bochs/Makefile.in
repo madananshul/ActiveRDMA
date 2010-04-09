@@ -95,7 +95,7 @@ CFLAGS = @CFLAGS@ @GUI_CFLAGS@ $(MCH_CFLAGS) $(FLA_FLAGS) @DEFINE_PLUGIN_PATH@ -
 CXXFLAGS = @CXXFLAGS@ @GUI_CXXFLAGS@ $(MCH_CFLAGS) $(FLA_FLAGS) @DEFINE_PLUGIN_PATH@ -DBX_SHARE_PATH='"$(sharedir)"'
 
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
+LIBS = @LIBS@ -Liodev -lkaffevm -lkaffe -lpthread -lzzip -lltdl
 # To compile with readline:
 #   linux needs just -lreadline
 #   solaris needs -lreadline -lcurses

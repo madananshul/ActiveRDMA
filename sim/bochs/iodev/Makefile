@@ -45,10 +45,10 @@ SHELL = /bin/sh
 
 
 CXX = g++
-CXXFLAGS = $(BX_INCDIRS) -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS) -Ikaffe
+CXXFLAGS = $(BX_INCDIRS) -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS)
 
 LDFLAGS = 
-LIBS =  -lm -L. -lkaffevm
+LIBS =  -lm
 RANLIB = ranlib
 PLUGIN_PATH=${exec_prefix}/lib
 top_builddir    = ..
@@ -56,11 +56,11 @@ LIBTOOL=$(SHELL) $(top_builddir)/libtool
 WIN32_DLL_IMPORT_LIBRARY=../dllexports.a
 
 CDROM_OBJS = cdrom.o
-IOAPIC_OBJS = 
+IOAPIC_OBJS = ioapic.o
 SOUNDLOW_OBJS = 
-NETLOW_OBJS = eth.o eth_null.o eth_vnet.o eth_linux.o eth_tap.o eth_vde.o eth_tuntap.o ActiveRDMA.o
-USBDEV_OBJS = 
-SCSI_OBJS = 
+NETLOW_OBJS = eth.o eth_null.o eth_vnet.o eth_linux.o eth_tap.o eth_vde.o eth_tuntap.o
+USBDEV_OBJS = usb_common.o usb_hid.o usb_hub.o usb_msd.o
+SCSI_OBJS = scsi_device.o
 
 BX_INCDIRS = -I.. -I$(srcdir)/.. -I../instrument/stubs -I$(srcdir)/../instrument/stubs
 LOCAL_CXXFLAGS = $(MCH_CFLAGS)
@@ -90,10 +90,11 @@ OBJS_THAT_CAN_BE_PLUGINS = \
   speaker.o \
   busmouse.o \
    \
-   \
+  pci.o pci2isa.o pci_ide.o pcivga.o acpi.o usb_uhci.o usb_ohci.o \
    \
   ne2k.o \
    \
+  ActiveRDMA.o \
   $(IOAPIC_OBJS)
 
 OBJS_THAT_SUPPORT_OTHER_PLUGINS = \

@@ -11,8 +11,7 @@ import common.messages.MessageFactory.Result;
 
 public abstract class ActiveRDMA {
 	
-	//FIXME: why the increase to 20s??
-	final public static int REQUEST_TIMEOUT = 20000; //20s ?!?!
+	final public static int REQUEST_TIMEOUT = 20000;
 	final public static int SERVER_PORT = 15712;
 	
 	/*
@@ -23,14 +22,14 @@ public abstract class ActiveRDMA {
 	 * @param address - offset of the memory location
 	 * @return value of memory location *at the time of the read*
 	 */
-	public abstract Result _r(int address);
+	public abstract Result _r(int address, int size);
 	
 	/** Writes the value into the server's memory.
 	 * @param address - offset of the memory location
 	 * @param value - the new value to be store
 	 * @return old value
 	 */
-	public abstract Result _w(int address, int value);
+	public abstract Result _w(int address, int[] values);
 	
 	/** Compare-And-Swap, if test is true it will atomically write value into 
 	 * the memory at location address.
@@ -67,7 +66,7 @@ public abstract class ActiveRDMA {
 	 * exception based wrappers
 	 */
 	
-	protected int unwrap(Result r){
+	static protected int[] unwrap(Result r){
 		switch(r.error){
 		case OUT_OF_BOUNDS:
 		case TIME_OUT:
@@ -81,24 +80,38 @@ public abstract class ActiveRDMA {
 		return r.result;
 	}
 	
+	static protected int unwrap(int[] array){
+		return array == null ? 0 : array[0];
+	}
+	
+	//batch
+	public int[] r(int address, int lenght){
+		return unwrap( _r(address,lenght) );
+	}
+	
 	public int r(int address){
-		return unwrap( _r(address) );
+		return unwrap( unwrap( _r(address,1) ) );
+	}
+
+	//batch
+	public int[] w(int address, int[] values){
+		return unwrap( _w(address, values) );
 	}
 	
 	public int w(int address, int value){
-		return unwrap( _w(address,value) );
+		return unwrap( unwrap( _w(address,new int[]{value}) ) );
 	}
 	
 	public int cas(int address, int test, int value){
-		return unwrap( _cas(address,test,value) );		
+		return unwrap( unwrap( _cas(address,test,value) ) );		
 	}
 	
 	public int run(byte[] md5, int[] arg){
-		return unwrap( _run(md5,arg) );	
+		return unwrap( unwrap( _run(md5,arg) ) );	
 	}
 	
 	public int load(byte[] code){
-		return unwrap( _load(code) );
+		return unwrap( unwrap( _load(code) ) );
 	}
 	
 	/* ==============================================================
@@ -177,7 +190,7 @@ public abstract class ActiveRDMA {
 	}
 
 	public int load(Class<?> c) {
-		return unwrap( _load(c) );
+		return unwrap( unwrap( _load(c) ) );
 	}
 	
 	public Result _load(Class<?> c) {

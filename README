@@ -5,13 +5,3 @@ FIXME tags point to stuff that needs/should be improved in future versions (Ecli
 
 The src/tests uses JUnit (again Eclipse includes this by default but you may need to have junit.jar in your classpath otherwise).
 
-TODO: test hidden links static calls between loaded classes.
-TODO: DFS.
-
-load(T) -> map<name,hash>
-   - send load(byte[])
-run(T) -> get<name>.hash
-   - send run(byte[])
-
-load(T) -> map<hash,code>
-run(T) -> get<hash>.code

@@ -3,6 +3,24 @@
 
 #include <jni.h>
 
+class RDMAReq
+{
+    public:
+        int src_ip, src_port; // to which we respond
+        enum { Rd, Wr, CAS, Load, Run } type;
+};
+
+class RDMAReq_Rd : public RDMAReq
+{
+    int addr, len;
+};
+
+class RDMAReq_Wr : public RDMAReq
+{
+    int addr, len;
+    unsigned char *data;
+};
+
 class ActiveRDMA_c
 {
     public:

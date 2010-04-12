@@ -11,8 +11,10 @@ class ActiveRDMA_c
     private:
         JNIEnv *m_jni;
         JavaVM *m_jvm;
+        jclass m_cls;
         jobject m_srv;
         jmethodID m_srvMth;
+        jmethodID m_getMth;
 
         char *m_mem;
         int m_mem_size;
@@ -32,7 +34,15 @@ class ActiveRDMA_c
 
         bool handle_ip_packet(unsigned char *ip_data, int len);
 
-        static const int PORT = 15712;
+        void update_mem_stats();
+
+        struct timing
+        {
+            unsigned long long int
+               jvm_nsec, insns, pkt, mem_rd, mem_wr, mem_cas;
+        } m_timing;
+
+        static ActiveRDMA_c *singleton;
 
     public:
 
@@ -40,7 +50,12 @@ class ActiveRDMA_c
         virtual ~ActiveRDMA_c();
 
         bool handle_packet(void *data, int len);
-        void reg_sender(packet_sender snd, void *p) { m_sender = snd; m_sender_p = p; }
+        void reg_sender(packet_sender snd, void *p) { m_sender = snd; m_sender_p = p; printf("reg_sender %p, %p, this = %p\n", snd, p, this); }
+
+        // hook for cpu
+        static inline void count_insn() { if (singleton) singleton->m_timing.insns++; }
+
+
 };
 
 #endif

@@ -31,6 +31,7 @@
 #define LOG_THIS BX_CPU_THIS_PTR
 
 #include "iodev/iodev.h"
+#include "iodev/ActiveRDMA.h" // for timing infrastructure
 
 // Make code more tidy with a few macros.
 #if BX_SUPPORT_X86_64==0
@@ -182,6 +183,8 @@ no_async_event:
 
       // inform instrumentation about new instruction
       BX_INSTR_NEW_INSTRUCTION(BX_CPU_ID);
+
+      ActiveRDMA_c::count_insn();
 
 #if BX_SUPPORT_TRACE_CACHE
       execute = (++i)->execute;

@@ -26,6 +26,8 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	
 	final protected AtomicInteger[] memory;
 	final protected MobileClassLoader loader;
+
+    private long stat_rd, stat_wr, stat_cas;
 	
     public SimpleServer(int memory_size) throws IOException {
 		super();
@@ -34,6 +36,10 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 		for(int i=0; i<memory.length; ++i)
 			memory[i] = new AtomicInteger(0);
 		Alloc.init(this);
+
+        stat_rd = 0;
+        stat_wr = 0;
+        stat_cas = 0;
     }
 	
     public byte[] serve(byte[] inBytes)
@@ -55,18 +61,24 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
             return null;
         }
     }
+
+    public long getStat(int stat)
+    {
+        if (stat == 0) return stat_rd;
+        if (stat == 1) return stat_wr;
+        if (stat == 2) return stat_cas;
+        return 0;
+    }
 	
 	/*
 	 * Visit each operation
 	 */
 	
 	public Result visit(Read read, Object context) {
-        System.out.println("read: address " + read.address + " size " + read.size);
 		return _r(read.address,read.size);
 	}
 
 	public Result visit(Write write, Object context) {
-        System.out.println("write: address " + write.address + " values " + write.values);
 		return _w(write.address,write.values);
 	}
 
@@ -87,6 +99,7 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	 */
 	
 	public Result _cas(int address, int test, int value) {
+        stat_cas++;
 		Result result = new Result();
 		try{
 			result.result = new int[]{memory[address].compareAndSet(test, value) ? 1 : 0};
@@ -115,6 +128,7 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	}
 
 	public Result _r(int address, int size) {
+        stat_rd++;
 		Result result = new Result();
 		try{
 			result.result = new int[size];
@@ -145,6 +159,7 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	}
 
 	public Result _w(int address, int[] values) {
+        stat_wr++;
 		Result result = new Result();
 		try{
 			result.result = new int[values.length];

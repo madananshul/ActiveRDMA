@@ -3,11 +3,14 @@
 #include <string.h>
 #include <netinet/ip.h> // struct iphdr
 #include <netinet/udp.h> // struct udphdr
+#include <time.h> // clock_gettime()
 
 #define PROT_UDP 17
 #define UDP_PORT 15712
 
 //#define DUMP
+
+ActiveRDMA_c *ActiveRDMA_c::singleton = 0;
 
 static unsigned short checksum(unsigned char *data, int len, short init)
 {
@@ -53,30 +56,45 @@ ActiveRDMA_c::ActiveRDMA_c()
 
     int err = JNI_CreateJavaVM(&m_jvm, (void **)&m_jni, &args);
 
-    jclass cls = m_jni->FindClass("server/SimpleServer");
-    jmethodID constructor = m_jni->GetMethodID(cls, "<init>", "(I)V");
-    m_srv = m_jni->NewObject(cls, constructor, 4*1024*1024);
+    m_cls = m_jni->FindClass("server/SimpleServer");
+    jmethodID constructor = m_jni->GetMethodID(m_cls, "<init>", "(I)V");
+    m_srv = m_jni->NewObject(m_cls, constructor, 4*1024*1024);
 
-    m_srvMth = m_jni->GetMethodID(cls, "serve", "([B)[B");
+    m_srvMth = m_jni->GetMethodID(m_cls, "serve", "([B)[B");
+    m_getMth = m_jni->GetMethodID(m_cls, "getStat", "(I)J");
+
+    m_timing.jvm_nsec = m_timing.insns = m_timing.pkt =
+        m_timing.mem_rd = m_timing.mem_wr = m_timing.mem_cas = 0;
+
+    singleton = this;
 }
 
 ActiveRDMA_c::~ActiveRDMA_c()
 {
 }
 
-static void dump(unsigned char *data, int len)
+void ActiveRDMA_c::update_mem_stats()
 {
-    for (int i = 0; i < len; i++)
-        printf("%02x ", data[i]);
-    printf("\n");
+    m_timing.mem_rd = m_jni->CallLongMethod(m_srv, m_getMth, 0);
+    m_timing.mem_wr = m_jni->CallLongMethod(m_srv, m_getMth, 1);
+    m_timing.mem_cas = m_jni->CallLongMethod(m_srv, m_getMth, 2);
 }
 
 void ActiveRDMA_c::handle_rdma_req(int src_addr, int src_port, unsigned char *data, int len)
 {
+    struct timespec t1, t2;
+
     jbyteArray arr = m_jni->NewByteArray(len);
     m_jni->SetByteArrayRegion(arr, 0, len, (jbyte *)data);
 
+    clock_gettime(CLOCK_REALTIME, &t1);
     jbyteArray ret = (jbyteArray)m_jni->CallObjectMethod(m_srv, m_srvMth, arr);
+    clock_gettime(CLOCK_REALTIME, &t2);
+
+    long long int nsec = 1000000000 * (t2.tv_sec - t1.tv_sec) + (t2.tv_nsec - t1.tv_nsec);
+    printf("call took %lld ns\n", nsec);
+
+    m_timing.jvm_nsec += nsec;
     
     jboolean isCopy = false;
     jbyte *ret_data = m_jni->GetByteArrayElements(ret, &isCopy);
@@ -95,13 +113,19 @@ bool ActiveRDMA_c::handle_udp_packet(int src_addr, unsigned char *udp_data, int 
             ntohs(hdr->source), ntohs(hdr->dest), ntohs(hdr->len));
 #endif
 
-    if (ntohs(hdr->dest) == UDP_PORT)
+    if (ntohs(hdr->dest) == UDP_PORT) // port 15712: call up to SimpleServer
     {
         handle_rdma_req(src_addr, ntohs(hdr->source), udp_data + 8, ntohs(hdr->len) - 8);
+        return true; // do not pass to host (intercept)
+    }
+    if (ntohs(hdr->dest) == UDP_PORT + 1) // port 15713: return timing information
+    {
+        update_mem_stats();
+        send_udp_packet(src_addr, ntohs(hdr->source), (unsigned char *)&m_timing, sizeof(m_timing));
         return true;
     }
 
-    return false;
+    return false; // if not intercepted, give packet to host
 }
 
 void ActiveRDMA_c::send_udp_packet(int addr, int port, unsigned char *udp_data, int len)
@@ -194,6 +218,8 @@ bool ActiveRDMA_c::handle_packet(void *data, int len)
     {
         memcpy((void *)m_my_eth, (void *)p, 6);
         memcpy((void *)m_partner_eth, (void *)(p + 6), 6);
+
+        m_timing.pkt++;
 
         return handle_ip_packet(p + 14, len - 14);
     }

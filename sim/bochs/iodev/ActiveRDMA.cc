@@ -7,27 +7,35 @@
 #define PROT_UDP 17
 #define UDP_PORT 15712
 
-static int checksum(void *data, int len)
+//#define DUMP
+
+static unsigned short checksum(unsigned char *data, int len, short init)
 {
-    int cksum = 0;
-    short *ptr = (short *)data;
+    unsigned int cksum = init;
+    unsigned short *ptr = (unsigned short *)data;
 
     while (len >= 2)
     {
         cksum += *ptr++;
         len -= 2;
+        data += 2;
 
         if (cksum > 0xffff)
             cksum = (cksum & 0xffff) + (cksum >> 16);
     }
 
     if (len)
-        cksum += *(char *)ptr;
+    {
+        unsigned char buf[2];
+        buf[0] = *data;
+        buf[1] = 0;
+        cksum += *((unsigned short *)buf);
+    }
 
     while (cksum > 0xffff)
         cksum = (cksum & 0xffff) + (cksum >> 16);
 
-    return ~cksum;
+    return cksum;
 }
 
 ActiveRDMA_c::ActiveRDMA_c()
@@ -56,10 +64,18 @@ ActiveRDMA_c::~ActiveRDMA_c()
 {
 }
 
+static void dump(unsigned char *data, int len)
+{
+    for (int i = 0; i < len; i++)
+        printf("%02x ", data[i]);
+    printf("\n");
+}
+
 void ActiveRDMA_c::handle_rdma_req(int src_addr, int src_port, unsigned char *data, int len)
 {
     jbyteArray arr = m_jni->NewByteArray(len);
     m_jni->SetByteArrayRegion(arr, 0, len, (jbyte *)data);
+
     jbyteArray ret = (jbyteArray)m_jni->CallObjectMethod(m_srv, m_srvMth, arr);
     
     jboolean isCopy = false;
@@ -80,7 +96,10 @@ bool ActiveRDMA_c::handle_udp_packet(int src_addr, unsigned char *udp_data, int 
 #endif
 
     if (ntohs(hdr->dest) == UDP_PORT)
-        handle_rdma_req(src_addr, ntohs(hdr->source), udp_data + 8, hdr->len - 8);
+    {
+        handle_rdma_req(src_addr, ntohs(hdr->source), udp_data + 8, ntohs(hdr->len) - 8);
+        return true;
+    }
 
     return false;
 }
@@ -100,7 +119,7 @@ void ActiveRDMA_c::send_udp_packet(int addr, int port, unsigned char *udp_data, 
     // IPv4 header
     iphdr *hdr = (iphdr *)(&buf[14]);
     memset((void *)hdr, 0, sizeof(iphdr));
-    hdr->ihl = 4;
+    hdr->ihl = 5;
     hdr->version = 4;
     hdr->ttl = 255;
     hdr->protocol = PROT_UDP;
@@ -110,15 +129,22 @@ void ActiveRDMA_c::send_udp_packet(int addr, int port, unsigned char *udp_data, 
 
     hdr->tot_len = htons(20 + 8 + len);
 
+    // IPv4 checksum
+    hdr->check = 0;
+    hdr->check = ~ checksum((unsigned char *)hdr, sizeof(iphdr), 0);
+    if (hdr->check == 0)
+        hdr->check = 0xFFFF;
+
     // UDP header
     udphdr *udp = (udphdr *)(&buf[34]);
     memset((void *)udp, 0, sizeof(udphdr));
     udp->source = htons(UDP_PORT);
     udp->dest = htons(port);
-    udp->len = htons(len);
+    udp->len = htons(8 + len);
+    udp->check = 0; // UDP checksum is optional
 
-    // checksums
-    // TODO
+    // payload
+    memcpy((void *)(&buf[42]), udp_data, len);
 
     // send it!
     int tot_len = 14 + 20 + 8 + len;
@@ -139,6 +165,12 @@ bool ActiveRDMA_c::handle_ip_packet(unsigned char *ip_data, int len)
             hdr->version, ntohs(hdr->tot_len), hdr->protocol,
             src >> 24, (src >> 16) & 0xff, (src >> 8) & 0xff, src & 0xff,
             dest >> 24, (dest >> 16) & 0xff, (dest >> 8) & 0xff, dest & 0xff);
+
+    unsigned short check = hdr->check;
+    printf("real checksum is %04x, ", hdr->check);
+    hdr->check = 0;
+    printf("computed checksum is %04x\n", (unsigned int) ~checksum((unsigned char *)hdr, hdr->ihl * 4, 0));
+    hdr->check = check;
 #endif
 
     if (hdr->protocol == PROT_UDP)

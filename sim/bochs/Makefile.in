@@ -95,7 +95,7 @@ CFLAGS = @CFLAGS@ @GUI_CFLAGS@ $(MCH_CFLAGS) $(FLA_FLAGS) @DEFINE_PLUGIN_PATH@ -
 CXXFLAGS = @CXXFLAGS@ @GUI_CXXFLAGS@ $(MCH_CFLAGS) $(FLA_FLAGS) @DEFINE_PLUGIN_PATH@ -DBX_SHARE_PATH='"$(sharedir)"' -I/usr/lib/jvm/java-1.5.0-gcj-4.4/include
 
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@ -L/usr/lib/jvm/java-1.5.0-gcj-4.4/lib -ljvm
+LIBS = @LIBS@ -L/usr/lib/jvm/java-1.5.0-gcj-4.4/lib -ljvm -Wl,-rpath /usr/lib/jvm/java-1.5.0-gcj-4.4/lib
 # To compile with readline:
 #   linux needs just -lreadline
 #   solaris needs -lreadline -lcurses

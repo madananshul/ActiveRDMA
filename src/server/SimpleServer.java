@@ -61,10 +61,12 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	 */
 	
 	public Result visit(Read read, Object context) {
+        System.out.println("read: address " + read.address + " size " + read.size);
 		return _r(read.address,read.size);
 	}
 
 	public Result visit(Write write, Object context) {
+        System.out.println("write: address " + write.address + " values " + write.values);
 		return _w(write.address,write.values);
 	}
 

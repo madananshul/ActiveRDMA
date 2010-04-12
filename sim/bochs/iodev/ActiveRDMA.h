@@ -3,24 +3,6 @@
 
 #include <jni.h>
 
-class RDMAReq
-{
-    public:
-        int src_ip, src_port; // to which we respond
-        enum { Rd, Wr, CAS, Load, Run } type;
-};
-
-class RDMAReq_Rd : public RDMAReq
-{
-    int addr, len;
-};
-
-class RDMAReq_Wr : public RDMAReq
-{
-    int addr, len;
-    unsigned char *data;
-};
-
 class ActiveRDMA_c
 {
     public:
@@ -29,6 +11,8 @@ class ActiveRDMA_c
     private:
         JNIEnv *m_jni;
         JavaVM *m_jvm;
+        jobject m_srv;
+        jmethodID m_srvMth;
 
         char *m_mem;
         int m_mem_size;
@@ -36,8 +20,15 @@ class ActiveRDMA_c
         packet_sender m_sender;
         void *m_sender_p;
 
-        bool handle_udp_packet(unsigned char *udp_data, int len);
-        void send_udp_packet(unsigned char *udp_data, int len);
+        // we assume a point-to-point TUN/TAP link and grab eth addrs from UDP packets
+        unsigned char m_my_eth[6], m_partner_eth[6];
+
+        // we pick this up from whatever the client calls us (``oh, OK, I'm 10.0.0.2!'')
+        int m_my_ip;
+
+        void handle_rdma_req(int src_addr, int port, unsigned char *data, int len);
+        bool handle_udp_packet(int ip, unsigned char *udp_data, int len);
+        void send_udp_packet(int ip, int port, unsigned char *udp_data, int len);
 
         bool handle_ip_packet(unsigned char *ip_data, int len);
 

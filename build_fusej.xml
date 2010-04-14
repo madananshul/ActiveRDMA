@@ -9,7 +9,7 @@
          <include name="**/*.jar"/>
       </fileset>
 
-      <pathelement location="bin"/>
+      <pathelement location="build"/>
 
       <!-- append the external classpath -->
       <pathelement path="${java.class.path}"/>
@@ -35,7 +35,7 @@
       <property name="jni.dir" value="jni"/>
 
       <!-- where classes are built -->
-      <property name="build.dir" value="bin"/>
+      <property name="build.dir" value="build"/>
 
       <!-- where javadocs are built -->
       <property name="javadoc.dir" value="javadoc"/>

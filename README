@@ -5,3 +5,5 @@ FIXME tags point to stuff that needs/should be improved in future versions (Ecli
 
 The src/tests uses JUnit (again Eclipse includes this by default but you may need to have junit.jar in your classpath otherwise).
 
+The current build.xml file is broken, use 'make' to compile the project.
+TBD - Fix build.xml

@@ -108,7 +108,8 @@ public class ARFilesystem implements Filesystem1
 	   DFS dfs;
 	   dfs = new DFS_RDMA(client);
 	   int inode = dfs.lookup(path);
-	   if (inode==0) {
+	   System.out.println("getattr : inode is " + inode);
+	   if (inode == 0) {
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 	   }
 
@@ -119,8 +120,9 @@ public class ARFilesystem implements Filesystem1
       stat.nlink = 1;
       stat.uid = 0;
       stat.gid = 0;
-      stat.size = entry.getSize();
-      stat.atime = stat.mtime = stat.ctime = (int) (entry.getTime() / 1000L);
+      stat.size = dfs.getLen(inode);
+      //stat.atime = stat.mtime = stat.ctime = (int) (entry.getTime() / 1000L);
+      stat.atime = stat.mtime = stat.ctime = 0;
       stat.blocks = (int) ((stat.size + 511L) / 512L);
 
       return stat;

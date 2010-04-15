@@ -5,6 +5,8 @@ FIXME tags point to stuff that needs/should be improved in future versions (Ecli
 
 The src/tests uses JUnit (again Eclipse includes this by default but you may need to have junit.jar in your classpath otherwise).
 
+TBD - Current FUSE code sometimes calls upto 2 DFS ActiveRDMA calls at a time(the extra call being to lookup), once Objects can be stored via ActiveRDMA, change this to single DFS syscall.
+
 The current build.xml file is broken, use 'make' to compile the project.
 TBD - Fix build.xml
 

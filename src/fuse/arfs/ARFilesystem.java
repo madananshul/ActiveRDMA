@@ -151,17 +151,15 @@ public class ARFilesystem implements Filesystem1
 
    public void mknod(String path, int mode, int rdev) throws FuseException
    {
-	   System.out.println("mknod : About to define ActiveRDMA client");
 	      ActiveRDMA client = null;
 	      
 	      try {
 	    	  client = new Client(server);
 	      }
 	      catch(Exception e){
-	    	  System.out.println("Error initiating ActiveRDMA client");
 	    	  System.out.println(e);
 	      }
-	      
+	      System.out.println("Initiated connection to server");
 	      DFS dfs;
 
 	      dfs = new DFS_RDMA(client);

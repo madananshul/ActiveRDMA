@@ -45,7 +45,7 @@ public class ARFilesystem implements Filesystem1
 
    private static final int blockSize = 512;
    
-   final String server = "10.0.0.2";
+   final String server = "localhost";
 
    private ZipFile zipFile;
    private long zipFileTime;
@@ -94,14 +94,28 @@ public class ARFilesystem implements Filesystem1
 
    public FuseStat getattr(String path) throws FuseException
    {
-      Node node = tree.lookupNode(path);
+      /*Node node = tree.lookupNode(path);
       ZipEntry entry = null;
       if (node == null || (entry = (ZipEntry)node.getValue()) == null)
-         throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
+         throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);*/
+	   ActiveRDMA client = null;
+	   try {
+	   	  client = new Client(server);
+	   }
+	   catch(Exception e){
+	   	  System.out.println(e);
+	   }
+	   DFS dfs;
+	   dfs = new DFS_RDMA(client);
+	   int inode = dfs.lookup(path);
+	   if (inode==0) {
+		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
+	   }
 
       FuseStat stat = new FuseStat();
 
-      stat.mode = entry.isDirectory() ? FuseFtype.TYPE_DIR | 0755 : FuseFtype.TYPE_FILE | 0644;
+      //stat.mode = entry.isDirectory() ? FuseFtype.TYPE_DIR | 0755 : FuseFtype.TYPE_FILE | 0644;
+      stat.mode = FuseFtype.TYPE_FILE | 0644;
       stat.nlink = 1;
       stat.uid = 0;
       stat.gid = 0;
@@ -152,29 +166,24 @@ public class ARFilesystem implements Filesystem1
    public void mknod(String path, int mode, int rdev) throws FuseException
    {
 	      ActiveRDMA client = null;
-	      
 	      try {
 	    	  client = new Client(server);
 	      }
 	      catch(Exception e){
 	    	  System.out.println(e);
 	      }
-	      System.out.println("Initiated connection to server");
 	      DFS dfs;
-
 	      dfs = new DFS_RDMA(client);
+	      
 	      int inode = dfs.lookup(path);
-	      System.out.println("mknod : lookup done");
-	  if (inode!=0) {
-		  throw new FuseException("File Exists").initErrno(FuseException.EEXIST);
-	  }
+	      if (inode!=0) {
+	    	  throw new FuseException("File Exists").initErrno(FuseException.EEXIST);
+	      }
 	  
-	  else {
-		  System.out.println("mknod : About to create file");
-		 inode =  dfs.create(path);
-	  }
-	  System.out.println("mknod : everything done");
-	  //return inode;
+	      else {
+	    	  inode =  dfs.create(path);
+	      }
+	      //return inode;
    }
 
    public void open(String path, int flags) throws FuseException

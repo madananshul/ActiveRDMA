@@ -15,7 +15,7 @@ import common.ActiveRDMA;
 import dfs.*;
 
 import fuse.*;
-import fuse.compat.Filesystem1;
+import fuse.compat.Filesystem2;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
 import fuse.arfs.util.Node;
@@ -39,7 +39,7 @@ import client.Client;
 import common.ActiveRDMA;
 
 
-public class ARFilesystem implements Filesystem1
+public class ARFilesystem implements Filesystem2
 {
    private static final Log log = LogFactory.getLog(ARFilesystem.class);
 
@@ -93,7 +93,22 @@ public class ARFilesystem implements Filesystem1
 
    }
 
+   
 
+   // CHANGE-22: new operation (Synchronize file contents),
+   //            isDatasync indicates that only the user data should be flushed, not the meta data
+   public void fsync(String path, long fh, boolean isDatasync) throws FuseException
+   {
+	   
+   }
+   
+   // CHANGE-22: new operation (called on every filehandle close)
+   public void flush(String path, long fh) throws FuseException
+   {
+	   
+   }
+   
+   
    public void chmod(String path, int mode) throws FuseException
    {
       throw new FuseException("Read Only").initErrno(FuseException.EACCES);
@@ -126,12 +141,13 @@ public class ARFilesystem implements Filesystem1
       stat.gid = 0;
       stat.size = dfs.getLen(inode);
       //stat.atime = stat.mtime = stat.ctime = (int) (entry.getTime() / 1000L);
-      stat.atime = stat.mtime = stat.ctime = 0;
+      stat.atime = stat.mtime = stat.ctime = (int)System.currentTimeMillis();
       stat.blocks = (int) ((stat.size + 511L) / 512L);
 
       return stat;
    }
 
+   // CHANGE-22: FuseDirEnt.inode added
    public FuseDirEnt[] getdir(String path) throws FuseException
    {
       Node node = tree.lookupNode(path);
@@ -184,12 +200,16 @@ public class ARFilesystem implements Filesystem1
 	      //return inode;
    }
 
-   public void open(String path, int flags) throws FuseException
+   public long open(String path, int flags) throws FuseException
    {
-      /*ZipEntry entry = getFileZipEntry(path);
+	   /*
       if (flags == O_WRONLY || flags == O_RDWR)
          throw new FuseException("Read Only").initErrno(FuseException.EACCES);*/
-	  
+	   int inode = dfs.lookup(path);
+	   if (inode == 0) {
+		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
+	   }
+	  return inode;
    }
 
    public void rename(String from, String to) throws FuseException
@@ -232,15 +252,20 @@ public class ARFilesystem implements Filesystem1
       throw new FuseException("Not a link").initErrno(FuseException.ENOENT);
    }
 
-   public void write(String path, ByteBuffer buf, long offset) throws FuseException
+   // isWritepage indicates that write was caused by a writepage
+   public void write(String path, long fh, boolean isWritepage, ByteBuffer buf, long offset) throws FuseException
    {
-      // noop
 	      
-	      int inode = dfs.lookup(path);
+	      int inode = 0;
+	      if(fh==0){
+	    	  inode = dfs.lookup(path);
+	      }
+	      else 
+	    	  inode = (int)fh;
+	      
 	      int[] buffer;
 	      IntBuffer intBuffer;
 	      
-	      //if() error checking code here
 	      if(inode != 0){
 	    	  intBuffer = buf.asIntBuffer();
 		      buffer = new int[buf.capacity()/4];
@@ -253,15 +278,16 @@ public class ARFilesystem implements Filesystem1
 	      
    }
 
-   public void read(String path, ByteBuffer buf, long offset) throws FuseException
+   public void read(String path, long fh, ByteBuffer buf, long offset) throws FuseException
    {
-      /*ZipEntry zipEntry = getFileZipEntry(path);
-      ZipEntryDataReader reader = zipFileDataReader.getZipEntryDataReader(zipEntry, offset, buf.capacity());
-
-      reader.read(buf, offset);*/
       
-      
-      int inode = dfs.lookup(path);
+	   int inode = 0;
+	   if(fh==0){
+	      inode = dfs.lookup(path);
+	   }
+	   else 
+	   	  inode = (int)fh;
+	      
       IntBuffer intBuffer;
       int[] buffer;
       if(inode != 0){
@@ -274,52 +300,19 @@ public class ARFilesystem implements Filesystem1
 
    }
 
-   public void release(String path, int flags) throws FuseException
+   // CHANGE-22: (called when last filehandle is closed), fh is filehandle passed from open
+   public void release(String path, long fh, int flags) throws FuseException
    {
       /*ZipEntry zipEntry = getFileZipEntry(path);
       zipFileDataReader.releaseZipEntryDataReader(zipEntry);*/
 	  
    }
-
-
-   //
-   // private methods
-
-   private ZipEntry getFileZipEntry(String path) throws FuseException
-   {
-      Node node = tree.lookupNode(path);
-      ZipEntry entry;
-      if (node == null || (entry = (ZipEntry)node.getValue()) == null)
-         throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
-
-      if (entry.isDirectory())
-         throw new FuseException("Not A File").initErrno(FuseException.ENOENT);
-
-      return entry;
-   }
-
-   private ZipEntry getDirectoryZipEntry(String path) throws FuseException
-   {
-      Node node = tree.lookupNode(path);
-      ZipEntry entry;
-      if (node == null || (entry = (ZipEntry)node.getValue()) == null)
-         throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
-
-      if (!entry.isDirectory())
-         throw new FuseException("Not A Directory").initErrno(FuseException.ENOENT);
-
-      return entry;
-   }
-
-
-
+   
    //
    // Java entry point
 
    public static void main(String[] args)
    {
-      
-
       String fuseArgs[] = new String[args.length];
       System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
       //File zipFile = new File(args[args.length - 1]);

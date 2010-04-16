@@ -9,7 +9,7 @@ TBD - Seems there is some problem with flush.
 
 TBD - atim/mtime/ctime not handled yet.
 
-TBD - open, mkdir
+TBD - open, mkdir, getdir, 
 
 TBD - Current FUSE code sometimes calls upto 2 DFS ActiveRDMA calls at a time(the extra call being to lookup), once Objects can be stored via ActiveRDMA, change this to single DFS syscall.
 

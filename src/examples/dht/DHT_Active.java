@@ -145,7 +145,6 @@ public class DHT_Active implements examples.dht.DHT {
 	}
 
 	public int get(String key) {
-		System.out.println("Input name to get is " + key);
 		int[] k = stringToInt(key);
 
 		return m_c.run(DHT_Active_Get.class, k);
@@ -160,7 +159,6 @@ public class DHT_Active implements examples.dht.DHT {
 	public void put(String key, int val) {
 		int[] k = stringToInt(key);
 		int[] args = new int[k.length + 1];
-		System.out.println("Input inode to put is " + val);
 		args[0] = val;
 		for (int i = 0; i < k.length; i++)
 			args[i + 1] = k[i];

@@ -90,7 +90,7 @@ public class ARFilesystem implements Filesystem2
 	   }
 	   
 	   dfs = new DFS_RDMA(client);
-
+	   dfs.create("/");
    }
 
    
@@ -121,11 +121,7 @@ public class ARFilesystem implements Filesystem2
 
    public FuseStat getattr(String path) throws FuseException
    {
-      /*Node node = tree.lookupNode(path);
-      ZipEntry entry = null;
-      if (node == null || (entry = (ZipEntry)node.getValue()) == null)
-         throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);*/
-	  
+        
 	   int inode = dfs.lookup(path);
 	   System.out.println("getattr : for path " + path+ " inode is " + inode);
 	   if (inode == 0) {
@@ -135,13 +131,13 @@ public class ARFilesystem implements Filesystem2
       FuseStat stat = new FuseStat();
 
       //stat.mode = entry.isDirectory() ? FuseFtype.TYPE_DIR | 0755 : FuseFtype.TYPE_FILE | 0644;
-      stat.mode = FuseFtype.TYPE_FILE | 0644;
+      stat.mode = FuseFtype.TYPE_FILE | 0755;
       stat.nlink = 1;
       stat.uid = 0;
       stat.gid = 0;
       stat.size = dfs.getLen(inode);
       //stat.atime = stat.mtime = stat.ctime = (int) (entry.getTime() / 1000L);
-      stat.atime = stat.mtime = stat.ctime = (int)System.currentTimeMillis();
+      stat.atime = stat.mtime = stat.ctime = 0;//(int)System.currentTimeMillis();
       stat.blocks = (int) ((stat.size + 511L) / 512L);
 
       return stat;
@@ -234,7 +230,9 @@ public class ARFilesystem implements Filesystem2
 
    public void truncate(String path, long size) throws FuseException
    {
-      throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+	   int inode = dfs.lookup(path);
+	   dfs.setLen(inode, (int)size);
+	      
    }
 
    public void unlink(String path) throws FuseException
@@ -257,7 +255,7 @@ public class ARFilesystem implements Filesystem2
    {
 	      
 	      int inode = 0;
-	      if(fh==0){
+	      if(fh == 0){
 	    	  inode = dfs.lookup(path);
 	      }
 	      else 
@@ -268,10 +266,10 @@ public class ARFilesystem implements Filesystem2
 	      
 	      if(inode != 0){
 	    	  intBuffer = buf.asIntBuffer();
-		      buffer = new int[buf.capacity()/4];
+		      buffer = new int[intBuffer.capacity()];
 		      intBuffer.get(buffer);
 		      
-		      dfs.put(inode, buffer, (int)offset, buf.capacity()/4);
+		      dfs.put(inode, buffer, (int)offset, intBuffer.capacity());
 	      }
 	      //How to return errors?
 	      
@@ -291,9 +289,9 @@ public class ARFilesystem implements Filesystem2
       IntBuffer intBuffer;
       int[] buffer;
       if(inode != 0){
-          buffer = new int[(buf.capacity()/4)];
-          dfs.get(inode, buffer, (int)offset, (buf.capacity()/4)); 
-          intBuffer = buf.asIntBuffer();
+    	  intBuffer = buf.asIntBuffer();
+          buffer = new int[intBuffer.capacity()];
+          dfs.get(inode, buffer, (int)offset, intBuffer.capacity()); 
           intBuffer.put(buffer);
       }
       //How to return errors?

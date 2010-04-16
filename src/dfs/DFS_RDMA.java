@@ -87,14 +87,12 @@ public class DFS_RDMA implements DFS
 
     public int lookup(String name)
     {
-    	System.out.println("Looking up file "+name);
         return m_dht.get(name);
     }
 
     public int create(String name)
     {
         int inode = alloc(1024);
-        System.out.println("dfs_create : Creating file "+name+" with inode no. "+inode);
         m_dht.put(name, inode);
         return inode;
     }

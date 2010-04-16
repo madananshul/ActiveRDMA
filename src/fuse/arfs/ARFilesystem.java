@@ -47,18 +47,20 @@ public class ARFilesystem implements Filesystem1
    
    final String server = "localhost";
 
-   private ZipFile zipFile;
-   private long zipFileTime;
+   //private ZipFile zipFile;
+   //private long zipFileTime;
    private ZipEntry rootEntry;
    private Tree tree;
    private FuseStatfs statfs;
 
-   private ZipFileDataReader zipFileDataReader;
+   //private ZipFileDataReader zipFileDataReader;
+   
+   private DFS dfs;
 
 
    public ARFilesystem() throws IOException
    {
-      rootEntry = new ZipEntry("")
+      /*rootEntry = new ZipEntry("")
       {
          public boolean isDirectory()
          {
@@ -69,7 +71,7 @@ public class ARFilesystem implements Filesystem1
       rootEntry.setSize(0);
 
       tree = new Tree();
-      tree.addNode(rootEntry.getName(), rootEntry);
+      tree.addNode(rootEntry.getName(), rootEntry);*/
 
       statfs = new FuseStatfs();
       statfs.blocks = 0;
@@ -78,6 +80,16 @@ public class ARFilesystem implements Filesystem1
       statfs.files = 0;
       statfs.filesFree = 0;
       statfs.namelen = 2048;
+      
+      ActiveRDMA client = null;
+	   try {
+	   	  client = new Client(server);
+	   }
+	   catch(Exception e){
+	   	  System.out.println(e);
+	   }
+	   
+	   dfs = new DFS_RDMA(client);
 
    }
 
@@ -98,17 +110,9 @@ public class ARFilesystem implements Filesystem1
       ZipEntry entry = null;
       if (node == null || (entry = (ZipEntry)node.getValue()) == null)
          throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);*/
-	   ActiveRDMA client = null;
-	   try {
-	   	  client = new Client(server);
-	   }
-	   catch(Exception e){
-	   	  System.out.println(e);
-	   }
-	   DFS dfs;
-	   dfs = new DFS_RDMA(client);
+	  
 	   int inode = dfs.lookup(path);
-	   System.out.println("getattr : inode is " + inode);
+	   System.out.println("getattr : for path " + path+ " inode is " + inode);
 	   if (inode == 0) {
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 	   }
@@ -167,16 +171,7 @@ public class ARFilesystem implements Filesystem1
 
    public void mknod(String path, int mode, int rdev) throws FuseException
    {
-	      ActiveRDMA client = null;
-	      try {
-	    	  client = new Client(server);
-	      }
-	      catch(Exception e){
-	    	  System.out.println(e);
-	      }
-	      DFS dfs;
-	      dfs = new DFS_RDMA(client);
-	      
+	      	      
 	      int inode = dfs.lookup(path);
 	      if (inode!=0) {
 	    	  throw new FuseException("File Exists").initErrno(FuseException.EEXIST);
@@ -184,16 +179,17 @@ public class ARFilesystem implements Filesystem1
 	  
 	      else {
 	    	  inode =  dfs.create(path);
+	    	  System.out.println("mknod : Creating file "+path+" with inode no. "+inode);
 	      }
 	      //return inode;
    }
 
    public void open(String path, int flags) throws FuseException
    {
-      ZipEntry entry = getFileZipEntry(path);
-
-/*      if (flags == O_WRONLY || flags == O_RDWR)
+      /*ZipEntry entry = getFileZipEntry(path);
+      if (flags == O_WRONLY || flags == O_RDWR)
          throw new FuseException("Read Only").initErrno(FuseException.EACCES);*/
+	  
    }
 
    public void rename(String from, String to) throws FuseException
@@ -239,18 +235,7 @@ public class ARFilesystem implements Filesystem1
    public void write(String path, ByteBuffer buf, long offset) throws FuseException
    {
       // noop
-	      ActiveRDMA client = null;
 	      
-	      try {
-	    	  client = new Client(server);
-	      }
-	      catch(Exception e){
-	    	  System.out.println(e);
-	      }
-	      
-	      DFS dfs;
-
-	      dfs = new DFS_RDMA(client);
 	      int inode = dfs.lookup(path);
 	      int[] buffer;
 	      IntBuffer intBuffer;
@@ -275,18 +260,7 @@ public class ARFilesystem implements Filesystem1
 
       reader.read(buf, offset);*/
       
-      ActiveRDMA client = null;
       
-      try {
-    	  client = new Client(server);
-      }
-      catch(Exception e){
-    	  System.out.println(e);
-      }
-      
-      DFS dfs;
-
-      dfs = new DFS_RDMA(client);
       int inode = dfs.lookup(path);
       IntBuffer intBuffer;
       int[] buffer;
@@ -302,8 +276,9 @@ public class ARFilesystem implements Filesystem1
 
    public void release(String path, int flags) throws FuseException
    {
-      ZipEntry zipEntry = getFileZipEntry(path);
-      zipFileDataReader.releaseZipEntryDataReader(zipEntry);
+      /*ZipEntry zipEntry = getFileZipEntry(path);
+      zipFileDataReader.releaseZipEntryDataReader(zipEntry);*/
+	  
    }
 
 

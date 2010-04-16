@@ -17,3 +17,16 @@ The current build.xml file is broken, use 'make' to compile the project.
 TBD - Fix build.xml
 
 P.S. Commits by '746 User' are by madananshul, TBD - Add appropriate user in my Linux VM.
+
+Instructions to run FUSE client + Java App prototype :
+-----------------
+Run MainServer.java
+
+Terminal 1
+
+    * mkdir /tmp/active_rdma
+    * ./arfs-mount.shr /tmp/active_rdma(This will mount and start logging in terminal 1)
+
+Terminal 2
+
+    * ls /tmp/active_rdma etc.(ops will be logged in terminal 1)

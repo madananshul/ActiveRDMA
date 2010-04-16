@@ -268,7 +268,6 @@ public class ARFilesystem implements Filesystem2
 	    	  intBuffer = buf.asIntBuffer();
 		      buffer = new int[intBuffer.capacity()];
 		      intBuffer.get(buffer);
-		      
 		      dfs.put(inode, buffer, (int)offset, intBuffer.capacity());
 	      }
 	      //How to return errors?

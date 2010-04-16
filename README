@@ -5,7 +5,7 @@ FIXME tags point to stuff that needs/should be improved in future versions (Ecli
 
 The src/tests uses JUnit (again Eclipse includes this by default but you may need to have junit.jar in your classpath otherwise).
 
-TBD - Seems there is some problem with flush.
+TBD - During 'touch' file gets created, but an error is returned to the linux client. Seems there is some problem with flush??
 
 TBD - atim/mtime/ctime not handled yet.
 

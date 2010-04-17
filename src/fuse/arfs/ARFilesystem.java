@@ -49,7 +49,7 @@ public class ARFilesystem implements Filesystem2
 
    //private ZipFile zipFile;
    //private long zipFileTime;
-   private ZipEntry rootEntry;
+   //private ZipEntry rootEntry;
    private Tree tree;
    private FuseStatfs statfs;
 
@@ -60,19 +60,6 @@ public class ARFilesystem implements Filesystem2
 
    public ARFilesystem() throws IOException
    {
-      /*rootEntry = new ZipEntry("")
-      {
-         public boolean isDirectory()
-         {
-            return true;
-         }
-      };
-      //rootEntry.setTime(zipFileTime);
-      rootEntry.setSize(0);
-
-      tree = new Tree();
-      tree.addNode(rootEntry.getName(), rootEntry);*/
-
       statfs = new FuseStatfs();
       statfs.blocks = 0;
       statfs.blockSize = blockSize;
@@ -82,15 +69,17 @@ public class ARFilesystem implements Filesystem2
       statfs.namelen = 2048;
       
       ActiveRDMA client = null;
-	   try {
+	  try {
 	   	  client = new Client(server);
-	   }
-	   catch(Exception e){
+	  }
+	  catch(Exception e){
 	   	  System.out.println(e);
-	   }
+	  }
 	   
-	   dfs = new DFS_RDMA(client);
-	   dfs.create("/");
+	  dfs = new DFS_RDMA(client);
+	   
+	  dfs.create("/");
+	  
    }
 
    
@@ -131,11 +120,14 @@ public class ARFilesystem implements Filesystem2
       FuseStat stat = new FuseStat();
 
       //stat.mode = entry.isDirectory() ? FuseFtype.TYPE_DIR | 0755 : FuseFtype.TYPE_FILE | 0644;
-      stat.mode = FuseFtype.TYPE_FILE | 0755;
+      if(path.equals("/"))
+    	  stat.mode = FuseFtype.TYPE_DIR | 0755;
+      else 
+    	  stat.mode = FuseFtype.TYPE_FILE | 0755;
       stat.nlink = 1;
       stat.uid = 0;
       stat.gid = 0;
-      stat.size = dfs.getLen(inode);
+      stat.size = 4*dfs.getLen(inode);
       //stat.atime = stat.mtime = stat.ctime = (int) (entry.getTime() / 1000L);
       stat.atime = stat.mtime = stat.ctime = 0;//(int)System.currentTimeMillis();
       stat.blocks = (int) ((stat.size + 511L) / 512L);

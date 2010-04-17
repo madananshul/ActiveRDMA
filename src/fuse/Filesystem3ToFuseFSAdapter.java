@@ -315,8 +315,11 @@ public class Filesystem3ToFuseFSAdapter implements FuseFS
    {
       String pathStr = cs.decode(path).toString();
 
+      //if (log != null && log.isDebugEnabled())
+      //   log.debug("utime: path=" + pathStr + ", atime=" + atime + " (" + new Date((long)atime * 1000L) + "), mtime=" + mtime + " (" + new Date((long)mtime * 1000L) + ")");
+
       if (log != null && log.isDebugEnabled())
-         log.debug("utime: path=" + pathStr + ", atime=" + atime + " (" + new Date((long)atime * 1000L) + "), mtime=" + mtime + " (" + new Date((long)mtime * 1000L) + ")");
+          log.debug("utime: path=" + pathStr + ", atime=" + atime + ", mtime=" + mtime + " ");
 
       try
       {

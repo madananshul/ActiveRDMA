@@ -100,12 +100,12 @@ public class ARFilesystem implements Filesystem2
    
    public void chmod(String path, int mode) throws FuseException
    {
-      throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+      //throw new FuseException("Read Only").initErrno(FuseException.EACCES);
    }
 
    public void chown(String path, int uid, int gid) throws FuseException
    {
-      throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+      //throw new FuseException("Read Only").initErrno(FuseException.EACCES);
    }
 
    public FuseStat getattr(String path) throws FuseException
@@ -138,27 +138,27 @@ public class ARFilesystem implements Filesystem2
    // CHANGE-22: FuseDirEnt.inode added
    public FuseDirEnt[] getdir(String path) throws FuseException
    {
-      Node node = tree.lookupNode(path);
-      ZipEntry entry = null;
-      if (node == null || (entry = (ZipEntry)node.getValue()) == null)
-         throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
+	   int inode = dfs.lookup(path);
+	   if (inode == 0) {
+		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
+	   }
 
-      if (!entry.isDirectory())
-         throw new FuseException("Not A Directory").initErrno(FuseException.ENOTDIR);
+      //if (!entry.isDirectory())
+      //   throw new FuseException("Not A Directory").initErrno(FuseException.ENOTDIR);
 
-      Collection children = node.getChildren();
-      FuseDirEnt[] dirEntries = new FuseDirEnt[children.size()];
+      //FuseDirEnt[] dirEntries = new FuseDirEnt[children.size()];
+	   FuseDirEnt[] dirEntries = new FuseDirEnt[0];
 
-      int i = 0;
-      for (Iterator iter = children.iterator(); iter.hasNext(); i++)
-      {
-         Node childNode = (Node)iter.next();
-         ZipEntry zipEntry = (ZipEntry)childNode.getValue();
-         FuseDirEnt dirEntry = new FuseDirEnt();
-         dirEntries[i] = dirEntry;
-         dirEntry.name = childNode.getName();
-         dirEntry.mode = zipEntry.isDirectory()? FuseFtype.TYPE_DIR : FuseFtype.TYPE_FILE;
-      }
+      //int i = 0;
+      //for (Iterator iter = children.iterator(); iter.hasNext(); i++)
+      //{
+         
+         //ZipEntry zipEntry = (ZipEntry)childNode.getValue();
+         //FuseDirEnt dirEntry = new FuseDirEnt();
+         //dirEntries[i] = dirEntry;
+         //dirEntry.name = childNode.getName();
+         //dirEntry.mode = zipEntry.isDirectory()? FuseFtype.TYPE_DIR : FuseFtype.TYPE_FILE;
+      //}
 
       return dirEntries;
    }
@@ -224,12 +224,11 @@ public class ARFilesystem implements Filesystem2
    {
 	   int inode = dfs.lookup(path);
 	   dfs.setLen(inode, (int)size);
-	      
    }
 
    public void unlink(String path) throws FuseException
    {
-      throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+      //throw new FuseException("Read Only").initErrno(FuseException.EACCES);
    }
 
    public void utime(String path, int atime, int mtime) throws FuseException
@@ -285,7 +284,7 @@ public class ARFilesystem implements Filesystem2
           dfs.get(inode, buffer, (int)offset, intBuffer.capacity()); 
           intBuffer.put(buffer);
       }
-      //How to return errors?
+      //Throw Exceptions to return errors.
 
    }
 

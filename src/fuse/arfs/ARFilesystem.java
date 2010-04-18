@@ -261,7 +261,6 @@ public class ARFilesystem implements Filesystem3
    // isWritepage indicates that write was caused by a writepage
    public int write(String path, Object fh, boolean isWritepage, ByteBuffer buf, long offset) throws FuseException
    {
-	      
 	      int inode = 0;
 	      if(fh.equals(new Integer(inode))){
 	    	  inode = dfs.lookup(path);
@@ -273,19 +272,28 @@ public class ARFilesystem implements Filesystem3
 	      IntBuffer intBuffer;
 	      
 	      if(inode != 0){
-	    	  intBuffer = ((ByteBuffer) buf.rewind()).asIntBuffer();
-	    	  //intBuffer = buf.asIntBuffer();
+	    	  //intBuffer = ((ByteBuffer) buf.rewind()).asIntBuffer();
+	    	  intBuffer = buf.asIntBuffer();
 	    	  System.out.println("Writing " + buf.capacity() + " bytes and " + intBuffer.capacity() + " ints.");
 	    	  int pad = ((buf.capacity()%4) != 0)?1:0;
-		      buffer = new int[intBuffer.capacity()];
-		      intBuffer.get(buffer, 0 , buffer.length);
+		      //buffer = new int[intBuffer.capacity()];
+		      //intBuffer.get(buffer, 0 , buffer.length);
+	    	  //buffer = intBuffer.array();
 		      
 		      /*int rem = buf.capacity()%4;
 		      for (int i = 0; i <= rem; i++) {
 		            int shift = (rem - i) * 8;
 		            buffer[intBuffer.capacity()] += (buf.get(i) & 0x000000FF) << shift;
-		      }
-		      System.out.println("Finally Writing " + buffer.length + " ints.");*/
+		      }*/
+		      
+		      //Nasty Hack that writes equivalent amount of data, but random junk
+		      buffer = new int[intBuffer.capacity() + pad];
+		      for(int i=0;i<intBuffer.capacity();i++)
+	        	  System.out.println("Writing int " + buffer[i] + " bytes" + buf.get(i*4) + " " + buf.get(i*4+1) + " " + buf.get(i*4+2) + " " + buf.get(i*4+3));
+	          
+		      
+		      /*System.out.println("Finally Writing " + buffer.length + " ints.");*/
+		      dfs.setLen(inode, intBuffer.capacity() + pad);
 		      dfs.put(inode, buffer, (int)offset, intBuffer.capacity());
 		      return 0;
 	      }
@@ -293,6 +301,7 @@ public class ARFilesystem implements Filesystem3
 	      
    }
 
+   //TBD - Problem in translation code. Fix this.
    public int read(String path, Object fh, ByteBuffer buf, long offset) throws FuseException
    {
 	   int fLen;
@@ -304,14 +313,20 @@ public class ARFilesystem implements Filesystem3
 	   	  inode = ((Integer)fh).intValue();
 	      
 	  fLen = dfs.getLen(inode);
+	  //fLen = 2; 
+	   
       IntBuffer intBuffer;
       int[] buffer;
       if(inode != 0){
     	  intBuffer = buf.asIntBuffer();
           buffer = new int[fLen];
-          System.out.println("Reading " + buf.capacity() + " bytes and " + intBuffer.capacity() + " ints.");
-          dfs.get(inode, buffer, (int)offset, intBuffer.capacity()); 
+          System.out.println("Reading " + fLen + " ints.");
+          dfs.get(inode, buffer, (int)offset, fLen);
+          /*for(int i=0;i<fLen;i++)
+        	  System.out.println("Before int buffer put, Reading int " + buffer[i] + " bytes" + buf.get(i*4) + " " + buf.get(i*4+1) + " " + buf.get(i*4+2) + " " + buf.get(i*4+3));*/
           intBuffer.put(buffer);
+          /*for(int i=0;i<fLen;i++)
+        	  System.out.println("After int buffer put, Reading int " + buffer[i] + " bytes" + buf.get(i*4) + " " + buf.get(i*4+1) + " " + buf.get(i*4+2) + " " + buf.get(i*4+3));*/
           return 0;
       }
       throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);

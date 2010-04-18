@@ -112,9 +112,16 @@ public class DFS_RDMA implements DFS
         int fLen = getLen(inode);
         System.out.println("off " + off + " len " + len + " fLen " + fLen);
         System.out.println("buf len " + buffer.length);
-        if (off + len > fLen) return -1;
+        
+        //Why is this condition here, seems to be not valid for writes??
+        //if (off + len > fLen) return -1;
+        
         if (len > buffer.length) return -1;
+        System.out.println("Access(Read/Write) is going to happen.");
 
+        //Are we updating length when writing to inode using put??
+        //dfs.getLen() seems to be returning 0 even after a write??
+        
         int bufptr = 0;
         while (len > 0)
         {

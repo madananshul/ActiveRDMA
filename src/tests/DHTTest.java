@@ -11,7 +11,7 @@ import examples.dht.DHT_RDMA;
 
 public class DHTTest extends TestCase {
 
-    final String server = "localhost";
+    final String server = "10.0.0.2";
 
     final int TestCount = 1000;
 

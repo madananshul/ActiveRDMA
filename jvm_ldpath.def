@@ -1,1 +1,1 @@
-LDPATH := -L/usr/lib/../lib/gcj-4.3-90 -L/usr/lib/jni
+LDPATH := -L/usr/lib/../lib/gcj-4.4-10 -L/usr/lib/jni

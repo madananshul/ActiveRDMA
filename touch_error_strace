@@ -1,6 +1,0 @@
-open("/tmp/active_rdma/file2", O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK|O_LARGEFILE, 0666) = 3
-dup2(3, 0)                              = 0
-close(3)                                = 0
-utimensat(0, NULL, NULL, 0)             = -1 EFAULT (Bad address)
-utimes("/tmp/active_rdma/file2", NULL)  = -1 EFAULT (Bad address)
-close(0)                                = 0

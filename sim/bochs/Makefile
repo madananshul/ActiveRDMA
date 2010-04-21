@@ -91,8 +91,8 @@ SHELL = /bin/sh
 
 CC = gcc
 CXX = g++
-CFLAGS = -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS) $(MCH_CFLAGS) $(FLA_FLAGS)  -DBX_SHARE_PATH='"$(sharedir)"'
-CXXFLAGS = -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS) $(MCH_CFLAGS) $(FLA_FLAGS)  -DBX_SHARE_PATH='"$(sharedir)"' -I/usr/lib/jvm/java-1.5.0-gcj-4.4/include
+CFLAGS = -g  -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS) $(MCH_CFLAGS) $(FLA_FLAGS)  -DBX_SHARE_PATH='"$(sharedir)"'
+CXXFLAGS = -g  -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES  $(X_CFLAGS) $(MCH_CFLAGS) $(FLA_FLAGS)  -DBX_SHARE_PATH='"$(sharedir)"' -I/usr/lib/jvm/java-1.5.0-gcj-4.4/include
 
 LDFLAGS = 
 LIBS =  -lm -L/usr/lib/jvm/java-1.5.0-gcj-4.4/lib -ljvm -Wl,-rpath /usr/lib/jvm/java-1.5.0-gcj-4.4/lib

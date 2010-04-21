@@ -3,6 +3,7 @@
 #include <string.h>
 #include <netinet/ip.h> // struct iphdr
 #include <netinet/udp.h> // struct udphdr
+#include <net/if_arp.h> // struct arphdr
 #include <time.h> // clock_gettime()
 
 #define PROT_UDP 17
@@ -41,7 +42,7 @@ static unsigned short checksum(unsigned char *data, int len, short init)
     return cksum;
 }
 
-ActiveRDMA_c::ActiveRDMA_c()
+ActiveRDMA_c::ActiveRDMA_c(char *macaddr)
 {
     JavaVMInitArgs args;
     JavaVMOption options[1];
@@ -67,6 +68,9 @@ ActiveRDMA_c::ActiveRDMA_c()
         m_timing.mem_rd = m_timing.mem_wr = m_timing.mem_cas = 0;
 
     singleton = this;
+
+    m_my_ip = (10 << 24) | (0 << 16) | (0 << 8) | (2 << 0);
+    m_my_eth = (unsigned char *)macaddr;
 }
 
 ActiveRDMA_c::~ActiveRDMA_c()
@@ -92,7 +96,6 @@ void ActiveRDMA_c::handle_rdma_req(int src_addr, int src_port, unsigned char *da
     clock_gettime(CLOCK_REALTIME, &t2);
 
     long long int nsec = 1000000000 * (t2.tv_sec - t1.tv_sec) + (t2.tv_nsec - t1.tv_nsec);
-    printf("call took %lld ns\n", nsec);
 
     m_timing.jvm_nsec += nsec;
     
@@ -182,7 +185,8 @@ bool ActiveRDMA_c::handle_ip_packet(unsigned char *ip_data, int len)
     iphdr *hdr = (iphdr *)ip_data;
     int src = ntohl(hdr->saddr), dest = ntohl(hdr->daddr);
 
-    m_my_ip = dest;
+    if (dest != m_my_ip)
+        return false;
 
 #ifdef DUMP
     printf("IPv%d, length %d, proto %d, saddr %d.%d.%d.%d, daddr %d.%d.%d.%d\n",
@@ -203,6 +207,38 @@ bool ActiveRDMA_c::handle_ip_packet(unsigned char *ip_data, int len)
     return false;
 }
 
+bool ActiveRDMA_c::handle_arp_packet(unsigned char *eth, unsigned char *arp_data, int len)
+{
+    arphdr *arp = (arphdr *)arp_data;
+    int ip = htonl(m_my_ip);
+
+    if (ntohs(arp->ar_op) == ARPOP_REQUEST &&
+            !memcmp(arp_data + sizeof(arphdr) + 10 + 6, (void *)&ip, 4))
+    {
+        printf("got a match! sending ARP reply.\n");
+
+        // copy sender MAC/IP to receiver fields
+        char temp[10];
+        memcpy(arp_data + sizeof(arphdr) + 10, arp_data + sizeof(arphdr), 10);
+        // this is a reply
+        arp->ar_op = htons(ARPOP_REPLY);
+        // copy our IP and MAC address in
+        memcpy(arp_data + sizeof(arphdr), m_my_eth, 6);
+        memcpy(arp_data + sizeof(arphdr) + 6, &ip, 4);
+
+        // swap source and dest ethernet addrs in eth frame
+        memcpy(eth, eth + 6, 6);
+        memcpy(eth + 6, m_my_eth, 6);
+
+        // send ethernet frame
+        m_sender(m_sender_p, eth, 14 + sizeof(arphdr) + 20);
+
+        return true;
+    }
+
+    return false;
+}
+
 bool ActiveRDMA_c::handle_packet(void *data, int len)
 {
     unsigned char *p = (unsigned char *)data;
@@ -216,12 +252,16 @@ bool ActiveRDMA_c::handle_packet(void *data, int len)
 
     if (p[12] == 0x08 && p[13] == 0x00) // 0x0800 is IPv4
     {
-        memcpy((void *)m_my_eth, (void *)p, 6);
         memcpy((void *)m_partner_eth, (void *)(p + 6), 6);
 
         m_timing.pkt++;
 
         return handle_ip_packet(p + 14, len - 14);
+    }
+
+    if (p[12] == 0x08 && p[13] == 0x06) // 0x0806 is ARP
+    {
+        return handle_arp_packet(p, p + 14, len - 14);
     }
 
     return false;

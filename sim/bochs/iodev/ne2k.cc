@@ -74,7 +74,7 @@ bx_ne2k_c::bx_ne2k_c()
   put("NE2K");
   s.tx_timer_index = BX_NULL_TIMER_HANDLE;
   ethdev = NULL;
-  rdma = new ActiveRDMA_c();
+  rdma = new ActiveRDMA_c((char *)(this->s.physaddr));
   rdma->reg_sender(bx_ne2k_c::rdma_packet_sender, this);
 }
 

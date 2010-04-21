@@ -7,7 +7,7 @@ import java.io.IOException;
 public class MessageFactory {
 	
 	public static enum ErrorCode{ OK, OUT_OF_BOUNDS, TIME_OUT, UNKNOWN_CODE, DUPLCIATED_CODE, ERROR };
-	enum OpCode{ READ, WRITE, CAS, RUN, LOAD };
+	enum OpCode{ READ, WRITE, CAS, RUN, LOAD, READBYTES, WRITEBYTES };
 	
 	static public Operation makeRead(int address, int size){
 		Read r = new Read();
@@ -43,6 +43,22 @@ public class MessageFactory {
 		r.code = code;
 		return r;
 	}
+
+    static public Operation makeReadBytes(int address, int count)
+    {
+        ReadBytes r = new ReadBytes();
+        r.address = address;
+        r.count = count;
+        return r;
+    }
+
+    static public Operation makeWriteBytes(int address, byte[] data)
+    {
+        WriteBytes r = new WriteBytes();
+        r.address = address;
+        r.count = count;
+        return r;
+    }
 	
 	static private final OpCode[] code_table = OpCode.values();
 	static public Operation read(DataInputStream in) throws IOException{
@@ -55,6 +71,8 @@ public class MessageFactory {
 		case WRITE: result = new Write(); break;
 		case  LOAD: result = new Load();  break;
 		case   RUN: result = new Run();   break;
+        case READBYTES: result = new ReadBytes(); break;
+        case WRITEBYTES: result = new WriteBytes(); break;
 		default:
 			throw new RuntimeException("unexpected op code:" + code_table[code]);
 		}
@@ -72,6 +90,13 @@ public class MessageFactory {
 			for(int i = 0 ; i < array.length ; ++i )
 				o.writeInt(array[i]);
 	}
+
+    protected static void writeArray(DataOutputStream o, byte[] array) throws IOException {
+        o.writeInt( array == null ? -1 : array.length );
+        if (array != null)
+            for (int i = 0; i < array.length; i++)
+                o.writeByte(array[i]);
+    }
 	
 	protected static int[] readArray(DataInputStream s) throws IOException {
 		int n = s.readInt();
@@ -84,20 +109,40 @@ public class MessageFactory {
 			return result;
 		}
 	}
+
+    protected static byte[] readArray_b(DataInputStream s) throws IOException {
+        int n = s.readInt();
+        if (n == -1)
+            return null;
+        else
+        {
+            byte[] result = new byte[n];
+            for (int i = 0; i <result.length; i++)
+                result[i] = s.readByte();
+            return result;
+        }
+    }
 	
 	public static class Result {
 		public int[] result;
+        public byte[] result_b;
 		public ErrorCode error;
 		
 		public Result(){
 			error = ErrorCode.ERROR;
 			result = null;
+            result_b = null;
 		}
 		
 		public Result(int[] values){
 			result = values;
 			error = ErrorCode.OK;
 		}
+
+        public Result(byte[] values){
+            result_b = values;
+            error = ErrorCode.OK;
+        }
 		
 		public Result(ErrorCode prob){
 			if( prob == ErrorCode.OK )
@@ -109,11 +154,13 @@ public class MessageFactory {
 		public void write(DataOutputStream s) throws IOException {
 			s.writeInt(error.ordinal());
 			writeArray(s, result);
+            writeArray(s, result_b);
 		}
 		
 		public void read(DataInputStream s) throws IOException {
 			error = ErrorCode.values()[s.readInt()];
 			result = readArray(s);
+            result_b = readArray_b(s);
 		}
 	}
 
@@ -231,4 +278,44 @@ public class MessageFactory {
 			s.read(code);
 		}
 	}
+
+    public static class ReadBytes implements Operation {
+        public int address, count;
+
+        public <C> Result visit(MessageVisitor<C> v, C context) {
+            return v.visit(this, context);
+        }
+
+        public void write(DataOutputStream s) throws IOException {
+            s.writeInt(OpCode.READBYTES.ordinal());
+            s.writeInt(address);
+            s.writeInt(count);
+        }
+
+        public void read(DataInputStream s) throws IOException {
+            address = s.readInt();
+            count = s.readInt();
+        }
+    }
+
+    public static class WriteBytes implements Operation {
+        public int address;
+        public byte[] data;
+
+        public <C> Result visit(MessageVisitor<C> v, C context) {
+            return v.visit(this, context);
+        }
+
+        public void write(DataOutputStream s) throws IOException {
+            s.writeInt(OpCode.WRITEBYTES.ordinal());
+            s.writeInt(address);
+            writeArray(s, data);
+        }
+
+        public void read(DataInputStream s) throws IOException {
+            address = s.readInt();
+            data = readArray_b(s);
+        }
+
+    }
 }

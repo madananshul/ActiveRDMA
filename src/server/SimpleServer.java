@@ -24,7 +24,7 @@ import common.messages.MessageFactory.Write;
 public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 {
 	
-	final protected AtomicInteger[] memory;
+	final protected byte[] memory;
 	final protected MobileClassLoader loader;
 
     private long stat_rd, stat_wr, stat_cas;
@@ -32,9 +32,7 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
     public SimpleServer(int memory_size) throws IOException {
 		super();
 		loader = new MobileClassLoader();
-		memory = new AtomicInteger[memory_size];
-		for(int i=0; i<memory.length; ++i)
-			memory[i] = new AtomicInteger(0);
+        memory = new byte[memory_size];
 		Alloc.init(this);
 
         stat_rd = 0;
@@ -94,15 +92,39 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 		return _load(load.code);
 	}
 
+    public Result visit(ReadBytes readbytes, Object context) {
+        return _readbytes(readbytes.address, readbytes.count);
+    }
+
+    public Result visit(WriteBytes writebytes, Object context) {
+        return _writebytes(writebytes.address, writebytes.data);
+    }
+
 	/*
 	 * ActiveRDMA stuff
 	 */
+
+    private int readW(int address) throws ArrayIndexOutOfBoundsException
+    {
+        return (int)memory[address] + (int)memory[address+1] << 8 +
+            (int)memory[address+2] << 16 + (int)memory[address+3] << 24;
+    }
+
+    private void writeW(int address, int word) throws ArrayIndexOutOfBoundsException
+    {
+        memory[address] = (byte)(word & 0xff);
+        memory[address+1] = (byte)((word >> 8) & 0xff);
+        memory[address+2] = (byte)((word >> 16) & 0xff);
+        memory[address+3] = (byte)((word >> 24) & 0xff);
+    }
 	
 	public Result _cas(int address, int test, int value) {
         stat_cas++;
 		Result result = new Result();
 		try{
-			result.result = new int[]{memory[address].compareAndSet(test, value) ? 1 : 0};
+            int old = readW(address);
+            if (old == test) writeW(address, value);
+			result.result = new int[]{ (old == test) ? 1 : 0 };
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
 			result.error = ErrorCode.OUT_OF_BOUNDS;
@@ -128,12 +150,13 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	}
 
 	public Result _r(int address, int size) {
-        stat_rd++;
+        stat_rd += 4 * size;
 		Result result = new Result();
 		try{
 			result.result = new int[size];
 			for(int i=0;i<size;++i)
-				result.result[i] =  memory[address+i].get();
+				result.result[i] = readW(address + 4*i);
+
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
 			result.error = ErrorCode.OUT_OF_BOUNDS;
@@ -159,13 +182,13 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	}
 
 	public Result _w(int address, int[] values) {
-        stat_wr++;
+        stat_wr += 4 * values.length;
 		Result result = new Result();
 		try{
 			result.result = new int[values.length];
 			for(int i=0;i<values.length;++i){
-				result.result[i] = memory[address+i].get();
-				memory[address+i].set(values[i]);
+				result.result[i] = readW(address + 4*i);
+                writeW(address + 4*i, values[i]);
 			}
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
@@ -174,5 +197,34 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 		}
 		return result;
 	}
+
+    public Result _readbytes(int address, int count) {
+        stat_rd += count;
+        Result result = new Result();
+        try {
+            result.result_b = new byte[count];
+            for (int i = 0; i < count; i++)
+                result.result_b[i] = memory[address + i];
+            result.error = ErrorCode.OK;
+        } catch (ArrayIndexOutOfBoundsException exc) {
+            result.error = ErrorCode.OUT_OF_BOUNDS;
+            result.result_b = null;
+        }
+        return result;
+    }
+
+    public Result _writebytes(int address, byte[] values) {
+        stat_wr += count;
+        Result result = new Result();
+        try {
+            for (int i = 0; i < count; i++)
+                memory[address + i] = values[i];
+            result.error = ErrorCode.OK;
+        } catch (ArrayIndexOutOfBoundsException exc) {
+            result.error = ErrorCode.OUT_OF_BOUNDS;
+            result.result_b = null;
+        }
+        return result;
+    }
 
 }

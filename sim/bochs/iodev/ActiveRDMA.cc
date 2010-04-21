@@ -8,6 +8,7 @@
 
 #define PROT_UDP 17
 #define UDP_PORT 15712
+#define MEMORY_SIZE 128*1024*1024
 
 //#define DUMP
 
@@ -59,7 +60,7 @@ ActiveRDMA_c::ActiveRDMA_c(char *macaddr)
 
     m_cls = m_jni->FindClass("server/SimpleServer");
     jmethodID constructor = m_jni->GetMethodID(m_cls, "<init>", "(I)V");
-    m_srv = m_jni->NewObject(m_cls, constructor, 4*1024*1024);
+    m_srv = m_jni->NewObject(m_cls, constructor, MEMORY_SIZE);
 
     m_srvMth = m_jni->GetMethodID(m_cls, "serve", "([B)[B");
     m_getMth = m_jni->GetMethodID(m_cls, "getStat", "(I)J");

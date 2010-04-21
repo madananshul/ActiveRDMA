@@ -52,7 +52,7 @@ public abstract class ActiveRDMA {
 	/** Executes the previously loaded code in the server.
 	 * @param name - class to be executed, FIXME: this will change to something else, md5 maybe?
 	 * @param arg - argument supplied to the executing code
-	 * @result result of the executed method.
+	 * @return result of the executed method.
 	 */
 	public abstract Result _run(byte[] md5, int[] arg);
 	
@@ -61,6 +61,20 @@ public abstract class ActiveRDMA {
 	 * @return boolean as int (0 - false, else - true) with load success result
 	 */
 	public abstract Result _load(byte[] code);
+
+    /** Reads a stream of bytes
+      * @param address - memory address
+      * @param count - number of bytes to read
+      * @return data in Result.result_b
+      */
+    public abstract Result _readbytes(int address, int count);
+
+    /** Writes a stream of bytes
+      * @param address - memory address
+      * @param values - array of bytes (zero or more) to write there
+      * @return error code
+      */
+    public abstract Result _writebytes(int address, byte[] values);
 	
 	/*
 	 * exception based wrappers
@@ -79,6 +93,20 @@ public abstract class ActiveRDMA {
 		}
 		return r.result;
 	}
+
+    static protected byte[] unwrap_b(Result r) {
+        switch (r.error) {
+		case OUT_OF_BOUNDS:
+		case TIME_OUT:
+		case UNKNOWN_CODE:
+		case DUPLCIATED_CODE:
+		case ERROR:
+			throw new RuntimeException("Error: "+r.error);
+        case OK:
+        default:
+        }
+        return r.result_b;
+    }
 	
 	static protected int unwrap(int[] array){
 		return array == null ? 0 : array[0];
@@ -113,6 +141,14 @@ public abstract class ActiveRDMA {
 	public int load(byte[] code){
 		return unwrap( unwrap( _load(code) ) );
 	}
+
+    public byte[] readbytes(int address, int count) {
+        return unwrap_b( _readbytes(address, count) );
+    }
+
+    public void writebytes(int address, byte[] values) {
+        unwrap( _writebytes(address, values) ); 
+    }
 	
 	/* ==============================================================
 	 * all these methods should just use/extend the above "interface"
@@ -133,7 +169,7 @@ public abstract class ActiveRDMA {
 		static final int MEM_COUNTER = 0;
 		
 		public static void init(ActiveRDMA a){
-			a.w(MEM_COUNTER, 1);
+			a.w(MEM_COUNTER, 4);
 		}
 		
 		public static int execute(ActiveRDMA a, int[] args) {

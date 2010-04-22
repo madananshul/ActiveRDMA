@@ -50,8 +50,8 @@ public class DHTTest extends TestCase {
 
         d = new DHT_RDMA(client, 1024);
         runTiming(d, "RDMA  ");
-//        d = new DHT_Active(client);
-//        runTiming(d, "Active");
+        d = new DHT_Active(client);
+        runTiming(d, "Active");
     }
 
 }

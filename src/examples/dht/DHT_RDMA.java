@@ -20,12 +20,18 @@ public class DHT_RDMA implements DHT {
 		N = _N;
 		
 		// initialize the free-block pointer
-		m_client.w(0, 2*N);
+		m_client.w(0, 4* (2*N));
 		
 		// initialize the hash entries
 		for (int i = 0; i < N; i++)
-			m_client.w(4*N+i, 0);
+			m_client.w(4*(N+i), 0);
 	}
+
+    public DHT_RDMA(ActiveRDMA client, int _n, boolean noInit)
+    {
+        m_client = client;
+        N = _n;
+    }
 	
 	int hash(byte[] key)
 	{
@@ -33,6 +39,12 @@ public class DHT_RDMA implements DHT {
 		for (int i = 0; i < key.length; i++) t = 37*t + key[i];
 		return t % N;
 	}
+
+    int hashPtr(byte[] key)
+    {
+        int h = hash(key);
+        return 4*(N+h);
+    }
 	
 	boolean compareKey(byte[] key, int ptr)
 	{
@@ -49,7 +61,7 @@ public class DHT_RDMA implements DHT {
 	
 	int findKey(byte[] key)
 	{
-		int ptr = m_client.r(4 * (N + hash(key)));
+		int ptr = m_client.r(hashPtr(key));
 
 		while (ptr != 0)
 		{
@@ -60,19 +72,28 @@ public class DHT_RDMA implements DHT {
 		
 		return ptr;
 	}
+
+    public int get(String key)
+    {
+        return get(key.getBytes());
+    }
 	
-	public int get(String key)
+	public int get(byte[] key)
 	{
-		int ptr = findKey(key.getBytes());
+		int ptr = findKey(key);
 		return (ptr != 0) ? m_client.r(ptr + 4) : 0;
 	}
+
+    public void put(String key, int val)
+    {
+        put(key.getBytes(), val);
+    }
 	
-	public void put(String key, int val)
+	public void put(byte[] k, int val)
 	{
 		int newPtr;
-        byte[] k = key.getBytes();
         int recLen = k.length + 12;
-        recLen = (recLen + 3) & ~4; // round up to next word
+        recLen = (recLen + 3) & ~3; // round up to next word
 		
 		// create the new data block first
 		while (true)
@@ -86,17 +107,20 @@ public class DHT_RDMA implements DHT {
         m_client.w(newPtr + 8, k.length);
         m_client.writebytes(newPtr + 12, k);
 		
-        int hashPtr = 4*(N+hash(k));
+        int h = hashPtr(k);
 		while (true)
 		{
-			int oldHead = m_client.r(hashPtr);
+			int oldHead = m_client.r(h);
 			m_client.w(newPtr, oldHead);
-			if (m_client.cas(hashPtr, oldHead, newPtr) != 0) break;
+			if (m_client.cas(h, oldHead, newPtr) != 0) break;
 		}
 	}
 
-	public boolean has(String key) {
-        byte[] k = key.getBytes();
+	public boolean has(byte[] k) {
         return findKey(k) != 0;
 	}
+
+    public boolean has(String key) {
+        return has(key.getBytes());
+    }
 }

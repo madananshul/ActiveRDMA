@@ -1,12 +1,8 @@
 package server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.*;
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import common.ActiveRDMA;
 import common.ByteArray;
@@ -21,6 +17,17 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	final protected MobileClassLoader loader;
 
     private long stat_rd, stat_wr, stat_cas;
+
+    public static void main(String[] args)
+    {
+        try
+        {
+            SimpleServer s = new SimpleServer(128*1024*1024);
+            s.serveSocket();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
     public SimpleServer(int memory_size) throws IOException {
 		super();
@@ -32,6 +39,24 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
         stat_wr = 0;
         stat_cas = 0;
     }
+
+    public void serveSocket() throws IOException
+    {
+        DatagramSocket socket = new DatagramSocket(ActiveRDMA.SERVER_PORT);
+        byte[] b = new byte[socket.getReceiveBufferSize()];
+        DatagramPacket packet = new DatagramPacket(b, b.length);
+
+        while (true)
+        {
+            socket.receive(packet);
+            byte[] response = serve(packet.getData());
+            DatagramPacket res = new DatagramPacket(response, response.length);
+            res.setAddress(packet.getAddress());
+            res.setPort(packet.getPort());
+            socket.send(res);
+        }
+    }
+
 	
     public byte[] serve(byte[] inBytes)
     {
@@ -97,14 +122,26 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	 * ActiveRDMA stuff
 	 */
 
+    // convert unsigned-byte-stored-as-signed to int (kill Java's sign extension)
+    private int byteToInt(byte b)
+    {
+        return ((int)b) & 0xff;
+    }
+
     private int readW(int address) throws ArrayIndexOutOfBoundsException
     {
-        return (int)memory[address] + (int)memory[address+1] << 8 +
-            (int)memory[address+2] << 16 + (int)memory[address+3] << 24;
+        int val = byteToInt(memory[address]) |
+            (byteToInt(memory[address+1]) |
+             (byteToInt(memory[address+2]) |
+              byteToInt(memory[address+3]) << 8) << 8) << 8;
+
+        System.out.println("readW " + address + ": " + val);
+        return val;
     }
 
     private void writeW(int address, int word) throws ArrayIndexOutOfBoundsException
     {
+        //System.out.println("write " + address + ": " + (byte)(word & 0xff) + " " + (byte)((word >> 8) & 0xff) + " " + (byte)((word >> 16) & 0xff) + " " + (byte)((word >> 24) & 0xff));
         memory[address] = (byte)(word & 0xff);
         memory[address+1] = (byte)((word >> 8) & 0xff);
         memory[address+2] = (byte)((word >> 16) & 0xff);
@@ -152,9 +189,11 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
+            System.out.println("out of bounds");
 			result.error = ErrorCode.OUT_OF_BOUNDS;
 			result.result = null;
 		}
+        System.out.println("read " + address + " (size " + size + "): " + result.result[0]);
 		return result;
 	}
 
@@ -188,6 +227,7 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 			result.error = ErrorCode.OUT_OF_BOUNDS;
 			result.result = null;
 		}
+        System.out.println("write " + address + " (data " + values[0] + "): " + result.result[0]);
 		return result;
 	}
 

@@ -41,17 +41,17 @@ public class ClientTest extends TestCase {
 	public void tests_Load_Run() throws Exception{
 		ActiveRDMA client = new Client(server);
 
-		client.w(7,0);
-		assertEquals( client.r(7) , 0 );
+		client.w(7*4,0);
+		assertEquals( client.r(7*4) , 0 );
 		
 		assertTrue( client.load(MobileCodeTest.class) != 0 );
 		assertTrue( client.load(MobileCodeTest2.class) != 0 );
 		
 		// sets to [7]42
-		assertEquals( client.run(MobileCodeTest.class,new int[]{7}) , 42 );
-		assertEquals( client.r(7) , 42 );
+		assertEquals( client.run(MobileCodeTest.class,new int[]{7*4}) , 42 );
+		assertEquals( client.r(7*4) , 42 );
 		
-		assertEquals( client.run(MobileCodeTest2.class,new int[]{6}) , 43 );
-		assertEquals( client.r(6) , 42 );
+		assertEquals( client.run(MobileCodeTest2.class,new int[]{6*4}) , 43 );
+		assertEquals( client.r(6*4) , 42 );
 	}
 }

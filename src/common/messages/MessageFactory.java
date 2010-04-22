@@ -104,7 +104,7 @@ public class MessageFactory {
 			return null;
 		else{
 			int[] result = new int[n];
-			for(int i=0;i<result.length;++i)
+			for(int i=0;i<n;++i)
 				result[i] = s.readInt();
 			return result;
 		}

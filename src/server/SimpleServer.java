@@ -60,6 +60,13 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	
     public byte[] serve(byte[] inBytes)
     {
+        /*
+        System.out.println("inBytes: ");
+        for (int i = 0; i < 128; i++)
+            System.out.print(String.format("%02x ", ((int)inBytes[i]) & 0xff));
+        System.out.println("");
+        */
+        
         try
         {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(inBytes));
@@ -70,7 +77,16 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
             DataOutputStream out = new DataOutputStream(oub);
             result.write(out);
             out.close();
-            return oub.toByteArray();
+            byte[] b = oub.toByteArray();
+
+            /*
+            System.out.println("outBytes: ");
+            for (int i = 0; i < b.length; i++)
+                System.out.print(String.format("%02x ", ((int)b[i]) & 0xff));
+            System.out.println("");
+            */
+
+            return b;
         }
         catch (IOException e)
         {
@@ -135,13 +151,11 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
              (byteToInt(memory[address+2]) |
               byteToInt(memory[address+3]) << 8) << 8) << 8;
 
-        System.out.println("readW " + address + ": " + val);
         return val;
     }
 
     private void writeW(int address, int word) throws ArrayIndexOutOfBoundsException
     {
-        //System.out.println("write " + address + ": " + (byte)(word & 0xff) + " " + (byte)((word >> 8) & 0xff) + " " + (byte)((word >> 16) & 0xff) + " " + (byte)((word >> 24) & 0xff));
         memory[address] = (byte)(word & 0xff);
         memory[address+1] = (byte)((word >> 8) & 0xff);
         memory[address+2] = (byte)((word >> 16) & 0xff);
@@ -189,11 +203,9 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 
 			result.error = ErrorCode.OK;
 		}catch(ArrayIndexOutOfBoundsException exc){
-            System.out.println("out of bounds");
 			result.error = ErrorCode.OUT_OF_BOUNDS;
 			result.result = null;
 		}
-        System.out.println("read " + address + " (size " + size + "): " + result.result[0]);
 		return result;
 	}
 
@@ -227,7 +239,6 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 			result.error = ErrorCode.OUT_OF_BOUNDS;
 			result.result = null;
 		}
-        System.out.println("write " + address + " (data " + values[0] + "): " + result.result[0]);
 		return result;
 	}
 

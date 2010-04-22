@@ -54,4 +54,14 @@ public class ClientTest extends TestCase {
 		assertEquals( client.run(MobileCodeTest2.class,new int[]{6*4}) , 43 );
 		assertEquals( client.r(6*4) , 42 );
 	}
+
+    public void tests_bytes() throws Exception {
+        ActiveRDMA client = new Client(server);
+
+        client.writebytes(0, new byte[] { 1, 2, 3, 4, 5, 6 });
+        byte[] result = client.readbytes(0, 6);
+
+        for (int i = 0; i < 6; i++)
+            assertEquals(result[i], i+1);
+    }
 }

@@ -85,12 +85,15 @@ public class Client extends ActiveRDMA{
 			p.setPort(ActiveRDMA.SERVER_PORT);
 			
 			socket.send(p);
+
+            byte[] buf = new byte[socket.getReceiveBufferSize()];
+            DatagramPacket resp = new DatagramPacket(buf, buf.length);
 			
 			int n_retry = 3;
 			while( n_retry-- > 0 ){
 				try{
 				socket.setSoTimeout(ActiveRDMA.REQUEST_TIMEOUT);
-				socket.receive(p);
+				socket.receive(resp);
 				break;
 				}catch(SocketTimeoutException e){
 					//re send
@@ -102,8 +105,8 @@ public class Client extends ActiveRDMA{
 				result = new Result(ErrorCode.TIME_OUT);
 				return result;
 			}
-			
-			DataInputStream in = new DataInputStream(new ByteArrayInputStream(p.getData()));
+
+			DataInputStream in = new DataInputStream(new ByteArrayInputStream(resp.getData()));
 			result.read(in);
 
 			socket.close();

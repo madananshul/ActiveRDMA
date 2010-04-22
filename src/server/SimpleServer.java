@@ -12,14 +12,7 @@ import common.ActiveRDMA;
 import common.ByteArray;
 import common.messages.MessageFactory;
 import common.messages.MessageVisitor;
-import common.messages.MessageFactory.CAS;
-import common.messages.MessageFactory.ErrorCode;
-import common.messages.MessageFactory.Load;
-import common.messages.MessageFactory.Operation;
-import common.messages.MessageFactory.Read;
-import common.messages.MessageFactory.Result;
-import common.messages.MessageFactory.Run;
-import common.messages.MessageFactory.Write;
+import common.messages.MessageFactory.*;
 
 public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 {
@@ -214,10 +207,10 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
     }
 
     public Result _writebytes(int address, byte[] values) {
-        stat_wr += count;
+        stat_wr += values.length;
         Result result = new Result();
         try {
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < values.length; i++)
                 memory[address + i] = values[i];
             result.error = ErrorCode.OK;
         } catch (ArrayIndexOutOfBoundsException exc) {

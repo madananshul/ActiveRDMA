@@ -47,6 +47,16 @@ public class Client extends ActiveRDMA{
 	public Result _load(byte[] code) {
 		return exchange( MessageFactory.makeLoad(code));
 	}
+
+	public Result _readbytes(int address, int count) {
+		return exchange( MessageFactory.makeReadBytes(address, count));
+	}
+
+	public Result _writebytes(int address, byte[] data) {
+		return exchange( MessageFactory.makeWriteBytes(address, data));
+	}
+
+
 	
 	/*
 	 * Communication stuff

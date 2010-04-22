@@ -56,7 +56,7 @@ public class MessageFactory {
     {
         WriteBytes r = new WriteBytes();
         r.address = address;
-        r.count = count;
+        r.data = data;
         return r;
     }
 	

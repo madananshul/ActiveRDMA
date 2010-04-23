@@ -1,3 +1,3 @@
 #!/bin/sh
-export CLASSPATH=bin/:$CLASSPATH
+export CLASSPATH=build/:$CLASSPATH
 exec java server.SimpleServer

@@ -1,6 +1,6 @@
 <project name="ActiveRDMA" default="compile" basedir=".">
   <property name="src" location="src"/>
-  <property name="bin" location="bin"/>
+  <property name="bin" location="build"/>
 
   <path id="classpath">
     <pathelement location="/usr/share/java/junit.jar"/>

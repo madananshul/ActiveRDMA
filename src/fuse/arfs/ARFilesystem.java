@@ -27,16 +27,11 @@ import fuse.compat.FuseStat;
 import fuse.arfs.util.Node;
 import fuse.arfs.util.Tree;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.IntBuffer;
+import java.io.*;
+import java.nio.*;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
@@ -64,8 +59,15 @@ public class ARFilesystem implements Filesystem3
    
    private DFS dfs;
 
+   final String dir_prefix = "###___DIR___###";
 
-   public ARFilesystem() throws IOException
+   static class OpenFileHandle
+   {
+       public int inode;
+       public OpenFileHandle (int i) { inode = i; }
+   }
+
+   public ARFilesystem() throws Exception
    {
       statfs = new FuseStatfs();
       statfs.blocks = 0;
@@ -73,7 +75,7 @@ public class ARFilesystem implements Filesystem3
       statfs.blocksFree = 0;
       statfs.files = 0;
       statfs.filesFree = 0;
-      statfs.namelen = 2048;
+      statfs.namelen = 256;
       
       ActiveRDMA client = null;
 	  try {
@@ -83,22 +85,17 @@ public class ARFilesystem implements Filesystem3
 	   	  System.out.println(e);
 	  }
 	   
-	  dfs = new DFS_RDMA(client);
+	  dfs = new DFS_Active(client);
 	   
-	  dfs.create("/");
-	  
+      dfs.create(dir_prefix + "/");
    }
-
    
 
-   // CHANGE-22: new operation (Synchronize file contents),
-   //            isDatasync indicates that only the user data should be flushed, not the meta data
    public int fsync(String path, Object fh, boolean isDatasync) throws FuseException
    {
 	   return 0;
    }
    
-   // CHANGE-22: new operation (called on every filehandle close)
    public int flush(String path, Object fh) throws FuseException
    {
 	   return 0;
@@ -107,121 +104,209 @@ public class ARFilesystem implements Filesystem3
    
    public int chmod(String path, int mode) throws FuseException
    {
-      //throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	   return 0;
    }
 
    public int chown(String path, int uid, int gid) throws FuseException
    {
-      //throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	   return 0;
    }
 
    public int getattr(String path, FuseGetattrSetter getattrSetter) throws FuseException
    {
-        
-	   int inode = dfs.lookup(path);
-	   System.out.println("getattr : for path " + path+ " inode is " + inode);
-	   if (inode == 0) {
-		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
-	   }
+       System.out.println("getattr: " + path);
 
+       boolean dir = false;
+	   int inode = dfs.lookup(path);
+       System.out.println("file lookup: " + inode);
+	   if (inode == 0)
+       {
+           inode = dfs.lookup(dir_prefix + path);
+           System.out.println("dir lookup: " + inode);
+           dir = true;
+       }
+       if (inode == 0)
+		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
+
+       int len = dfs.getLen(inode); // FILE DELETION HACK: size of -1 == deleted file. (world-class filesystem here!)
+       if (len == -1)
+           throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 	  
       FuseStat stat = new FuseStat();
 
-      if(path.equals("/"))
+      if(dir)
     	  stat.mode = FuseFtype.TYPE_DIR | 0755;
       else 
     	  stat.mode = FuseFtype.TYPE_FILE | 0755;
+
       stat.nlink = 1;
       stat.uid = 0;
       stat.gid = 0;
-      stat.size = 4*dfs.getLen(inode);
-      //stat.atime = stat.mtime = stat.ctime = (int) (entry.getTime() / 1000L);
+      stat.size = len;
       stat.atime = stat.mtime = stat.ctime = 0;//(int)System.currentTimeMillis();
-      stat.blocks = (int) ((stat.size + 511L) / 512L);
+      stat.blocks = (int) ((stat.size + 4095L) / 4096L);
       getattrSetter.set(inode, stat.mode, stat.nlink, stat.uid, stat.gid, 0, stat.size, stat.blocks, stat.atime, stat.mtime, stat.ctime);
 
       return 0;
    }
 
-   // CHANGE-22: FuseDirEnt.inode added
    public int getdir(String path, FuseDirFiller dirFiller) throws FuseException
    {
-	   int inode = dfs.lookup(path);
+       System.out.println("getdir: " + path);
+
+	   int inode = dfs.lookup(dir_prefix + path);
 	   if (inode == 0) {
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 	   }
 
-      //if (!entry.isDirectory())
-      //   throw new FuseException("Not A Directory").initErrno(FuseException.ENOTDIR);
+       int len = dfs.getLen(inode);
+       if (len == -1)
+           throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 
-	  // FuseDirEnt[] dirEntries = new FuseDirEnt[0];
+       byte[] buf = new byte[len];
+       dfs.get(inode, buf, 0, len);
 
-      //int i = 0;
-      //for (Iterator iter = children.iterator(); iter.hasNext(); i++)
-      //{
-         
-         //ZipEntry zipEntry = (ZipEntry)childNode.getValue();
-         //FuseDirEnt dirEntry = new FuseDirEnt();
-         //dirEntries[i] = dirEntry;
-         //dirEntry.name = childNode.getName();
-         //dirEntry.mode = zipEntry.isDirectory()? FuseFtype.TYPE_DIR : FuseFtype.TYPE_FILE;
-      //}
+       try
+       {
+           ByteArrayInputStream str = new ByteArrayInputStream(buf);
+           DataInputStream ds = new DataInputStream(str);
+           while (ds.available() > 0)
+           {
+               int fInode = ds.readInt();
+               int nameLen = ds.readUnsignedByte();
+               byte[] name = new byte[nameLen];
+               ds.read(name);
+               String nameS = new String(name);
+               boolean dir = false;
 
-      //return dirEntries;
-	   return 0;
+               if (nameS.startsWith(dir_prefix))
+               {
+                   dir = true;
+                   nameS = nameS.substring(dir_prefix.length());
+               }
+
+               dirFiller.add(nameS, fInode, dir ? FuseFtype.TYPE_DIR  : FuseFtype.TYPE_FILE);
+           }
+       } catch (IOException e) {
+           System.out.println("Malformed directory: exception!");
+           e.printStackTrace();
+           return 0;
+       }
+
+       return 0;
+   }
+
+   void appendDirEntry(int dirInode, String name, int inode) throws FuseException
+   {
+       byte[] dirEntry = null;
+       try
+       {
+           ByteArrayOutputStream oub = new ByteArrayOutputStream();
+           DataOutputStream out = new DataOutputStream(oub);
+
+           byte[] nameB = name.getBytes();
+           if (nameB.length > 255) throw new FuseException("Name Too Long").initErrno(FuseException.ENAMETOOLONG);
+
+           out.writeInt(inode);
+           out.writeByte(nameB.length);
+           out.write(nameB, 0, nameB.length);
+
+           dirEntry = oub.toByteArray();
+       } catch (IOException e) {
+       }
+
+       int len = dfs.getLen(dirInode);
+       dfs.setLen(dirInode, len + dirEntry.length);
+       dfs.put(dirInode, dirEntry, len, dirEntry.length);
+   }
+
+   String dirname(String path)
+   {
+       int idx = path.lastIndexOf('/');
+       if (idx == -1 || idx == 0)
+           return new String("/");
+       else
+           return path.substring(0, idx);
+   }
+
+   String basename(String path)
+   {
+       int idx = path.lastIndexOf('/');
+       if (idx == -1)
+           return path;
+       else
+           return path.substring(idx + 1);
    }
 
    public int link(String from, String to) throws FuseException
    {
-      //throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+       int inode = dfs.lookup(from);
+       if (inode == 0)
+           throw new FuseException("Entry Not Found").initErrno(FuseException.ENOENT);
+
+       int dirInode = dfs.lookup(dir_prefix + dirname(to));
+       if (dirInode == 0)
+           throw new FuseException("Destination Dir Not Found").initErrno(FuseException.ENOENT);
+
+       appendDirEntry(dirInode, basename(to), inode);
+
 	   return 0;
    }
 
    public int mkdir(String path, int mode) throws FuseException
    {
-      return 0;
+       if (dfs.lookup(path) != 0 || dfs.lookup(dir_prefix + path) != 0)
+           throw new FuseException("Entry Exists").initErrno(FuseException.EEXIST);
+
+       int parent_inode = dfs.lookup(dir_prefix + dirname(path));
+       if (parent_inode == 0)
+           throw new FuseException("Entry Not Found").initErrno(FuseException.ENOENT);
+
+       int inode = dfs.create(dir_prefix + path);
+       appendDirEntry(parent_inode, basename(path), inode);
+       return 0;
    }
 
    public int mknod(String path, int mode, int rdev) throws FuseException
    {
-	      	      
-	      int inode = dfs.lookup(path);
-	      if (inode!=0) {
-	    	  throw new FuseException("File Exists").initErrno(FuseException.EEXIST);
-	      }
-	  
-	      else {
-	    	  inode =  dfs.create(path);
-	    	  System.out.println("mknod : Creating file "+path+" with inode no. "+inode);
-	      }
-	      return 0;
+       System.out.println("mknod: path = " + path);
+
+       if (dfs.lookup(path) != 0 || dfs.lookup(dir_prefix + path) != 0)
+           throw new FuseException("Entry Exists").initErrno(FuseException.EEXIST);
+
+       System.out.println("dirname = " + dirname(path));
+       int parent_inode = dfs.lookup(dir_prefix + dirname(path));
+       if (parent_inode == 0)
+           throw new FuseException("Entry Not Found").initErrno(FuseException.ENOENT);
+
+       int inode = dfs.create(path);
+       appendDirEntry(parent_inode, basename(path), inode);
+       return 0;
    }
 
    public int open(String path, int flags, FuseOpenSetter openSetter) throws FuseException
    {
-	   /*
-      if (flags == O_WRONLY || flags == O_RDWR)
-         throw new FuseException("Read Only").initErrno(FuseException.EACCES);*/
 	   int inode = dfs.lookup(path);
 	   if (inode == 0) {
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 	   }
 	   else {
-		   openSetter.setFh(inode);
+		   openSetter.setFh(new OpenFileHandle(inode));
 	   }
 	  return 0;
    }
 
    public int rename(String from, String to) throws FuseException
    {
-      return 0;
+       link(from, to);
+       unlink(from);
+       return 0;
    }
 
    public int rmdir(String path) throws FuseException
    {
-      return 0;
+       unlink(dir_prefix + path);
+       return 0;
    }
 
    public int statfs(FuseStatfsSetter statfsSetter) throws FuseException
@@ -233,7 +318,7 @@ public class ARFilesystem implements Filesystem3
 
    public int symlink(String from, String to) throws FuseException
    {
-	   return 0;
+       throw new FuseException("Symlinks not supported").initErrno(FuseException.EACCES);
    }
 
    public int truncate(String path, long size) throws FuseException
@@ -245,11 +330,12 @@ public class ARFilesystem implements Filesystem3
 
    public int unlink(String path) throws FuseException
    {
-      return 0;
+       return truncate(path, -1); // HACK HACK HACK (cough cough)
    }
 
    public int utime(String path, int atime, int mtime) throws FuseException
    {
+       System.out.println("utime: path " + path);
 	   return 0;
    }
 
@@ -262,81 +348,57 @@ public class ARFilesystem implements Filesystem3
    public int write(String path, Object fh, boolean isWritepage, ByteBuffer buf, long offset) throws FuseException
    {
 	      int inode = 0;
-	      if(fh.equals(new Integer(inode))){
+	      if (fh == null)
 	    	  inode = dfs.lookup(path);
-	      }
 	      else 
-	    	  inode = ((Integer)fh).intValue();
-	      
-	      int[] buffer;
-	      IntBuffer intBuffer;
-	      
+	    	  inode = ((OpenFileHandle)fh).inode;
+
 	      if(inode != 0){
-	    	  //intBuffer = ((ByteBuffer) buf.rewind()).asIntBuffer();
-	    	  intBuffer = buf.asIntBuffer();
-	    	  System.out.println("Writing " + buf.capacity() + " bytes and " + intBuffer.capacity() + " ints.");
-	    	  int pad = ((buf.capacity()%4) != 0)?1:0;
-		      //buffer = new int[intBuffer.capacity()];
-		      //intBuffer.get(buffer, 0 , buffer.length);
-	    	  //buffer = intBuffer.array();
+              if (buf.capacity() + offset > dfs.getLen(inode))
+                  dfs.setLen(inode, (int)(offset + buf.capacity()));
+
+              byte[] bytebuf = new byte[buf.capacity()];
+
+              buf.get(bytebuf);
+
+              dfs.put(inode, bytebuf, (int)offset, buf.capacity());
 		      
-		      /*int rem = buf.capacity()%4;
-		      for (int i = 0; i <= rem; i++) {
-		            int shift = (rem - i) * 8;
-		            buffer[intBuffer.capacity()] += (buf.get(i) & 0x000000FF) << shift;
-		      }*/
-		      
-		      //Nasty Hack that writes equivalent amount of data, but random junk
-		      buffer = new int[intBuffer.capacity() + pad];
-		      for(int i=0;i<intBuffer.capacity();i++)
-	        	  System.out.println("Writing int " + buffer[i] + " bytes" + buf.get(i*4) + " " + buf.get(i*4+1) + " " + buf.get(i*4+2) + " " + buf.get(i*4+3));
-	          
-		      
-		      /*System.out.println("Finally Writing " + buffer.length + " ints.");*/
-		      dfs.setLen(inode, intBuffer.capacity() + pad);
-		      //dfs.put(inode, buffer, (int)offset, intBuffer.capacity());
 		      return 0;
 	      }
 	      throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 	      
    }
 
-   //TBD - Problem in translation code. Fix this.
    public int read(String path, Object fh, ByteBuffer buf, long offset) throws FuseException
    {
 	   int fLen;
 	   int inode = 0;
-	   if(fh.equals(new Integer(inode))){
+	   if(fh == null)
 	   	  inode = dfs.lookup(path);
-	   }
 	   else 
-	   	  inode = ((Integer)fh).intValue();
+           inode = ((OpenFileHandle)fh).inode;
 	      
 	  fLen = dfs.getLen(inode);
-	  //fLen = 2; 
 	   
-      IntBuffer intBuffer;
-      int[] buffer;
       if(inode != 0){
-    	  intBuffer = buf.asIntBuffer();
-          buffer = new int[fLen];
-          System.out.println("Reading " + fLen + " ints.");
-          //dfs.get(inode, buffer, (int)offset, fLen);
-          /*for(int i=0;i<fLen;i++)
-        	  System.out.println("Before int buffer put, Reading int " + buffer[i] + " bytes" + buf.get(i*4) + " " + buf.get(i*4+1) + " " + buf.get(i*4+2) + " " + buf.get(i*4+3));*/
-          intBuffer.put(buffer);
-          /*for(int i=0;i<fLen;i++)
-        	  System.out.println("After int buffer put, Reading int " + buffer[i] + " bytes" + buf.get(i*4) + " " + buf.get(i*4+1) + " " + buf.get(i*4+2) + " " + buf.get(i*4+3));*/
+          int len = buf.capacity();
+          if (offset > fLen) offset = fLen;
+          if (len + (int)offset > fLen) len = fLen - (int)offset;
+
+          byte[] bytebuf = new byte[len];
+          
+          if (len > 0)
+              dfs.get(inode, bytebuf, (int)offset, len);
+
+          buf.put(bytebuf);
+
           return 0;
       }
       throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
-
    }
 
-   // CHANGE-22: (called when last filehandle is closed), fh is filehandle passed from open
    public int release(String path, Object fh, int flags) throws FuseException
    {
-      
 	  return 0;
    }
    

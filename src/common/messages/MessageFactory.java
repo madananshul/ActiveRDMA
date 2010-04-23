@@ -99,27 +99,35 @@ public class MessageFactory {
     }
 	
 	protected static int[] readArray(DataInputStream s) throws IOException {
-		int n = s.readInt();
-		if( n == -1 )
-			return null;
-		else{
-			int[] result = new int[n];
-			for(int i=0;i<n;++i)
-				result[i] = s.readInt();
-			return result;
-		}
+        try {
+            int n = s.readInt();
+            if( n == -1 )
+                return null;
+            else{
+                int[] result = new int[n];
+                for(int i=0;i<n;++i)
+                    result[i] = s.readInt();
+                return result;
+            }
+        } catch (Exception e) {
+            return null;
+        }
 	}
 
     protected static byte[] readArray_b(DataInputStream s) throws IOException {
-        int n = s.readInt();
-        if (n == -1)
+        try {
+            int n = s.readInt();
+            if (n == -1)
+                return null;
+            else
+            {
+                byte[] result = new byte[n];
+                for (int i = 0; i <result.length; i++)
+                    result[i] = s.readByte();
+                return result;
+            }
+        } catch (Exception e) {
             return null;
-        else
-        {
-            byte[] result = new byte[n];
-            for (int i = 0; i <result.length; i++)
-                result[i] = s.readByte();
-            return result;
         }
     }
 	

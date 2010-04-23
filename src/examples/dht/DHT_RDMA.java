@@ -35,9 +35,11 @@ public class DHT_RDMA implements DHT {
 	
 	int hash(byte[] key)
 	{
-		int t = 0;
-		for (int i = 0; i < key.length; i++) t = 37*t + key[i];
-		return t % N;
+        // DJB hash
+        int hash = 5381;
+        for (int i = 0; i < key.length; i++)
+            hash = ((hash << 5) + hash) + (((int)key[i])&0xff);
+        return hash % N;
 	}
 
     int hashPtr(byte[] key)

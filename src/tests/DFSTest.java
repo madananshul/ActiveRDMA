@@ -26,7 +26,26 @@ public class DFSTest extends TestCase {
         	System.out.println("dfs lookup : "+ "file_" + i + " inode " + temp);
         	assertEquals(inodes[i],  temp);
         }
-        
+    }
+
+    public void tests_Access() throws Exception {
+        ActiveRDMA client = new Client(server);
+
+        DFS dfs = new DFS_RDMA(client);
+
+        int inode = dfs.create("asdf");
+
+        byte[] buf = new byte[1024];
+        for (int i = 0; i < 1024; i++) buf[i] = (byte)(i & 0xff);
+
+        dfs.setLen(inode, 1048576); // 1 MB
+
+        for (int i = 0; i < 32; i++)
+            dfs.put(inode, buf, 1024*i, 1024);
+
+        dfs.get(inode, buf, 4096 - 2, 4);
+        for (int i = 0; i < 4; i++)
+            assertEquals(buf[i], (byte)(((i + 1024 - 2) % 1024) & 0xff));
     }
 
 }

@@ -5,6 +5,7 @@ import client.Client;
 import common.ActiveRDMA;
 import dfs.DFS;
 import dfs.DFS_RDMA;
+import dfs.DFS_Active;
 
 public class DFSTest extends TestCase {
 
@@ -15,7 +16,7 @@ public class DFSTest extends TestCase {
         ActiveRDMA client = new Client(server);
 
         DFS dfs;
-        dfs = new DFS_RDMA(client);
+        dfs = new DFS_Active(client);
         int[] inodes = new int[10];
         for(int i = 0;i<10;i++){
         	inodes[i] = dfs.create("file_" + i);
@@ -26,12 +27,6 @@ public class DFSTest extends TestCase {
         	System.out.println("dfs lookup : "+ "file_" + i + " inode " + temp);
         	assertEquals(inodes[i],  temp);
         }
-    }
-
-    public void tests_Access() throws Exception {
-        ActiveRDMA client = new Client(server);
-
-        DFS dfs = new DFS_RDMA(client);
 
         int inode = dfs.create("asdf");
 
@@ -46,6 +41,6 @@ public class DFSTest extends TestCase {
         dfs.get(inode, buf, 4096 - 2, 4);
         for (int i = 0; i < 4; i++)
             assertEquals(buf[i], (byte)(((i + 1024 - 2) % 1024) & 0xff));
-    }
 
+    }
 }

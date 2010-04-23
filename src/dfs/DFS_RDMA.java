@@ -23,8 +23,8 @@ import examples.dht.*;
 
 public class DFS_RDMA implements DFS
 {
-    ActiveRDMA m_client;
-    DHT m_dht;
+    protected ActiveRDMA m_client;
+    private DHT m_dht;
 
     public DFS_RDMA(ActiveRDMA client)
     {
@@ -38,7 +38,7 @@ public class DFS_RDMA implements DFS
         m_dht = new DHT_RDMA(client, 1024, noInit);
     }
 
-    private int alloc(int len)
+    public int alloc(int len)
     {
         int ptr = 0;
         while (true)
@@ -47,13 +47,10 @@ public class DFS_RDMA implements DFS
             if (m_client.cas(0, ptr, ptr + len) != 0) break;
         }
 
-        for (int i = 0; i < len; i++)
-            m_client.w(ptr + i, 0);
-
         return ptr;
     }
 
-    private int getBlock(int inode, int blockno)
+    public int getBlock(int inode, int blockno)
     {
         if (blockno <= 1022)
             return m_client.r(inode + 4 * (1 + blockno));
@@ -71,7 +68,7 @@ public class DFS_RDMA implements DFS
         }
     }
 
-    private void setBlock(int inode, int blockno, int ptr)
+    public void setBlock(int inode, int blockno, int ptr)
     {
         if (blockno <= 1022)
             m_client.w(inode + 4 * (1 + blockno), ptr);
@@ -119,7 +116,7 @@ public class DFS_RDMA implements DFS
         return m_client.r(inode);
     }
 
-    private int access(int inode, byte[] buffer, int off, int len, boolean write)
+    protected int access(int inode, byte[] buffer, int off, int len, boolean write)
     {
         int fLen = getLen(inode);
         

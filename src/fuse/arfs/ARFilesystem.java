@@ -294,7 +294,7 @@ public class ARFilesystem implements Filesystem3
 		      
 		      /*System.out.println("Finally Writing " + buffer.length + " ints.");*/
 		      dfs.setLen(inode, intBuffer.capacity() + pad);
-		      dfs.put(inode, buffer, (int)offset, intBuffer.capacity());
+		      //dfs.put(inode, buffer, (int)offset, intBuffer.capacity());
 		      return 0;
 	      }
 	      throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
@@ -321,7 +321,7 @@ public class ARFilesystem implements Filesystem3
     	  intBuffer = buf.asIntBuffer();
           buffer = new int[fLen];
           System.out.println("Reading " + fLen + " ints.");
-          dfs.get(inode, buffer, (int)offset, fLen);
+          //dfs.get(inode, buffer, (int)offset, fLen);
           /*for(int i=0;i<fLen;i++)
         	  System.out.println("Before int buffer put, Reading int " + buffer[i] + " bytes" + buf.get(i*4) + " " + buf.get(i*4+1) + " " + buf.get(i*4+2) + " " + buf.get(i*4+3));*/
           intBuffer.put(buffer);

@@ -56,7 +56,8 @@ public class ARFilesystem implements Filesystem3
    static class OpenFileHandle
    {
        public int inode;
-       public OpenFileHandle (int i) { inode = i; }
+       public int length;
+       public OpenFileHandle (int i, int l) { inode = i; length = l; }
    }
 
    public ARFilesystem() throws Exception
@@ -295,11 +296,14 @@ public class ARFilesystem implements Filesystem3
    public int open(String path, int flags, FuseOpenSetter openSetter) throws FuseException
    {
 	   int inode = dfs.lookup(path);
-	   if (inode == 0) {
+       int len = -1;
+       if (inode != 0) len = dfs.getLen(inode);
+
+	   if (inode == 0 || len == -1) {
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 	   }
 	   else {
-		   openSetter.setFh(new OpenFileHandle(inode));
+		   openSetter.setFh(new OpenFileHandle(inode, len));
 	   }
 	  return 0;
    }
@@ -363,21 +367,27 @@ public class ARFilesystem implements Filesystem3
    // isWritepage indicates that write was caused by a writepage
    public int write(String path, Object fh, boolean isWritepage, ByteBuffer buf, long offset) throws FuseException
    {
-	      int inode = 0;
-	      if (fh == null)
-	    	  inode = dfs.lookup(path);
-	      else 
-	    	  inode = ((OpenFileHandle)fh).inode;
+       OpenFileHandle f = (OpenFileHandle)fh;
 
-	      if(inode != 0){
-              if (buf.capacity() + offset > dfs.getLen(inode))
-                  dfs.setLen(inode, (int)(offset + buf.capacity()));
+	      if (f == null)
+          {
+	    	  int inode = dfs.lookup(path);
+              int len = dfs.getLen(inode);
+              f = new OpenFileHandle(inode, len);
+          }
+
+	      if(f.inode != 0){
+              if (buf.capacity() + offset > f.length)
+              {
+                  f.length = (int)(offset + buf.capacity());
+                  dfs.setLen(f.inode, f.length);
+              }
 
               byte[] bytebuf = new byte[buf.capacity()];
 
               buf.get(bytebuf);
 
-              dfs.put(inode, bytebuf, (int)offset, buf.capacity());
+              dfs.put(f.inode, bytebuf, (int)offset, buf.capacity());
 		      
 		      return 0;
 	      }
@@ -387,24 +397,23 @@ public class ARFilesystem implements Filesystem3
 
    public int read(String path, Object fh, ByteBuffer buf, long offset) throws FuseException
    {
-	   int fLen;
-	   int inode = 0;
-	   if(fh == null)
-	   	  inode = dfs.lookup(path);
-	   else 
-           inode = ((OpenFileHandle)fh).inode;
+       OpenFileHandle f = (OpenFileHandle)fh;
+	   if(f == null)
+       {
+	   	  int inode = dfs.lookup(path);
+          int fLen = dfs.getLen(inode);
+          f = new OpenFileHandle(inode, fLen);
+       }
 	      
-	  fLen = dfs.getLen(inode);
-	   
-      if(inode != 0){
+      if(f.inode != 0){
           int len = buf.capacity();
-          if (offset > fLen) offset = fLen;
-          if (len + (int)offset > fLen) len = fLen - (int)offset;
+          if (offset > f.length) offset = f.length;
+          if (len + (int)offset > f.length) len = f.length - (int)offset;
 
           byte[] bytebuf = new byte[len];
           
           if (len > 0)
-              dfs.get(inode, bytebuf, (int)offset, len);
+              dfs.get(f.inode, bytebuf, (int)offset, len);
 
           buf.put(bytebuf);
 

@@ -1,46 +1,38 @@
 package playground;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Scanner;
+
+import client.Client;
+import dfs.DFS;
+import dfs.DFS_Active;
 
 public class Grep {
 
-	static class InputStreamWrapper extends InputStream{
-
-		InputStream in;
-
-		public InputStreamWrapper(String file) throws IOException{
-			in = new FileInputStream(new File(file));
-		}
-
-		@Override
-		//-1 on EOF
-		public int read() throws IOException {
-			return in.read();
-		}
-
-		public void close() throws IOException {
-			in.close();
-		}
-
-	}
-
-	public static void main(String[] args) throws Exception{
-		//arguments
-		String file = "src/playground/test";
-		String pattern = "(.*\\W)?apple(\\W.*)?";
-
-		//
-		Scanner sc = new Scanner(new InputStreamWrapper(file));
-		System.out.println(".begin");
+	public static void grep(String file, String pattern, DFS server) throws Exception {
+		Scanner sc = new Scanner(new DFSInputStream(file, server)
+		);
 		while( sc.hasNextLine() ){
 			String line = sc.nextLine();
 			if( line.matches(pattern) )
 				System.out.println(line);
 		}
+		sc.close();
+	}
+	
+	/*
+	 *
+.begin
+apple
+apple-
+apple-fruit
+fruit-apple
+.done
+	 */
+	public static void main(String[] args) throws Exception{
+		DFS dfs = new DFS_Active( new Client("localhost") );
+		
+		System.out.println(".begin");
+		grep("src/playground/test","(.*\\W)?apple(\\W.*)?",dfs);
 		System.out.println(".done");
 	}
 

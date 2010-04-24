@@ -12,10 +12,8 @@ public class CopyToDFS {
 
 	/** copies file into DFS
 	 * @param file - name of local file to be copied into DFS
-	 * @param server - location of the ActiveRDMA server
 	 */
-	public static void copy(String file, String server) throws Exception {
-		DFS dfs = new DFS_Active( new Client(server) );
+	public static void copy(DFS dfs, String file) throws Exception {
 		int inode = dfs.create(file);
 		File f = new File(file);
 		dfs.setLen(inode, (int)f.length());
@@ -25,16 +23,17 @@ public class CopyToDFS {
 		int offset = 0;
 		int len = 0;
 		while( (len = in.read(buffer)) != -1)
+        {
 			dfs.put(inode, buffer, offset, len);
+            offset += len;
+        }
 		in.close();
 	}
 	
 	/** prints DFS file into System.out
 	 * @param file
-	 * @param server
 	 */
-	public static void print(String file, String server) throws Exception {
-		DFS dfs = new DFS_Active( new Client(server) );
+	public static void print(DFS dfs, String file) throws Exception {
 		byte[] buffer = new byte[512];
 		int inode = dfs.lookup(file);
 		int len = dfs.getLen(inode);
@@ -49,10 +48,11 @@ public class CopyToDFS {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		copy("src/playground/test","localhost");
+        DFS dfs = new DFS_Active( new Client("localhost") );
+		copy(dfs, "src/playground/test");
 		System.out.println("copy completed.");
 		System.out.println("----------------");
-		print("src/playground/test","localhost");
+		print(dfs, "src/playground/test");
 		System.out.println("");
 		System.out.println("----------------");
 		System.out.println("print completed.");

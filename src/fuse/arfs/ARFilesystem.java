@@ -24,8 +24,6 @@ import fuse.*;
 import fuse.Filesystem3;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
-import fuse.arfs.util.Node;
-import fuse.arfs.util.Tree;
 
 import java.io.*;
 import java.nio.*;

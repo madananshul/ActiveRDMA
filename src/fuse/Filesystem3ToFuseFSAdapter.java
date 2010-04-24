@@ -461,7 +461,7 @@ public class Filesystem3ToFuseFSAdapter implements FuseFS
    public int getxattrsize(ByteBuffer path, ByteBuffer name, FuseSizeSetter sizeSetter)
    {
       if (xattrSupport == null)
-         return handleErrno(Errno.ENOTSUPP);
+         return handleErrno(Errno.ENOSYS);
 
       String pathStr = cs.decode(path).toString();
       String nameStr = cs.decode(name).toString();
@@ -482,7 +482,7 @@ public class Filesystem3ToFuseFSAdapter implements FuseFS
    public int getxattr(ByteBuffer path, ByteBuffer name, ByteBuffer value)
    {
       if (xattrSupport == null)
-         return handleErrno(Errno.ENOTSUPP);
+         return handleErrno(Errno.ENOSYS);
 
       String pathStr = cs.decode(path).toString();
       String nameStr = cs.decode(name).toString();
@@ -521,7 +521,7 @@ public class Filesystem3ToFuseFSAdapter implements FuseFS
    public int listxattrsize(ByteBuffer path, FuseSizeSetter sizeSetter)
    {
       if (xattrSupport == null)
-         return handleErrno(Errno.ENOTSUPP);
+         return handleErrno(Errno.ENOSYS);
 
       String pathStr = cs.decode(path).toString();
 
@@ -621,7 +621,7 @@ public class Filesystem3ToFuseFSAdapter implements FuseFS
    public int listxattr(ByteBuffer path, final ByteBuffer list)
    {
       if (xattrSupport == null)
-         return handleErrno(Errno.ENOTSUPP);
+         return handleErrno(Errno.ENOSYS);
 
       String pathStr = cs.decode(path).toString();
 
@@ -650,7 +650,7 @@ public class Filesystem3ToFuseFSAdapter implements FuseFS
    public int setxattr(ByteBuffer path, ByteBuffer name, ByteBuffer value, int flags)
    {
       if (xattrSupport == null)
-         return handleErrno(Errno.ENOTSUPP);
+         return handleErrno(Errno.ENOSYS);
 
       String pathStr = cs.decode(path).toString();
       String nameStr = cs.decode(name).toString();
@@ -671,7 +671,7 @@ public class Filesystem3ToFuseFSAdapter implements FuseFS
    public int removexattr(ByteBuffer path, ByteBuffer name)
    {
       if (xattrSupport == null)
-         return handleErrno(Errno.ENOTSUPP);
+         return handleErrno(Errno.ENOSYS);
 
       String pathStr = cs.decode(path).toString();
       String nameStr = cs.decode(name).toString();

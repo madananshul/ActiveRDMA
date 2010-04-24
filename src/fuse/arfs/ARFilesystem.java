@@ -45,18 +45,12 @@ public class ARFilesystem implements Filesystem3
 {
    private static final Log log = LogFactory.getLog(ARFilesystem.class);
 
-   private static final int blockSize = 512;
+   private static final int blockSize = 4096;
    
    final String server = "localhost";
 
-   //private ZipFile zipFile;
-   //private long zipFileTime;
-   //private ZipEntry rootEntry;
-   private Tree tree;
    private FuseStatfs statfs;
 
-   //private ZipFileDataReader zipFileDataReader;
-   
    private DFS dfs;
 
    final String dir_prefix = "###___DIR___###";
@@ -114,18 +108,14 @@ public class ARFilesystem implements Filesystem3
 
    public int getattr(String path, FuseGetattrSetter getattrSetter) throws FuseException
    {
-       System.out.println("getattr: " + path);
-
        boolean dir = false;
 	   int inode = dfs.lookup(path);
-       System.out.println("file lookup: " + inode);
-	   if (inode == 0)
+	   if (inode == 0 || dfs.getLen(inode) == -1)
        {
            inode = dfs.lookup(dir_prefix + path);
-           System.out.println("dir lookup: " + inode);
            dir = true;
        }
-       if (inode == 0)
+       if (inode == 0 || dfs.getLen(inode) == -1)
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 
        int len = dfs.getLen(inode); // FILE DELETION HACK: size of -1 == deleted file. (world-class filesystem here!)
@@ -152,8 +142,6 @@ public class ARFilesystem implements Filesystem3
 
    public int getdir(String path, FuseDirFiller dirFiller) throws FuseException
    {
-       System.out.println("getdir: " + path);
-
 	   int inode = dfs.lookup(dir_prefix + path);
 	   if (inode == 0) {
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
@@ -178,6 +166,8 @@ public class ARFilesystem implements Filesystem3
                ds.read(name);
                String nameS = new String(name);
                boolean dir = false;
+
+               if (dfs.getLen(fInode) == -1) continue; // deleted file
 
                if (nameS.startsWith(dir_prefix))
                {
@@ -255,8 +245,19 @@ public class ARFilesystem implements Filesystem3
 
    public int mkdir(String path, int mode) throws FuseException
    {
-       if (dfs.lookup(path) != 0 || dfs.lookup(dir_prefix + path) != 0)
-           throw new FuseException("Entry Exists").initErrno(FuseException.EEXIST);
+       int fileInode = dfs.lookup(path);
+       if (fileInode != 0 && dfs.getLen(fileInode) != -1)
+           throw new FuseException("Entry Exists as File").initErrno(FuseException.EEXIST);
+
+       int prevInode = dfs.lookup(dir_prefix + path);
+       if (prevInode != 0)
+       {
+           if (dfs.getLen(prevInode) != -1)
+               throw new FuseException("Entry Exists as Dir").initErrno(FuseException.EEXIST);
+
+           dfs.setLen(prevInode, 0);
+           return 0;
+       }
 
        int parent_inode = dfs.lookup(dir_prefix + dirname(path));
        if (parent_inode == 0)
@@ -269,12 +270,21 @@ public class ARFilesystem implements Filesystem3
 
    public int mknod(String path, int mode, int rdev) throws FuseException
    {
-       System.out.println("mknod: path = " + path);
-
-       if (dfs.lookup(path) != 0 || dfs.lookup(dir_prefix + path) != 0)
+       int dirInode = dfs.lookup(dir_prefix + path);
+       if (dirInode != 0 && dfs.getLen(dirInode) != -1)
            throw new FuseException("Entry Exists").initErrno(FuseException.EEXIST);
 
-       System.out.println("dirname = " + dirname(path));
+       int prevInode = dfs.lookup(path);
+       if (prevInode != 0)
+       {
+           if (dfs.getLen(prevInode) != -1)
+               throw new FuseException("Entry Exists").initErrno(FuseException.EEXIST);
+
+           // already existed: just set length to 0 and return
+           dfs.setLen(prevInode, 0);
+           return 0;
+       }
+
        int parent_inode = dfs.lookup(dir_prefix + dirname(path));
        if (parent_inode == 0)
            throw new FuseException("Entry Not Found").initErrno(FuseException.ENOENT);
@@ -324,18 +334,26 @@ public class ARFilesystem implements Filesystem3
    public int truncate(String path, long size) throws FuseException
    {
 	   int inode = dfs.lookup(path);
+       if (inode == 0)
+           throw new FuseException("Entry Not Found").initErrno(FuseException.ENOENT);
+           
 	   dfs.setLen(inode, (int)size);
 	   return 0;
    }
 
    public int unlink(String path) throws FuseException
    {
-       return truncate(path, -1); // HACK HACK HACK (cough cough)
+       int fInode = dfs.lookup(path);
+       if (fInode == 0)
+           throw new FuseException("Entry Not Found").initErrno(FuseException.ENOENT);
+
+       dfs.setLen(fInode, -1);
+
+       return 0;
    }
 
    public int utime(String path, int atime, int mtime) throws FuseException
    {
-       System.out.println("utime: path " + path);
 	   return 0;
    }
 
@@ -409,11 +427,10 @@ public class ARFilesystem implements Filesystem3
    {
       String fuseArgs[] = new String[args.length];
       System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
-      //File zipFile = new File(args[args.length - 1]);
 
       try
       {
-         FuseMount.mount(fuseArgs, new ARFilesystem(), log);
+         FuseMount.mount(fuseArgs, new ARFilesystem(), null /* log */);
       }
       catch (Exception e)
       {

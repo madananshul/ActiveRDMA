@@ -109,18 +109,15 @@ public class ARFilesystem implements Filesystem3
    {
        boolean dir = false;
 	   int inode = dfs.lookup(path);
-	   if (inode == 0 || dfs.getLen(inode) == -1)
+       int len = -1;
+	   if (inode == 0 || (len = dfs.getLen(inode)) == -1)
        {
            inode = dfs.lookup(dir_prefix + path);
            dir = true;
        }
-       if (inode == 0 || dfs.getLen(inode) == -1)
+       if (inode == 0 || (len = dfs.getLen(inode)) == -1)
 		   throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 
-       int len = dfs.getLen(inode); // FILE DELETION HACK: size of -1 == deleted file. (world-class filesystem here!)
-       if (len == -1)
-           throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
-	  
       FuseStat stat = new FuseStat();
 
       if(dir)

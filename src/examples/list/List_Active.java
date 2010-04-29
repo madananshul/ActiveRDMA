@@ -9,16 +9,16 @@ public class List_Active implements List{
 			int value = args[0];
 			int root_ptr = args[1];
 			//new node
-			int node = c.alloc(2);
+			int node = c.alloc(4*2);
 			c.w(node, value); // node[0] = content
-			c.w(node+1, NULL);  // node[1] = link
+			c.w(node+4, NULL);  // node[1] = link
 
 			//now try to put it at the end
 			int pos = root_ptr;
-			while( c.cas(pos+1,NULL,node) == 0 ){
+			while( c.cas(pos+4,NULL,node) == 0 ){
 				//link was not NULL
 				//follow the link of the node
-				pos = c.r(pos+1);
+				pos = c.r(pos+4);
 			}
 
 			return node;
@@ -30,13 +30,13 @@ public class List_Active implements List{
 			int n = args[0];
 			int root_ptr = args[1];
 			
-			int pos = c.r(root_ptr+1);
+			int pos = c.r(root_ptr+4);
 
 			if( pos==NULL )
 				return NULL;
 			
 			while( n-- > 0 && pos!=NULL ){
-				pos = c.r( pos+1 );
+				pos = c.r( pos+4 );
 			}
 
 			return pos!=NULL ? c.r(pos) : NULL;
@@ -44,9 +44,9 @@ public class List_Active implements List{
 	}
 	
 	public static int makeRoot(ActiveRDMA c){
-		int root = c.alloc(2);
+		int root = c.alloc(4*2);
 		//slot 0 never used
-		c.w(root+1, NULL);
+		c.w(root+4, NULL);
 		return root;
 	}
 	

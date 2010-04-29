@@ -79,7 +79,7 @@ public class Lock_Active implements examples.lock.Lock {
 			int predecessor;
 			
 			predecessor = c.r(lock+4);
-			while(c.cas(lock+1, predecessor, node)==0){
+			while(c.cas(lock+4, predecessor, node)==0){
 				predecessor = c.r(lock+4);
 			}
 			if(predecessor == NULL){

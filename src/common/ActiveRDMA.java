@@ -228,6 +228,10 @@ public abstract class ActiveRDMA {
 	public int run(Class<?> c, int[] arg) {
 		return run(class_to_md5.get( c.getName() ).array(),arg);
 	}
+	
+	public int[] runArray(Class<?> c, int[] arg) {
+		return runArray(class_to_md5.get( c.getName() ).array(),arg);
+	}
 
 	public int load(Class<?> c) {
 		return unwrap( unwrap( _load(c) ) );

@@ -138,6 +138,10 @@ public abstract class ActiveRDMA {
 		return unwrap( unwrap( _run(md5,arg) ) );	
 	}
 	
+	public int[] runArray(byte[] md5, int[] arg){
+		return unwrap( _run(md5,arg) );	
+	}
+	
 	public int load(byte[] code){
 		return unwrap( unwrap( _load(code) ) );
 	}
@@ -238,4 +242,29 @@ public abstract class ActiveRDMA {
 			return new Result(ErrorCode.ERROR);
 		}
 	}
+	
+	/*
+	 * String wrapping/unwrapping
+	 */
+	
+    public static String getString(int[] args, int off)
+    {
+        byte[] bytes = new byte[args.length - off];
+        for (int i = off; i < args.length; i++)
+            bytes[i - off] = (byte)args[i];
+
+        return new String(bytes);
+    }
+    
+	
+    public static int[] constructArgs(int prefix, String s)
+    {
+        byte[] sBytes = (s != null) ? s.getBytes() : null;
+        int[] args = new int[prefix + ((sBytes != null) ? sBytes.length : 0)];
+        if (sBytes != null)
+            for (int i = 0; i < sBytes.length; i++)
+                args[prefix + i] = (int)sBytes[i];
+
+        return args;
+    }
 }

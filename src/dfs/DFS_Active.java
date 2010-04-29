@@ -1,7 +1,6 @@
 package dfs;
 
 import common.*;
-import examples.dht.*;
 
 public class DFS_Active extends DFS_RDMA
 {

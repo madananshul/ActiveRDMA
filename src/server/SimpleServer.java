@@ -181,7 +181,6 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 		Result result = new Result();
 		try{
 			Class<?> c = loader.loadMobileCode( code );
-			//indexes by the name of the class TODO: index by md5 instead?
 			//this will actually never return false, if there is a previous
 			//class with the same name LinkageError will occur.
 			result.result = new int[]{tableClassAndMd5(c,code) ? 1 : 0};
@@ -215,7 +214,14 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 		Class<?> c = md5_to_class.get(new ByteArray(md5));
 		try {
 			Method m = c.getMethod(ActiveRDMA.METHOD, ActiveRDMA.SIGNATURE);
-			result.result =  new int[]{(Integer) m.invoke(null, new Object[]{this,arg})};
+			Object res = m.invoke(null, new Object[]{this,arg});
+			
+			if( res instanceof Integer )
+				result.result = new int[]{ (Integer)res };
+			else if( res instanceof int[] )
+				result.result = (int[]) res;
+			else throw new RuntimeException("uexpected: "+res.getClass());
+			
 			result.error = ErrorCode.OK;
 		} catch (Exception e) {
 			e.printStackTrace();

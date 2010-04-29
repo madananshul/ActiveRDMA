@@ -12,10 +12,10 @@ public class DFSInputStream extends InputStream{
 	DFS dfs;
 	int inode, len, off;
 	byte[] buffer;
-
-	public DFSInputStream(String file, DFS dfs) throws IOException{
+	
+	public DFSInputStream(int inode, DFS dfs) throws IOException{
 		this.dfs = dfs;
-		this.inode = dfs.lookup(file);
+		this.inode = inode;
 		this.len = dfs.getLen(this.inode);
 		this.buffer = new byte[SIZE];
 	}

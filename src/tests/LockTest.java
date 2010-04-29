@@ -22,9 +22,9 @@ public class LockTest extends TestCase {
 		int table = lock_sys.create(10);
 		
 		int lock_offset = 1;
-		int lock_id = lock_sys.lock(lock_offset, table+2*lock_offset);
+		int lock_id = lock_sys.lock(lock_offset, table+8*lock_offset);
 		//sleep
-		lock_sys.release(lock_id, table+2*lock_offset);
+		lock_sys.release(lock_id, table+8*lock_offset);
 		
     }
     

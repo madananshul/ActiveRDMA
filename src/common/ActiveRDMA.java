@@ -238,5 +238,4 @@ public abstract class ActiveRDMA {
 			return new Result(ErrorCode.ERROR);
 		}
 	}
-	
 }

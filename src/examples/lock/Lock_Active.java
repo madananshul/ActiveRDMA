@@ -33,6 +33,8 @@ public class Lock_Active implements examples.lock.Lock {
 		
 		public static int execute(ActiveRDMA c, int[] args) {
 			int node = args[0], lock = args[1];
+
+            System.out.println("Starting release, lock is " + lock);
 			
 			int next = c.r(node+4);
 			if(next != NULL){

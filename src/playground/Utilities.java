@@ -15,6 +15,9 @@ import dfs.DFS_RDMA;
 public class Utilities {
 
 	static class Grep{
+
+		//inode
+		//pattern
 		public static void execute(ActiveRDMA c, int[] args) throws Exception {
 			DFS dfs = new DFS_RDMA(c, true);
 			int inode = args[0];
@@ -33,6 +36,8 @@ public class Utilities {
 	static class FileCopy{
 		static final int BUF_SIZE = 512;
 
+		//from inode
+		//to inode
 		public static int execute(ActiveRDMA c, int[] args) throws Exception {
 			DFS dfs = new DFS_RDMA(c, true);
 			int from_inode = args[0];
@@ -58,6 +63,7 @@ public class Utilities {
 	static class CopyToDFS{
 		static final int BUF_SIZE = 512;
 
+		//local file
 		public static int execute(ActiveRDMA c, int[] args) throws Exception {
 			DFS dfs = new DFS_RDMA(c, true);
 			String file = ActiveRDMA.getString(args, 0);
@@ -84,6 +90,7 @@ public class Utilities {
 	static class PrintFile{
 		static final int BUF_SIZE = 512;
 
+		// file
 		public static int execute(ActiveRDMA c, int[] args) throws Exception {
 			DFS dfs = new DFS_RDMA(c, true);
 			String file = ActiveRDMA.getString(args, 0);
@@ -107,6 +114,7 @@ public class Utilities {
 	static class PrintInode{
 		static final int BUF_SIZE = 512;
 
+		// inode
 		public static int execute(ActiveRDMA c, int[] args) throws Exception {
 			DFS dfs = new DFS_RDMA(c, true);
 			int inode = args[0];
@@ -125,30 +133,40 @@ public class Utilities {
 			return 0;
 		}
 	}
-	
+
 	/*
 	 * Tests
 	 */
 
-
-	public static void main(String[] args) throws Exception{
-
+	public static void main(String[] _) throws Exception{
 		ActiveRDMA c = new Client("localhost");
-		Utilities.CopyToDFS.execute(c, ActiveRDMA.constructArgs(0,"src/playground/test") );
+		DFS dfs = new DFS_RDMA(c, true);
+		int args[] = null;
+
+		//copy to dfs
+		args = ActiveRDMA.constructArgs(0,"src/playground/test");
+		Utilities.CopyToDFS.execute(c, args );
+
 		System.out.println("copy completed.");
 		System.out.println("----------------");
 
-		Utilities.PrintFile.execute(c, ActiveRDMA.constructArgs(0,"src/playground/test") );
-		System.out.println("");
-		System.out.println("----------------");
-		System.out.println("print completed.");
+//		args = ActiveRDMA.constructArgs(0,"src/playground/test");
+//		Utilities.PrintFile.execute(c, args );
+//
+//		System.out.println("");
+//		System.out.println("----------------");
+//		System.out.println("print completed.");
 
+//		args = ActiveRDMA.constructArgs(1, "(.*\\W)?apple(\\W.*)?");
+//		Utilities.Grep.execute(c, args );
 		
-//		DFS dfs = new DFS_Active( new Client("localhost") );
-//		
-//		System.out.println(".begin");
-//		grep("src/playground/test","(.*\\W)?apple(\\W.*)?",dfs);
-//		System.out.println(".done");
+		////
+		int from = dfs.lookup("src/playground/test");
+		int to = dfs.create("trash");
+		Utilities.FileCopy.execute(c, new int[]{from,to});
+		
+		Utilities.PrintInode.execute(c, new int[]{to});
+
 	}
-	
+
 }

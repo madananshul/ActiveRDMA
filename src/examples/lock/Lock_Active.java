@@ -13,8 +13,8 @@ public class Lock_Active implements examples.lock.Lock {
 		public static int execute(ActiveRDMA c, int[] args) {
 			int size = args[0];
 			int head_of_table = c.alloc(4 * 2*size);
-			for(int i=0;i<2*size;i++)
-				c.w(head_of_table+4*i, NULL);
+			for(int i=0;i<8*size;i++)
+				c.w(head_of_table+i, NULL);
 			return head_of_table;
 		}
 	}

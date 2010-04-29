@@ -18,7 +18,7 @@ public class Utilities {
 
 		//inode
 		//pattern
-		public static void execute(ActiveRDMA c, int[] args) throws Exception {
+		public static int execute(ActiveRDMA c, int[] args) throws Exception {
 			DFS dfs = new DFS_RDMA(c, true);
 			int inode = args[0];
 			String pattern = ActiveRDMA.getString(args, 1);
@@ -30,9 +30,32 @@ public class Utilities {
 					System.out.println(line);
 			}
 			sc.close();
+			return 0;
 		}
 	}
 
+	static class GrepRes{
+
+		//inode
+		//pattern
+		public static int[] execute(ActiveRDMA c, int[] args) throws Exception {
+			DFS dfs = new DFS_RDMA(c, true);
+			int inode = args[0];
+			String pattern = ActiveRDMA.getString(args, 1);
+			String res = "";
+			
+			Scanner sc = new Scanner(new DFSInputStream(inode, dfs) );
+			while( sc.hasNextLine() ){
+				String line = sc.nextLine();
+				if( line.matches(pattern) )
+					res += line+"\n";
+			}
+			sc.close();
+			
+			return ActiveRDMA.constructArgs(0, res);
+		}
+	}
+	
 	static class FileCopy{
 		static final int BUF_SIZE = 512;
 
@@ -164,9 +187,13 @@ public class Utilities {
 		int from = dfs.lookup("src/playground/test");
 		int to = dfs.create("trash");
 		Utilities.FileCopy.execute(c, new int[]{from,to});
+//		
+//		Utilities.PrintInode.execute(c, new int[]{to});
 		
-		Utilities.PrintInode.execute(c, new int[]{to});
-
+		args = ActiveRDMA.constructArgs(1, "(.*\\W)?apple(\\W.*)?");
+		args[0] = to;
+		args = Utilities.GrepRes.execute(c, args );
+		System.out.println( ActiveRDMA.getString(args, 0) );
 	}
 
 }

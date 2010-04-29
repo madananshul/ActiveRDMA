@@ -2,9 +2,10 @@ package tests;
 
 import junit.framework.TestCase;
 import client.Client;
+
 import common.ActiveRDMA;
+
 import dfs.DFS;
-import dfs.DFS_RDMA;
 import dfs.DFS_Active;
 
 public class DFSTest extends TestCase {

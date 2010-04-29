@@ -259,6 +259,25 @@ public abstract class ActiveRDMA {
 
         return new String(bytes);
     }
+
+    public static String[] getStrings(int[] args, int off)
+    {
+        int len1 = args[off++];
+
+        byte[] bytes1 = new byte[len1];
+        for (int i = 0; i < len1; i++)
+            bytes1[i] = (byte)args[off++];
+
+        int len2 = args[off++];
+
+        byte[] bytes2 = new byte[len2];
+        for (int i = 0; i < len2; i++)
+            bytes2[i] = (byte)args[off++];
+
+        String s1 = new String(bytes1), s2 = new String(bytes2);
+
+        return new String[] { s1, s2 };
+    }
     
 	
     public static int[] constructArgs(int prefix, String s)
@@ -268,6 +287,22 @@ public abstract class ActiveRDMA {
         if (sBytes != null)
             for (int i = 0; i < sBytes.length; i++)
                 args[prefix + i] = (int)sBytes[i];
+
+        return args;
+    }
+
+    public static int[] constructArgs(int prefix, String s1, String s2)
+    {
+        byte[] s1Bytes = s1.getBytes(), s2Bytes = s2.getBytes();
+
+        int[] args = new int[prefix + 1 + s1Bytes.length + 1 + s2Bytes.length];
+        int ptr = prefix;
+        args[ptr++] = s1Bytes.length;
+        for (int i = 0; i < s1Bytes.length; i++)
+            args[ptr++] = (int)s1Bytes[i];
+        args[ptr++] = s2Bytes.length;
+        for (int i = 0; i < s2Bytes.length; i++)
+            args[ptr++] = (int)s2Bytes[i];
 
         return args;
     }

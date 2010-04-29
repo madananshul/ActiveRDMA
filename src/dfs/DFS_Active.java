@@ -54,6 +54,14 @@ public class DFS_Active extends DFS_RDMA
         c.load(DFS_Active_Adapter.class);
     }
 
+    public DFS_Active(ActiveRDMA c, boolean noInit)
+    {
+        super(c, noInit);
+
+        c.load(DFS_RDMA.class);
+        c.load(DFS_Active_Adapter.class);
+    }
+
     int[] constructArgs(int prefix, String s)
     {
         byte[] sBytes = (s != null) ? s.getBytes() : null;

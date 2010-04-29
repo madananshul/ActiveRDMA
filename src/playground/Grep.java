@@ -9,7 +9,8 @@ import dfs.DFS_Active;
 public class Grep {
 
 	public static void grep(String file, String pattern, DFS server) throws Exception {
-		Scanner sc = new Scanner(new DFSInputStream(file, server)
+        int inode = server.lookup(file);
+		Scanner sc = new Scanner(new DFSInputStream(inode, server)
 		);
 		while( sc.hasNextLine() ){
 			String line = sc.nextLine();

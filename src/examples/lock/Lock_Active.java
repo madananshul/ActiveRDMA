@@ -12,9 +12,9 @@ public class Lock_Active implements examples.lock.Lock {
 		//creating lock table
 		public static int execute(ActiveRDMA c, int[] args) {
 			int size = args[0];
-			int head_of_table = c.alloc(2*size);
+			int head_of_table = c.alloc(4 * 2*size);
 			for(int i=0;i<2*size;i++)
-				c.w(head_of_table+i, NULL);
+				c.w(head_of_table+4*i, NULL);
 			return head_of_table;
 		}
 	}
@@ -34,7 +34,7 @@ public class Lock_Active implements examples.lock.Lock {
 		public static int execute(ActiveRDMA c, int[] args) {
 			int node = args[0], lock = args[1];
 			
-			int next = c.r(node+1);
+			int next = c.r(node+4);
 			if(next != NULL){
 				c.w(next, 0);
 			}
@@ -44,7 +44,7 @@ public class Lock_Active implements examples.lock.Lock {
 				}
 				else {
 					//poll on next until it is set 
-					while( (next = c.r(node+1)) == NULL ){
+					while( (next = c.r(node+4)) == NULL ){
 						//next = NULL
 					}
 					c.w(next, 0);
@@ -69,23 +69,23 @@ public class Lock_Active implements examples.lock.Lock {
 		public static int execute(ActiveRDMA c, int[] args) {
 			int file = args[0], lock = args[1];
 			//new node
-			int node = c.alloc(2);
+			int node = c.alloc(4 * 2);
 			//System.out.println("New node for lock is at address :"+node);
 			
-			c.w(node+1, NULL);  // node[1] = link
+			c.w(node+4, NULL);  // node[1] = link
 	
 			int predecessor;
 			
-			predecessor = c.r(lock+1);
+			predecessor = c.r(lock+4);
 			while(c.cas(lock+1, predecessor, node)==0){
-				predecessor = c.r(lock+1);
+				predecessor = c.r(lock+4);
 			}
 			if(predecessor == NULL){
 				c.w(node, 0);
 			}
 			else {
-				c.cas(predecessor+1, NULL, node);
-				c.w(node, 1);
+				c.cas(predecessor+4, NULL, node);
+				c.w(node, 4);
 			}
 			
 			//poll on locked until it is false

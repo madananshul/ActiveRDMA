@@ -1,0 +1,248 @@
+\documentclass[10pt]{article}
+\usepackage{fullpage}
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+
+\title{15-712 Final Project Report: Active RDMA}
+\author{Chris Fallin, Anshul Madan, Filipe Milit\~{a}o}
+\date{}
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+Traditional distributed services have built upon RPC or RPC-like
+interfaces at the network level. In these systems, a server exports a
+static set of operations, typically at a high level. For example, a
+file server allows a client to open a file in one call, and read a
+block of data in the next. An alternate paradigm exists: RDMA (Remote
+Direct Memory Access), first proposed in~\cite{thekkath94}, exposes
+data structures in the server's memory directly. Client applications
+can then, with knowledge of the appropriate structures, implement most
+intelligence on the client side and access shared data remotely. The
+advantage of this scheme is that it allows low-latency operation if
+the RDMA mechanism is implemented efficiently (i.e., in hardware or at
+the low level in a system software trap). It also allows more
+flexibility in client operations by allowing a finer granularity than
+a static high-level API, although this aspect was not evaluated in the
+original proposal. The disadvantage is that, for complex
+data-structure manipulations or pathological cases (e.g., a long
+linked list in memory), the cost of multiple round-trips over the
+network can be extreme compared to performing the computation locally
+at the server.
+
+We attempt to retain the benefits of both designs by building a
+hybrid. In the spirit of Active Networks~\cite{AN-survey}, we propose
+to allow clients to send code to the server to execute directly
+against the shared data structures. We call this \textbf{Active
+  RDMA}. This functionality will allow for the \emph{flexibility} and
+\emph{client-driven intelligence} of RDMA while providing the
+\emph{data locality} advantages of traditional server-side code.
+
+In order to narrow the scope of our project, we focus specifically on
+environments in which security is not an explicit concern. This seems
+strange at first in the context of a network-centric project, but
+such environments do exist. For example, large computing clusters or
+datacenters with a single owner, in which all machines or network
+devices are trusted and performance is the paramount concern, are one
+possible application domain.
+
+Furthermore, the assumption that security is externally provided
+(whole-cluster access control) or otherwise an orthogonal problem
+allows us to push Active RDMA's code execution to a lower level,
+bypassing layers for higher performance. 
+
+We plan to define our interface to be sufficiently low-level that
+it could hypothetically execute directly on a network interface
+card~\cite{nic-basedreduction}, interacting with shared memory via DMA.
+This would allow for extremely low latency.
+
+A secondary benefit to this, and one that we explore, lies in the
+flexibility of executing arbitrary code segments on the server,
+defined by an application. For example, a ``grep''-like operation to
+search through some shared data structure is significantly faster when
+executed on the server than when querying a fixed interface from the
+client side.
+
+Our work consists of several main contributions:
+
+\begin{itemize} \itemsep -2pt
+
+\item Defining a low-level interface for remote code based on Java
+  class-file shipping and word-level shared memory access; defining a
+  protocol and building reference implementations of a server and a
+  client library to enable use of this ActiveRDMA interface.
+
+\item Building a simulation infrastructure to examine the performance
+  tradeoffs of the performance split. We base this infrastructure on a
+  conglomeration of the Bochs x86 simulator and the Kaffe open-source
+  JVM with a timing model, in order to give some level of fidelity to
+  our comparison results.
+
+\item Building a distributed file system on top of this infrastructure,
+  keeping data in-memory for simplicity, and evaluating against
+  existing commonly used distributed file systems both on traditional
+  workloads and application-specific workloads using higher level
+  interfaces made possible by remote code optimizations.
+
+\end{itemize}
+
+\section{Background and Related Work}
+
+As discussed above, the primary advantage of a basic RDMA system is
+that there is low latency for common data-transfer operations that
+require little actual logic on the server side, and deal with simple
+data structures. However, the inability to execute code on the server
+can lead to unacceptably high cost for some common operations, such as
+a linked list traversal. The proposal in~\cite{thekkath94} gets around
+this limitation by also allowing RPC in some cases (e.g., when their
+nameserver implementation cannot find an entry after a certain number
+of hash-table probes). This is a win for performance, but then
+eliminates the flexibility that client-side logic has for
+application-specific optimizations. Our Active RDMA idea retains this
+flexibility while attempting to regain some of the server-side
+performance.
+
+Our work differs in several ways from previous work and other
+alternatives:
+
+\begin{itemize} \itemsep -2pt
+
+\item Active Networks are primarily proposed for customization at the
+  network or routing layer: for example, upgrading TCP~\cite{AN-tcp},
+  or providing programmable packet-forwarding as in ANTS~\cite{ANTS},
+  PLANet~\cite{planet} or FIRE~\cite{FIRE}.
+
+\item Active Disks~\cite{AD2,AD} execute code at a disk controller,
+  increasing data locality for certain types of data preprocessing in
+  the same way as Active RDMA will allow for storage applications.
+  However, Active Disks are limited in scope to this data processing.
+  In contrast, Active RDMA is a generic mechanism that not only will
+  allow for storage applications but any distributed system that
+  requires some shared state at a central server. Also, the fact the
+  interface would allow the RDMA code to be executed on the NIC itself, 
+  should improve the performance of network storage applications.
+
+\item Mobile code~\cite{mobile} is the name for a general research
+  thrust of code migration over networks in order to build distributed
+  systems. This is the most similar to our idea. However, mobile
+  code is generally a higher-level abstraction that does not provide
+  direct access to a shared memory segment, for example, and provides
+  more sandboxing and security that remove many of the potential
+  performance benefits.
+
+\end{itemize}
+
+\section{Progress So Far}
+
+So far, we have built a prototype implementation of Active RDMA in
+Java, as well as several simple test applications, and we plan to move
+onto a full system simulator-based evaluation framework and a
+FUSE-based client filesystem interface so that we can more accurately
+evaluate performance. Our progress can be summarized by
+these accomplishments so far:
+
+\begin{itemize}
+\item Defined an Active RDMA client-server interface, at the API level
+  and at the wire protocol level. The interface allows direct memory
+  access as well as code migration (using Java bytecode), and supports
+  the following basic operations:
+  \begin{itemize}
+  \item Read, Write, Compare-and-Swap -- as in original RDMA, these
+    allow for direct memory access over the network.
+  \item Load(bytecode) -- loads a Java class file into the remote
+    environment.
+  \item Execute(code, param) -- Executes previously-loaded remote code
+    (referenced by MD5 hash), giving it direct access to the host
+    memory.
+  \end{itemize}
+\item Built a prototype implementation of this system in Java. The
+  server consists of a single large array representing host memory and
+  an implementation of the wire protocol and Java environment (class
+  loader, etc). The client consists of a library that allows the user
+  to easily load classes and call them remotely.
+\item Built four demo/test applications on this prototype framework: a
+  simple hash table, a linked list, a simple non-hierarchical
+  in-memory filesystem (built on the hash table), and a locking
+  (mutual exclusion) service with FCFS lock
+  ordering~\cite{nic-basedatomic}.
+\item Begun to integrate Kaffe and Bochs in order to build our full
+  system simulator (discussed below).
+  \item Begun to design DFS applications (discussed below).
+\end{itemize}
+
+By the end of the semester, we plan to do the following:
+
+\begin{itemize}
+\item Integrate the Kaffe JVM into the Bochs full system simulator's
+  network card (PCI ne2000) implementation. This will be a first
+  approximation of what our proposed hardware would actually look
+  like. The network card will look for ``magic packets'' of a certain
+  format, probably UDP packets to a particular port, and steal them
+  from the packet stream, interpreting them as Active RDMA
+  commands. The JVM will execute the remote code. We will implement a
+  unified timing framework between Bochs (which has an instrumentation
+  interface for such things) and Kaffe (likely just counting opcodes
+  as they execute), defining certain costs for host memory access in
+  order to establish an interesting tradeoff. We will build a simple
+  client to query ``server time'' (current cycle count) so that
+  benchmarks can be timed on this virtual timeline rather than by
+  wallclock time (which may not correspond directly to simulated
+  cycles). \emph{Estimated time:}~\textbf{2 weeks}
+
+\item Build a client side FUSE filesystem, allowing us to run
+  ``real'' benchmarks against it. We plan to expose a subset
+  of Unix like semantics in order to make comparison with
+  traditional distributed file systems like AFS, NFS possible.
+  \emph{Estimated time:}~\textbf{1 week} (in parallel to the above task)
+
+\item Build custom remote-code-based \emph{grep} and \emph{find}
+  client side utilities, and a remote-code-based file copy client side
+  utility (that make use of higher level file system interfaces to the
+  application), to execute on top of our Active RDMA filesystem.
+  \emph{Estimated time:}~\textbf{1 week}
+
+\item Evaluate several common distributed filesystem benchmarks on our
+  filesystem, as well as on a Linux NFS server running on our common
+  simulation infrastructure.. \emph{Estimated time:}~\textbf{A few
+    days}
+
+\item Implement several optimizations and ease-of-use improvements
+  into our system. Among our ideas so far are a more structured
+  data-store API for the active code to use, which in a real system
+  would be part of a runtime library. Though the goal of our project
+  is to show the feasibility of building a system this way, and
+  hopefully show somewhat competitive performance (maybe!), it is
+  interesting to explore the programmability aspect a bit as well. As
+  well, we are also exploring the possibility of using a
+  DAFS~\cite{DAFS} like interface for applications to directly call
+  InfiniBand-like transport resources.
+
+\end{itemize}
+
+\section{Evaluation Sketch}
+
+\begin{itemize}
+\item Basic performance: sequential read, write, Modified Andrew
+  Benchmark
+\begin{itemize}
+\item Compare against NFS, AFS
+\item Warm the pagecache for NFS, AFS comparisons to make in-memory
+  comparison fair
+\end{itemize}
+\item Scaling performance: read/write bandwidth as number of clients grows
+\item Performance as JVM speed varies: sweep the JVM speed relative to
+  the main CPU speed
+\item Performance as DMA cost varies: sweep the cost of memory access
+  from the NIC
+\item Performance as network latency varies: sweep the round-trip time
+\item Custom code-assisted applications (compare against NFS, AFS)
+\begin{itemize}
+\item Remote grep, remote find
+\item Large-tree file copy
+\end{itemize}
+\end{itemize}
+
+\bibliography{final} \bibliographystyle{abbrv}
+
+\end{document}

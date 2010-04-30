@@ -154,6 +154,7 @@ public class DFS_Active extends DFS_RDMA
 
         c.load(DFS_RDMA.class);
         c.load(DFS_Active_Adapter.class);
+        c.load(DFS_Active_IO_Adapter.class);
     }
 
     int[] constructArgs(int prefix, String s)
@@ -227,7 +228,7 @@ public class DFS_Active extends DFS_RDMA
             args[0] = 0;
             args[1] = inode;
             args[2] = off;
-            args[3] = len;
+            args[3] = chunk;
 
             int[] dat = m_client.runArray(DFS_Active_IO_Adapter.class, args);
             if (dat == null)
@@ -253,11 +254,11 @@ public class DFS_Active extends DFS_RDMA
             if (chunk > DFS_Active_IO_Adapter.MAX_BYTES_IN_REQ)
                 chunk = DFS_Active_IO_Adapter.MAX_BYTES_IN_REQ;
 
-            int[] args = DFS_Active_IO_Adapter.pack(4, buffer, buf_off, len);
+            int[] args = DFS_Active_IO_Adapter.pack(4, buffer, buf_off, chunk);
             args[0] = 1;
             args[1] = inode;
             args[2] = off;
-            args[3] = len;
+            args[3] = chunk;
 
             int[] ret = m_client.runArray(DFS_Active_IO_Adapter.class, args);
 

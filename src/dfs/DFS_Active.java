@@ -52,63 +52,6 @@ public class DFS_Active extends DFS_RDMA
 
         public static int MAX_BYTES_IN_REQ = 1200; // 1200-byte packets, to leave some headroom for 1500-byte Eth packets
 
-        public static int[] pack(int prefix, byte[] data, int offset, int len)
-        {
-            int intLen = (len+3) / 4;
-            int[] ret = new int[prefix + intLen + 1];
-            ret[prefix] = len;
-
-            int dstPtr = prefix + 1;
-            int srcPtr = offset;
-            int remaining = len;
-            int off = 0;
-
-            while (remaining-- > 0)
-            {
-                ret[dstPtr] <<= 8;
-                ret[dstPtr] |= ((int)data[srcPtr++]) & 0xff;
-
-                if (++off == 4)
-                {
-                    off = 0;
-                    dstPtr++;
-                }
-            }
-            if (off > 0)
-                while (off++ < 4)
-                    ret[dstPtr] <<= 8;
-
-            return ret;
-        }
-
-        public static void unpack(int[] data, int offset, byte[] ret, int dest_off)
-        {
-            int srcPtr = offset;
-
-            int remaining = data[srcPtr];
-            srcPtr++;
-            int dstPtr = dest_off;
-            int mod = 0;
-
-            while (remaining-- > 0)
-            {
-                ret[dstPtr++] = (byte)((data[srcPtr] & 0xff000000) >> 24);
-                data[srcPtr] <<= 8;
-                if (++mod == 4)
-                {
-                    srcPtr++;
-                    mod = 0;
-                }
-            }
-        }
-
-        public static byte[] unpack(int[] data, int offset)
-        {
-            byte[] ret = new byte[data[offset]];
-            unpack(data, offset, ret, 0);
-            return ret;
-        }
-
         public static int[] execute(ActiveRDMA c, int[] args)
         {
             // arg 0 is {0: get, 1: put}, 1 is inode, 2 is off, 3 is len,
@@ -126,11 +69,11 @@ public class DFS_Active extends DFS_RDMA
             {
                 byte[] buf = new byte[len];
                 rdma.get(inode, buf, off, len);
-                return pack(0, buf, 0, buf.length);
+                return ActiveRDMA.pack(0, buf, 0, buf.length);
             }
             else if (op == 1)
             {
-                byte[] buf = unpack(args, 4);
+                byte[] buf = ActiveRDMA.unpack(args, 4);
                 rdma.put(inode, buf, off, len);
                 return new int[] { };
             }
@@ -234,7 +177,7 @@ public class DFS_Active extends DFS_RDMA
             if (dat == null)
                 return -1;
 
-            DFS_Active_IO_Adapter.unpack(dat, 0, buffer, buf_off);
+            ActiveRDMA.unpack(dat, 0, buffer, buf_off);
 
             off += chunk;
             buf_off += chunk;
@@ -254,7 +197,7 @@ public class DFS_Active extends DFS_RDMA
             if (chunk > DFS_Active_IO_Adapter.MAX_BYTES_IN_REQ)
                 chunk = DFS_Active_IO_Adapter.MAX_BYTES_IN_REQ;
 
-            int[] args = DFS_Active_IO_Adapter.pack(4, buffer, buf_off, chunk);
+            int[] args = ActiveRDMA.pack(4, buffer, buf_off, chunk);
             args[0] = 1;
             args[1] = inode;
             args[2] = off;

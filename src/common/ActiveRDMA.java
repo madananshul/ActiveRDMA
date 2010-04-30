@@ -259,57 +259,100 @@ public abstract class ActiveRDMA {
 	
     public static String getString(int[] args, int off)
     {
-        byte[] bytes = new byte[args.length - off];
-        for (int i = off; i < args.length; i++)
-            bytes[i - off] = (byte)args[i];
-
-        return new String(bytes);
+        return new String(unpack(args, off));
     }
 
     public static String[] getStrings(int[] args, int off)
     {
-        int len1 = args[off++];
+        int off1 = off;
+        int len1 = args[off1];
+        int off2 = off1 + 1 + len1;
+        int len2 = args[off2];
 
-        byte[] bytes1 = new byte[len1];
-        for (int i = 0; i < len1; i++)
-            bytes1[i] = (byte)args[off++];
-
-        int len2 = args[off++];
-
-        byte[] bytes2 = new byte[len2];
-        for (int i = 0; i < len2; i++)
-            bytes2[i] = (byte)args[off++];
-
-        String s1 = new String(bytes1), s2 = new String(bytes2);
-
-        return new String[] { s1, s2 };
+        String[] ret = new String[] { getString(args, off1), getString(args, off2) };
+        return ret;
     }
     
 	
     public static int[] constructArgs(int prefix, String s)
     {
-        byte[] sBytes = (s != null) ? s.getBytes() : null;
-        int[] args = new int[prefix + ((sBytes != null) ? sBytes.length : 0)];
-        if (sBytes != null)
-            for (int i = 0; i < sBytes.length; i++)
-                args[prefix + i] = (int)sBytes[i];
+        byte[] sBytes = s.getBytes();
+        return pack(prefix, sBytes, 0, sBytes.length);
+    }
 
-        return args;
+    public static int[] appendArray(int[] x, int[] y)
+    {
+        int[] ret = new int[x.length + y.length];
+        System.arraycopy(x, 0, ret, 0, x.length);
+        System.arraycopy(y, 0, ret, x.length, y.length);
+        return ret;
     }
 
     public static int[] constructArgs(int prefix, String s1, String s2)
     {
-        byte[] s1Bytes = s1.getBytes(), s2Bytes = s2.getBytes();
-
-        int[] args = new int[prefix + 1 + s1Bytes.length + 1 + s2Bytes.length];
-        int ptr = prefix;
-        args[ptr++] = s1Bytes.length;
-        for (int i = 0; i < s1Bytes.length; i++)
-            args[ptr++] = (int)s1Bytes[i];
-        args[ptr++] = s2Bytes.length;
-        for (int i = 0; i < s2Bytes.length; i++)
-            args[ptr++] = (int)s2Bytes[i];
-
-        return args;
+        return appendArray(constructArgs(prefix, s1), constructArgs(0, s2));
     }
+
+    public static int[] pack(int prefix, byte[] data, int offset, int len)
+    {
+        int intLen = (len+3) / 4;
+        int[] ret = new int[prefix + intLen + 1];
+        ret[prefix] = len;
+
+        int dstPtr = prefix + 1;
+        int srcPtr = offset;
+        int remaining = len;
+        int off = 0;
+
+        while (remaining-- > 0)
+        {
+            ret[dstPtr] <<= 8;
+            ret[dstPtr] |= ((int)data[srcPtr++]) & 0xff;
+
+            if (++off == 4)
+            {
+                off = 0;
+                dstPtr++;
+            }
+        }
+        if (off > 0)
+            while (off++ < 4)
+                ret[dstPtr] <<= 8;
+
+        return ret;
+    }
+
+    public static int[] pack(int prefix, byte[] data)
+    {
+        return pack(prefix, data, 0, data.length);
+    }
+
+    public static void unpack(int[] data, int offset, byte[] ret, int dest_off)
+    {
+        int srcPtr = offset;
+
+        int remaining = data[srcPtr];
+        srcPtr++;
+        int dstPtr = dest_off;
+        int mod = 0;
+
+        while (remaining-- > 0)
+        {
+            ret[dstPtr++] = (byte)((data[srcPtr] & 0xff000000) >> 24);
+            data[srcPtr] <<= 8;
+            if (++mod == 4)
+            {
+                srcPtr++;
+                mod = 0;
+            }
+        }
+    }
+
+    public static byte[] unpack(int[] data, int offset)
+    {
+        byte[] ret = new byte[data[offset]];
+        unpack(data, offset, ret, 0);
+        return ret;
+    }
+
 }

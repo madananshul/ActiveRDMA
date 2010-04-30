@@ -78,8 +78,6 @@ public class ARFilesystem implements Filesystem3
             arfs = new ARFS(client, false);
 
         dfs = arfs.dfs;
-
-        System.out.println("constructed ARFilesystem: arfs " + arfs + " dfs " + dfs);
     }
 
     public int fsync(String path, Object fh, boolean isDatasync) throws FuseException
@@ -105,8 +103,6 @@ public class ARFilesystem implements Filesystem3
 
     public int getattr(String path, FuseGetattrSetter getattrSetter) throws FuseException
     {
-        System.out.println("getattr: " + path);
-
         int[] result = arfs.getattr(path);
 
         int inode = result[0];
@@ -136,8 +132,6 @@ public class ARFilesystem implements Filesystem3
 
     public int getdir(String path, FuseDirFiller dirFiller) throws FuseException
     {
-        System.out.println("getdir: " + path);
-        
         int inode = dfs.lookup(dir_prefix + path);
         if (inode == 0) {
             throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
@@ -194,7 +188,6 @@ public class ARFilesystem implements Filesystem3
 
     public int mkdir(String path, int mode) throws FuseException
     {
-        System.out.println("mkdir: " + path);
         int result = arfs.mkdir(path);
 
         if (result == -1)
@@ -209,12 +202,12 @@ public class ARFilesystem implements Filesystem3
         if (result == -1)
             throw new FuseException("No Such Entry").initErrno(FuseException.ENOENT);
 
+
         return 0;
     }
 
     public int open(String path, int flags, FuseOpenSetter openSetter) throws FuseException
     {
-        System.out.println("open: " + path);
         int inode = dfs.lookup(path);
         int len = -1;
         if (inode != 0) len = dfs.getLen(inode);
@@ -243,7 +236,6 @@ public class ARFilesystem implements Filesystem3
 
     public int statfs(FuseStatfsSetter statfsSetter) throws FuseException
     {
-        System.out.println("statfs");
         statfsSetter.set(statfs.blockSize, statfs.blocks, statfs.blocksFree, statfs.blocksAvail, statfs.files, statfs.filesFree, statfs.namelen);
 
         return 0;

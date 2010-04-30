@@ -180,11 +180,19 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
 	public Result _load(byte[] code) {
 		Result result = new Result();
 		try{
-			Class<?> c = loader.loadMobileCode( code );
-			//this will actually never return false, if there is a previous
-			//class with the same name LinkageError will occur.
-			result.result = new int[]{tableClassAndMd5(c,code) ? 1 : 0};
-			result.error = ErrorCode.OK;
+            if (haveCode(code))
+            {
+                result.result = new int[] { 1 };
+                result.error = ErrorCode.OK;
+            }
+            else
+            {
+                Class<?> c = loader.loadMobileCode( code );
+                //this will actually never return false, if there is a previous
+                //class with the same name LinkageError will occur.
+                result.result = new int[]{tableClassAndMd5(c,code) ? 1 : 0};
+                result.error = ErrorCode.OK;
+            }
 		}catch(LinkageError e){
 			//problems loading
 			result.error = ErrorCode.DUPLCIATED_CODE;

@@ -6,7 +6,7 @@ if [ "x$SERVER" == "x" ]; then
     SERVER=localhost
 fi
 if [ "x$ACTIVE" == "x" ]; then
-    ACTIVE=rdma
+    ACTIVE=active
 fi
 
 echo Server: $SERVER

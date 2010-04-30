@@ -213,6 +213,12 @@ public abstract class ActiveRDMA {
 		return bytes;
 	}
 
+    protected boolean haveCode(byte[] code) {
+        MessageDigest digest = ByteArray.getDigest();
+        ByteArray hash = new ByteArray ( code, digest );
+        return md5_to_class.containsKey(hash);
+    }
+
 	protected boolean tableClassAndMd5(Class<?> cl, byte[] code){
 		if( !class_to_md5.containsKey(cl.getName()) ){
 			MessageDigest digest = ByteArray.getDigest();

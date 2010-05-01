@@ -15,7 +15,10 @@ Carnegie Mellon University}
 \maketitle
 
 \begin{abstract}
-\PROBLEM{TODO}.
+The inflexible border between RPC and RDMA like systems imposes a significant tradeoff on system design: you can either have static code exploiting data locality - but without much possibilities for adjusting the application; or you can have a simple DMA like interface that allows for code to be built and updated by still just using a very simple interface - but completely losing the benefits of data locality and paying a considerable penalty on network latency. We propose a middle ground between these two approaches. In Active RDMA the application designer has the possibility of both using just an RDMA like interface or he can decide to upload the code to be run on the server and thus exploit locality.
+
+We designed and implemented a prototype of Active RDMA as well as a series of tests that show significant performance gains \PROBLEM{or not?}. By simulating the execution of this architecture on a NIC we have gather ...
+
 \end{abstract}
 
 \section{Introduction}
@@ -229,16 +232,25 @@ These results show gains consistent with the complexity of the operation. Thus, 
 
 The last two application (the file system and the locking service), were then extended into the full testing framework discussed further below.
 
-\subsection{Other stuff}
+\subsection{DFS}
+
+\PROBLEM{TODO}
+
+\subsection{File system utilities (Grep, Copy and Find)}
+
+In order to use the file system and expose our performance gains, we built the following utilities that make use of the higher level file system interface:
 
 \begin{itemize}
+\item Copy -- a simple utility that is able of copying a file already in DFS to a new position as well as pinning a file in the systems' filesystem to DFS (that is, transfer a file to memory). The expected performance gains are mostly due to keeping all transfers locally instead of having to move each chunk across the network (on a read) just to be written in another block (on a write) on the server side.
 
-\item Built custom remote-code-based \emph{grep} and \emph{find}
-  client side utilities, and a remote-code-based file copy client side
-  utility (that make use of higher level file system interfaces to the
-  application), to execute on top of our Active RDMA filesystem. Although we did not experiment with more dynamic code generation (that would truly expose the advantage of such dynamic system), our prototype implementation of such utilities should be enough to serve as proof-of-concept that our model can achieve significant performance gains when compared with purely client side RDMA even if a static code migration mechanism (such as in traditional RPC) could also be used in such heavily constrained scenario to get similar benefits. Thus, we leave as future work the potential to send dynamically generated code that matches the data-structures on the server side, instead of sending a pattern that gets used in a generic pattern matcher. 
+\item Grep -- does simple pattern matching on a text file. It takes a regular expression that is then used to filter a text file and returns all lines that contain that expression. Although we did not experiment with more dynamic code generation (that would truly expose the advantage of such dynamic system), our prototype implementation of this utility should be enough to serve as proof-of-concept that our model can achieve significant performance gains when compared with purely client side RDMA even if a static code migration mechanism (such as in traditional RPC) could also be used in such heavily constrained scenario to get similar benefits. Thus, we leave as future work the potential to send dynamically generated code that matches the data-structures on the server side more efficiently, instead of sending the pattern that gets used in a generic pattern matcher. 
+We made an assumption that the result will necessarily fit into a single packet and as such our tests have been design with this limitation in mind.
+
+\item Find -- this utility searches for files that match a specific name pattern. It essentially just traverses the directory table selecting all entries that have compatible names. We did not use the same size restriction as on the previous utility and instead rely on basically exposing the table iterator to the client that can use some state to continue the iteration over a certain point instead of having to \PROBLEM{this makes no sense... little help?}
 
 \end{itemize}
+  
+\subsection{Other stuff}
 
 By the end of the semester, we plan to do the following:
 

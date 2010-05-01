@@ -158,40 +158,6 @@ public class Utilities {
 		}
 	}
 
-    public static class Finder
-    {
-        static final int MAX_RET = 300; // 1200 bytes
-
-        public static int[] execute(ActiveRDMA c, int[] args)
-        {
-            DFS dfs = new DFS_RDMA(c, true);
-
-            int lastBin = args[0];
-            int lastPtr = args[1];
-            String pattern = ActiveRDMA.getString(args, 2);
-
-            int[] ret = new int[2];   
-
-            DFSIter iter = new DFSIter(dfs, lastBin, lastPtr);
-            while (!iter.done())
-            {
-                iter.findNext(pattern);
-                if (iter.done()) break;
-
-                int[] fname = ActiveRDMA.pack(0, iter.key().getBytes());
-                if (ret.length + fname.length > MAX_RET) break;
-
-                ret = ActiveRDMA.appendArray(ret, fname);
-                iter.next();
-            }
-
-            ret[0] = iter.bin();
-            ret[1] = iter.ptr();
-
-            return ret;
-        }
-    }
-
 	/*
 	 * Tests
 	 */

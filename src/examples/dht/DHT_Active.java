@@ -93,4 +93,27 @@ public class DHT_Active implements examples.dht.DHT {
 
 		m_c.run(DHT_Active_Put.class, args);
 	}
+
+    public String getKey(int ptr)
+    {
+        int len = m_c.r(ptr + 8);
+        byte[] bytes = m_c.readbytes(ptr + 12, len);
+        return new String(bytes);
+    }
+
+    public int getNBins()
+    {
+        return N;
+    }
+
+    public int getHead(int bin)
+    {
+        return m_c.r(4*(N+bin));
+    }
+
+    public int getNext(int ptr)
+    {
+        return m_c.r(ptr);
+    }
+
 }

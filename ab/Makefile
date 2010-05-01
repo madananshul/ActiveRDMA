@@ -21,7 +21,7 @@
 #	logfile will contain the timing information on completion.
 # 7. rm -rf <workingdir> to get rid of the junk created in it.
 
-ORIGINAL = <<fill in pathname here>>
+ORIGINAL := $(shell pwd)/..
 W = w
 PS = ps axww
 TIMESTAMP = date
@@ -30,10 +30,6 @@ WHERE = pwd
 COMPILER = /bin/cc
 
 benchmark:
-	$(MACHINEID)
-	$(WHERE)
-	$(W)
-	$(PS)
 	@echo "********* Timing begins here *********"
 	$(TIMESTAMP)
 

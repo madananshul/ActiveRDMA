@@ -69,13 +69,13 @@ Our work consists of several main contributions:
 \begin{itemize} \itemsep -2pt
 
 \item Defining a low-level interface for remote code based on Java
-  class-file shipping and word-level shared memory access; defining a
+  class-file shipping and both word-level and byte-level shared memory access; defining a
   protocol and building reference implementations of a server and a
   client library to enable use of this ActiveRDMA interface.
 
 \item Building a simulation infrastructure to examine the performance
   tradeoffs of the performance split. We base this infrastructure on a
-  conglomeration of the Bochs x86 simulator and the Kaffe open-source
+  conglomeration of the Bochs x86 simulator and the standard Java
   JVM with a timing model, in order to give some level of fidelity to
   our comparison results.
 
@@ -129,18 +129,20 @@ alternatives:
   code is generally a higher-level abstraction that does not provide
   direct access to a shared memory segment, for example, and provides
   more sandboxing and security that remove many of the potential
-  performance benefits.
+  performance benefits that we are aiming for. We also do not plan for any kind of special language integration and instead rely on traditional interfaces and Java bytecode gets send directly through the network.
 
 \end{itemize}
 
-\section{Progress So Far}
+\section{Implementation}
 
-So far, we have built a prototype implementation of Active RDMA in
-Java, as well as several simple test applications, and we plan to move
-onto a full system simulator-based evaluation framework and a
-FUSE-based client filesystem interface so that we can more accurately
-evaluate performance. Our progress can be summarized by
-these accomplishments so far:
+%So far, we have built a prototype implementation of Active RDMA in
+%Java, as well as several simple test applications, and we plan to move
+%onto a full system simulator-based evaluation framework and a
+%FUSE-based client filesystem interface so that we can more accurately
+%evaluate performance. Our progress can be summarized by
+%these accomplishments so far:
+
+Our implementation can be summarized as follows:
 
 \begin{itemize}
 \item Defined an Active RDMA client-server interface, at the API level
@@ -149,31 +151,42 @@ these accomplishments so far:
   the following basic operations:
   \begin{itemize}
   \item Read, Write, Compare-and-Swap -- as in original RDMA, these
-    allow for direct memory access over the network.
+    allow for direct memory access over the network but both \textit{read}
+    and \textit{write} operations are defined over blocks of addresses (so
+    that batching is possible) which allow us to group together multiple similar requests.
   \item Load(bytecode) -- loads a Java class file into the remote
     environment.
   \item Execute(code, param) -- Executes previously-loaded remote code
     (referenced by MD5 hash), giving it direct access to the host
-    memory.
+    memory. Both \textit{param} and the result can use arrays of integers so that more complex arguments and results can be required/produced by an execution. 
   \end{itemize}
 \item Built a prototype implementation of this system in Java. The
   server consists of a single large array representing host memory and
   an implementation of the wire protocol and Java environment (class
   loader, etc). The client consists of a library that allows the user
-  to easily load classes and call them remotely.
+  to easily load classes and call them remotely. Active code is simply a static method (called \textit{execute}) that takes an Active RDMA interface and an array of integers as parameters (and as result). The Active RDMA interface allows for the code, when it is run on the server, to be used in exactly the same way as when it is run from a RDMA only perspective (that is, a client interface that sends all those basic requests across the network to the server). 
 \item Built four demo/test applications on this prototype framework: a
   simple hash table, a linked list, a simple non-hierarchical
   in-memory filesystem (built on the hash table), and a locking
   (mutual exclusion) service with FCFS lock
-  ordering~\cite{nic-basedatomic}.
-\item Begun to integrate Kaffe and Bochs in order to build our full
-  system simulator (discussed below).
-  \item Begun to design DFS applications (discussed below).
+  ordering~\cite{nic-basedatomic}. Running both as plain RDMA and as Active code served as initial benchmarks whose results encouraged us to continue with the implementation. 
+
+
+\item Built custom remote-code-based \emph{grep} and \emph{find}
+  client side utilities, and a remote-code-based file copy client side
+  utility (that make use of higher level file system interfaces to the
+  application), to execute on top of our Active RDMA filesystem. Although we did not experiment with more dynamic code generation (that would truly expose the advantage of such dynamic system), our prototype implementation of such utilities should be enough to serve as proof-of-concept that our model can achieve significant performance gains when compared with purely client side RDMA even if a static code migration mechanism (such as in traditional RPC) could also be used in such heavily constrained scenario to get similar benefits. Thus, we leave as future work the potential to send dynamically generated code that matches the data-structures on the server side, instead of sending a pattern that gets used in a generic pattern matcher. 
+
 \end{itemize}
 
 By the end of the semester, we plan to do the following:
 
 \begin{itemize}
+
+\item Begun to integrate Kaffe and Bochs in order to build our full
+  system simulator (discussed below).
+  \item Begun to design DFS applications (discussed below).
+
 \item Integrate the Kaffe JVM into the Bochs full system simulator's
   network card (PCI ne2000) implementation. This will be a first
   approximation of what our proposed hardware would actually look
@@ -196,12 +209,6 @@ By the end of the semester, we plan to do the following:
   traditional distributed file systems like AFS, NFS possible.
   \emph{Estimated time:}~\textbf{1 week} (in parallel to the above task)
 
-\item Build custom remote-code-based \emph{grep} and \emph{find}
-  client side utilities, and a remote-code-based file copy client side
-  utility (that make use of higher level file system interfaces to the
-  application), to execute on top of our Active RDMA filesystem.
-  \emph{Estimated time:}~\textbf{1 week}
-
 \item Evaluate several common distributed filesystem benchmarks on our
   filesystem, as well as on a Linux NFS server running on our common
   simulation infrastructure.. \emph{Estimated time:}~\textbf{A few
@@ -220,7 +227,7 @@ By the end of the semester, we plan to do the following:
 
 \end{itemize}
 
-\section{Evaluation Sketch}
+\section{Evaluation Methodology}
 
 \begin{itemize}
 \item Basic performance: sequential read, write, Modified Andrew
@@ -242,6 +249,13 @@ By the end of the semester, we plan to do the following:
 \item Large-tree file copy
 \end{itemize}
 \end{itemize}
+
+\section{Results}
+did it work?
+
+\section{Conclusion}
+we are doomed.
+
 
 \bibliography{final} \bibliographystyle{abbrv}
 

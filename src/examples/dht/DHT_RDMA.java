@@ -18,19 +18,27 @@ public class DHT_RDMA implements DHT {
 	{
 		m_client = client;
 		N = _N;
-		
-		// initialize the free-block pointer
-		m_client.w(0, 4* (2*N));
-		
-		// initialize the hash entries
-		for (int i = 0; i < N; i++)
-			m_client.w(4*(N+i), 0);
-	}
+
+        init();
+    }
 
     public DHT_RDMA(ActiveRDMA client, int _n, boolean noInit)
     {
         m_client = client;
         N = _n;
+
+        if (m_client.r(0) < 4*2*N)
+            init();
+    }
+
+    void init()
+    {
+        // initialize the free-block pointer
+        m_client.w(0, 4* (2*N));
+
+        // initialize the hash entries
+        for (int i = 0; i < N; i++)
+            m_client.w(4*(N+i), 0);
     }
 	
 	int hash(byte[] key)
@@ -176,5 +184,27 @@ public class DHT_RDMA implements DHT {
 
     public boolean has(String key) {
         return has(key.getBytes());
+    }
+
+    public String getKey(int ptr)
+    {
+        int len = m_client.r(ptr + 8);
+        byte[] bytes = m_client.readbytes(ptr + 12, len);
+        return new String(bytes);
+    }
+
+    public int getNBins()
+    {
+        return N;
+    }
+
+    public int getHead(int bin)
+    {
+        return m_client.r(4*(N+bin));
+    }
+
+    public int getNext(int ptr)
+    {
+        return m_client.r(ptr);
     }
 }

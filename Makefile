@@ -37,16 +37,16 @@ java_clean:
 jni_all: ${JNI_BINDINGS_H} ${JNI_BINDINGS_C} jvm_ldpath.def
 	${MAKE} -C jni all
 
-${JNI_BINDINGS_H} ${JNI_BINDINGS_C}: ${JAVASRC}
-	${JAVA} -classpath build java2c.CAPIGenerator \
-	${JNI_BINDINGS_H} ${JNI_BINDINGS_C} ${JNI_COMMON_H}
+#${JNI_BINDINGS_H} ${JNI_BINDINGS_C}: ${JAVASRC}
+#	${JAVA} -classpath build java2c.CAPIGenerator \
+#	${JNI_BINDINGS_H} ${JNI_BINDINGS_C} ${JNI_COMMON_H}
 
 jvm_ldpath.def:
 	${JAVA} -classpath build java2c.DumpJVMLdPath > jvm_ldpath.def
 
 jni_clean:
 	${MAKE} -C jni clean
-	rm -f ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}
+#	rm -f ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}
 	rm -f jvm_ldpath.def
 
 

@@ -12,6 +12,7 @@ import common.ActiveRDMA;
 import dfs.DFS;
 import dfs.DFS_RDMA;
 import examples.dht.DHT;
+import dfs.DFSIter;
 
 public class Utilities {
 

@@ -26,6 +26,8 @@ public class DFS_RDMA implements DFS
     protected ActiveRDMA m_client;
     private DHT m_dht;
 
+    public DHT dht() { return m_dht; }
+
     public DFS_RDMA(ActiveRDMA client)
     {
         m_client = client;

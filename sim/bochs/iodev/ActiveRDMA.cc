@@ -54,7 +54,7 @@ ActiveRDMA_c::ActiveRDMA_c(char *macaddr)
     args.version = JNI_VERSION_1_4;
     args.nOptions = 1;
     args.options = options;
-    options[0].optionString = (char *) "-Djava.class.path=../../bin/";
+    options[0].optionString = (char *) "-Djava.class.path=../../build/";
 
     int err = JNI_CreateJavaVM(&m_jvm, (void **)&m_jni, &args);
 

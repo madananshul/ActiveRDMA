@@ -11,6 +11,7 @@ import common.ActiveRDMA;
 
 import dfs.DFS;
 import dfs.DFS_RDMA;
+import examples.dht.DHT;
 
 public class Utilities {
 
@@ -157,6 +158,18 @@ public class Utilities {
 		}
 	}
 
+	public static class Find{
+		
+		public static int[] execute(ActiveRDMA c, int[] args) throws Exception {
+			DFS dfs = new DFS_RDMA(c, true);
+			int dir_inode = args[0];
+			String pattern = ActiveRDMA.getString(args, 1);
+			//int[] args = constructArgs(1, s);
+			return dfs.find(dir_inode, pattern);
+		}
+	}
+	
+	
 	/*
 	 * Tests
 	 */
@@ -234,6 +247,14 @@ public class Utilities {
 		System.out.println("(grep)----------------");
 		System.out.println( ActiveRDMA.getString(args, 0) );
 		System.out.println("(grep)----------------");
+		
+		args = ActiveRDMA.constructArgs(0, "(.*\\W)?apple(\\W.*)?");
+		args[1] = to;//TBD - Put inode number instead
+		args = c.runArray( Find.class, args );
+		System.out.println("(find)----------------");
+		System.out.println( ActiveRDMA.getString(args, 0) );
+		System.out.println("(find)----------------");
+		
 	}
 
 }

@@ -134,6 +134,10 @@ public class DFS_Active extends DFS_RDMA
                 rdma.put(inode, buf, off, len);
                 return new int[] { };
             }
+            else if (op ==2){
+            	byte[] buf = unpack(args, 1);
+                return rdma.find(inode, buf);
+            }
 
             return new int[] { };
         }
@@ -184,6 +188,7 @@ public class DFS_Active extends DFS_RDMA
 
         return m_client.run(DFS_Active_Adapter.class, args);
     }
+    
 
     public void setLen(int inode, int len)
     {
@@ -213,6 +218,14 @@ public class DFS_Active extends DFS_RDMA
     {
         int[] args = new int[] { 7, size };
         return m_client.run(DFS_Active_Adapter.class, args);
+    }
+    
+    public int[] find(int inode, String pattern)
+    {
+        int[] args = constructArgs(1, pattern);
+        args[0] = 8;
+
+        return m_client.runArray(DFS_Active_IO_Adapter.class, args);
     }
 
     public int get(int inode, byte[] buffer, int off, int len)

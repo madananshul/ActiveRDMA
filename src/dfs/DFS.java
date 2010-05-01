@@ -3,7 +3,7 @@ package dfs;
 public interface DFS {
     int lookup(String name); // filename -> inode (must exist)
     int create(String name); // filename -> inode (creates new)
-
+    int[] find(int inode, String pattern);
     int getLen(int inode);
     void setLen(int inode, int len); // sets length of file
     int get(int inode, byte[] buffer, int off, int len); // gets range

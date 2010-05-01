@@ -115,6 +115,16 @@ public class DFS_RDMA implements DFS
     {
         return m_client.r(inode);
     }
+    
+    public int[] find(int inode, String pattern)
+    {
+        return m_dht.match(inode, pattern.getBytes());
+    }
+    
+    public int[] find(int inode, byte[] pattern)
+    {
+        return m_dht.match(inode, pattern);
+    }
 
     protected int access(int inode, byte[] buffer, int off, int len, boolean write)
     {

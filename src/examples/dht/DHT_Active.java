@@ -23,6 +23,20 @@ public class DHT_Active implements examples.dht.DHT {
             return r.get(k);
         }
 	}
+	
+	public static class DHT_Active_Find {
+
+		public static int[] execute(ActiveRDMA c, int[] args) {
+
+			// args[1] is the key
+            byte[] pattern = new byte[args.length-1];
+            for (int i = 0; i < args.length; i++)
+                pattern[i] = (byte)args[i];
+
+            DHT_RDMA r = new DHT_RDMA(c, N, true);
+            return r.match(args[0], pattern);
+        }
+	}
 
 	public static class DHT_Active_Has {
 
@@ -57,11 +71,24 @@ public class DHT_Active implements examples.dht.DHT {
         m_dht = new DHT_RDMA(c, N);
 
         c.load(DHT_RDMA.class);
+        c.load(DHT_Active_Find.class);
 		c.load(DHT_Active_Get.class);
 		c.load(DHT_Active_Put.class);
 		c.load(DHT_Active_Has.class);
 	}
 
+	
+	public int[] match(int key, byte[] pattern) {
+		//byte[] b = pattern.getBytes();
+
+		int[] args = new int[pattern.length+1];
+		args[0] = key;
+        for (int i = 0; i < pattern.length; i++)
+            args[i] = (int)pattern[i];
+
+		return m_c.runArray(DHT_Active_Find.class, args);
+	}
+	
 	public int get(String key) {
         byte[] b = key.getBytes();
 

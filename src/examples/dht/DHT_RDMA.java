@@ -74,6 +74,58 @@ public class DHT_RDMA implements DHT {
 		
 		return ptr;
 	}
+	
+	int[] matchKey(int key, byte[] pattern_bytes)
+	{
+		//int ptr = m_client.r(hashPtr(key));
+		int ptr;
+		int[] ptr_array = new int[1000];
+		int count = 0;
+		String pattern = new String(pattern_bytes);
+		
+		for (int i = 0; i < N; i++){
+			ptr = m_client.r(4*(N+i));
+		
+			while (ptr != 0)
+			{
+				int cur_key = m_client.r(ptr + 12);
+			    int len = m_client.r(ptr + 8);
+		        byte[] b = m_client.readbytes(ptr + 12, len);
+		        int b_int[] = new int[b.length];
+	            for (int j = 0; j < b_int.length; j++)
+	                b_int[j] = (int)b[j];
+		        
+		        String cur_key_str = m_client.getString(b_int, 0);
+				if( cur_key_str.matches(pattern) ) {
+					ptr_array[count++] = ptr;
+				}
+				ptr = m_client.r(ptr);
+			}
+		}
+		
+		return ptr_array;
+	}
+	
+	
+	
+    public int[] match(int key, String pattern)
+    {
+        return match(key, pattern.getBytes());
+    }
+	
+	public int[] match(int key, byte[] pattern)
+	{
+		//TBD - return int array instead
+		//boolean found = false;
+		int ptr[] = matchKey(key, pattern);
+		int[] ret_ptr = new int[ptr.length];
+		
+		for(int i=0;i<ptr.length;i++){
+			ret_ptr[i] = (ptr[i] != 0) ? m_client.r(ptr[i] + 4) : 0;
+		}
+		
+		return ret_ptr;
+	}
 
     public int get(String key)
     {

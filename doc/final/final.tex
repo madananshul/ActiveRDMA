@@ -2,6 +2,8 @@
 %\usepackage{fullpage}
 %\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \usepackage{courier}
+\usepackage{color}
+\newcommand{\PROBLEM}[1] {\textbf{\textcolor{red}{#1}}}
 
 \title{Active RDMA}
 \author{Chris Fallin, Anshul Madan, Filipe Milit\~{a}o\\ \\
@@ -13,7 +15,7 @@ Carnegie Mellon University}
 \maketitle
 
 \begin{abstract}
-TODO.
+\PROBLEM{TODO}.
 \end{abstract}
 
 \section{Introduction}
@@ -170,7 +172,7 @@ Although, for convenience, we also allow:
 
     {\tt \textbf{public static int} execute(ActiveRDMA a, \textbf{int}[] args)}
 
-(where the result gets wrapped in an array so that the semantics remain identical to the previous one).
+(where the result gets wrapped in an array so that the semantics remain identical to the previous one). This signatures allows for the code, when it is run on the server, to be used in exactly the same way as when it is run from a RDMA only perspective (that is, a client interface that sends all those basic requests across the network to the server). 
 
   \item {\tt Execute(code, param)} -- Executes previously-loaded remote code
     (referenced by MD5 hash), giving it direct access to the host
@@ -181,21 +183,55 @@ Although, for convenience, we also allow:
   This simple interface also includes a series of error codes to account for common mistakes that may occur during execution such as going beyond the memory bounds of the server. We also defined a series of more complex operations that use this simple interface as building block or that are just more convenient for the programmer to use (like just passing a class to the load function instead of having to manually extract its byte code). 
 Finally, even if this was not thoroughly explored, we could also have defined a set of useful library functions for memory management or other convenient procedures that are necessary in real-world production environments.
   
-  \begin{itemize}
-\item Built a prototype implementation of this system in Java. The
-  server consists of a single large array representing host memory and
+   The server consists of a single large array representing host memory and
   an implementation of the wire protocol and Java environment (class
   loader, etc). The client consists of a library that allows the user
-  to easily load classes and call them remotely. Active code is simply a static method (called 
-  \textit{execute}) that takes an Active RDMA interface and an array of integers as parameters (and as result). The Active RDMA interface allows for the code, when it is run on the server, to be used in exactly the same way as when it is run from a RDMA only perspective (that is, a client interface that sends all those basic requests across the network to the server). 
+  to easily load classes and call them remotely. We based our wire protocol on UDP packets specially to simplify the modification of the test virtual machine (so that it did not require the implementation of a full TCP network stack). This means we made certain assumption of the packet size to keep failure handling simple (in this case a simple timeout and resend).
+  The execution model on the server side is also meant to be simple: a fixed number of threads listens to jobs that are pushed into a single work queue. If a job waits for to long to be handle, it is just assumed to have expired and is ignored. Traditional RDMA request are handled immediately as they should be fairly lightweight and not cause any abuse in the use of server's resources. As a consequence of this execution architecture, we could have situation where an expensive computation ends up running multiple times due to response timeouts on the client side. We did not handle such case as well as providing more control over what computational resources the active code is allowed to use. However, the first case can be handled easily by just pushing some complexity to the active code that needs to have a ``guard'' memory position to tracks the state of the computation (such as ``not-stated'', ``running'' and ``done''). Before starting the heavy code, it just checks to ensure that there is no previously ``running'' or ``done'' values (using compare and swap to avoid races).
 
+\subsection{Initial demo applications}
 
-\item Built four demo/test applications on this prototype framework: a
-  simple hash table, a linked list, a simple non-hierarchical
-  in-memory filesystem (built on the hash table), and a locking
-  (mutual exclusion) service with FCFS lock
-  ordering~\cite{nic-basedatomic}. Running both as plain RDMA and as Active code served as initial benchmarks whose results encouraged us to continue with the implementation. 
+We built four simple demo application using our prototype framework. 
+\begin{itemize}
+\item linked list - where the most significant operation (from the cost perspective) is the insertion operation as it needs to iterate across all elements of that list before if can insert a new element at the end.
+\item hash table - again where the insertion operation represents the most significant cost, as it has the potential to require multiple lookups before it finds an item.
+\item in-memory filesystem (built using the hash table).
+\item locking (mutual exclusion) service with FCFS lock ordering~\cite{nic-basedatomic}.  
+\end{itemize}
 
+Running the first two as both plain RDMA and as Active code served as initial benchmarks whose results encouraged us to continue with the implementation. The results of running in a local machine (where network latency and bandwidth should be considerably smaller than any real remote execution), are shown in Figure \ref{res1}.
+
+\begin{figure}[h!]
+\center
+\begin{tabular}{|ccc|}
+\hline
+Algorithm & Operation & Run Time\\
+\hline
+list - RDMA &  put & 39.675 ms \\
+list - RDMA & get & 19.38 ms \\
+\hline
+list - Active & put & 0.33 ms \\
+list - Active & get & 0.245 ms \\
+\hline
+\hline
+table - RDMA  & put & 1.919 ms\\
+table - RDMA   & get & 1.739 ms\\
+\hline
+table - Active  &put & 0.245 ms\\
+table - Active & get & 0.239 ms\\
+\hline
+\end{tabular}
+\caption{Results for RDMA and Active operations on a list and hash table.}
+\label{res1}
+\end{figure}
+
+These results show gains consistent with the complexity of the operation. Thus, the insertion of 200 elements in a list as well as the iteration over all those elements has a considerable gain on the Active version when compared with the RDMA version that requires all requests to be sent over the wire. On the hash-table side, gains were still significant but more modest as this structure has a lower computational complexity both for insertion and access and therefore, will pay a lower performance penalty for using the network. 
+
+The last two application (the file system and the locking service), were then extended into the full testing framework discussed further below.
+
+\subsection{Other stuff}
+
+\begin{itemize}
 
 \item Built custom remote-code-based \emph{grep} and \emph{find}
   client side utilities, and a remote-code-based file copy client side

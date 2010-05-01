@@ -43,6 +43,28 @@ public class Find
 
     static String DIR_PREFIX = "###___DIR___###";
 
+    static void printResults(int[] results)
+    {
+        int off = 2;
+        while (off < results.length)
+        {
+            String val = new String(ActiveRDMA.unpack(results, off));
+            off += (results[off]+3)/4 + 1;
+
+            boolean dir = false;
+            if (val.startsWith(DIR_PREFIX))
+            {
+                dir = true;
+                val = val.substring(DIR_PREFIX.length());
+            }
+
+            if (dir)
+                System.out.println("dir: " + val);
+            else
+                System.out.println("file: " + val);
+        }
+    }
+
     public static void main(String[] args)
     {
         if (args.length < 3)
@@ -64,9 +86,21 @@ public class Find
         String pattern = args[2];
 
         int[] arg = ActiveRDMA.constructArgs(2, pattern);
+        arg[0] = 0;
+        arg[1] = 0;
         
         if (active)
         {
+            c.load(Active_Finder.class);
+            while (true)
+            {
+                int[] results = c.runArray(Active_Finder.class, arg);
+                if (results.length == 2) break;
+
+                printResults(results);
+                arg[0] = results[0];
+                arg[1] = results[1];
+            }
         }
         else
         {
@@ -75,25 +109,8 @@ public class Find
                 int[] results = Active_Finder.execute(c, arg);
                 if (results.length == 2) break;
 
-                int off = 2;
-                while (off < results.length)
-                {
-                    String val = new String(ActiveRDMA.unpack(results, off));
-                    off += (results[off]+3)/4 + 1;
-
-                    boolean dir = false;
-                    if (val.startsWith(DIR_PREFIX))
-                    {
-                        dir = true;
-                        val = val.substring(DIR_PREFIX.length());
-                    }
-
-                    if (dir)
-                        System.out.println("dir: " + val);
-                    else
-                        System.out.println("file: " + val);
-                }
-
+                printResults(results);
+        
                 arg[0] = results[0];
                 arg[1] = results[1];
             }

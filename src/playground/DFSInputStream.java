@@ -13,7 +13,7 @@ public class DFSInputStream extends InputStream{
 	int inode, len, off;
 	byte[] buffer;
 	
-	public DFSInputStream(int inode, DFS dfs) throws IOException{
+	public DFSInputStream(int inode, DFS dfs) {
 		this.dfs = dfs;
 		this.inode = inode;
 		this.len = dfs.getLen(this.inode);

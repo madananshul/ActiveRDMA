@@ -11,8 +11,6 @@ import common.ActiveRDMA;
 
 import dfs.DFS;
 import dfs.DFS_RDMA;
-import examples.dht.DHT;
-import dfs.DFSIter;
 
 public class Utilities {
 
@@ -177,7 +175,18 @@ public class Utilities {
 
 	public static void main(String[] _) throws Exception{
 //		rdma();
-		active();
+//		active();
+		copyFiles();
+	}
+	
+	public static void copyFiles() throws Exception {
+		ActiveRDMA c = new Client("localhost");
+//		DFS dfs = new DFS_RDMA(c, true);
+		int args[] = null;
+
+		//copy to dfs
+		args = ActiveRDMA.constructArgs(0,"src/playground/test");
+		Utilities.CopyToDFS.execute(c, args );
 	}
 
 	public static void rdma() throws Exception{

@@ -189,7 +189,9 @@ public class ARFS
     public int unlink(String path)
     {
         int fInode = dfs.lookup(path);
-        if (fInode == 0)
+        if (fInode == 0 || dfs.getLen(fInode) == -1)
+            fInode = dfs.lookup(dir_prefix + path);
+        if (fInode == 0 || dfs.getLen(fInode) == -1)
             return -1;
 
         dfs.setLen(fInode, -1);

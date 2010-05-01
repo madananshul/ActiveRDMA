@@ -179,7 +179,7 @@ public class Utilities {
 //		rdma();
 		active();
 	}
-	
+
 	public static void rdma() throws Exception{
 		ActiveRDMA c = new Client("localhost");
 		DFS dfs = new DFS_RDMA(c, true);

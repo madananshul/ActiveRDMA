@@ -1,13 +1,20 @@
 \documentclass[10pt]{article}
-\usepackage{fullpage}
-\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+%\usepackage{fullpage}
+%\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{courier}
 
-\title{15-712 Final Project Report: Active RDMA}
-\author{Chris Fallin, Anshul Madan, Filipe Milit\~{a}o}
+\title{Active RDMA}
+\author{Chris Fallin, Anshul Madan, Filipe Milit\~{a}o\\ \\
+15-712: Advanced Operating Systems \&  Distributed Systems\\
+Carnegie Mellon University}
 \date{}
 \begin{document}
 
 \maketitle
+
+\begin{abstract}
+TODO.
+\end{abstract}
 
 \section{Introduction}
 
@@ -142,29 +149,47 @@ alternatives:
 %evaluate performance. Our progress can be summarized by
 %these accomplishments so far:
 
-Our implementation can be summarized as follows:
+We developed a prototype implementation of Active RDMA with the goal of having both a reference implementation of our concept and also to use it to provide significant test results to either prove or disprove our beliefs of performance gains. As with any proof-of-concept code, it does not aim to be full feature and it makes some strong assumptions (such as result sizes, packet formats, etc) to reduce the complexity of the code and allow us to reach the testing phase quicker. We based our implementation on the Java programming language for convenience of the development tools and the flexibility of the JVM in dealing with the uploaded code.
 
-\begin{itemize}
-\item Defined an Active RDMA client-server interface, at the API level
-  and at the wire protocol level. The interface allows direct memory
+The most crucial point of our implementation is the definition of the Active RDMA client-server interface, both at the API level and at the wire protocol level, since it needs to be simple and small but powerful enough to facilitate efficient use of the server's resources. The interface allows direct memory
   access as well as code migration (using Java bytecode), and supports
   the following basic operations:
   \begin{itemize}
-  \item Read, Write, Compare-and-Swap -- as in original RDMA, these
-    allow for direct memory access over the network but both \textit{read}
-    and \textit{write} operations are defined over blocks of addresses (so
-    that batching is possible) which allow us to group together multiple similar requests.
-  \item Load(bytecode) -- loads a Java class file into the remote
-    environment.
-  \item Execute(code, param) -- Executes previously-loaded remote code
+  \item {\tt Read}, {\tt Write}, {\tt Compare-and-Swap} -- as in original RDMA, these
+    allow for direct memory access over the network but both {\tt read}
+    and {\tt write} operations are defined over blocks of addresses (so
+    that batching is possible) which allows us to group together multiple similar requests in the same packet.
+  \item {\tt Load(bytecode)} -- loads a Java class file into the remote
+    environment. This will cause the class' byte code to be sent over the wire and loaded on the server side. The code is then indexed using an MD5 hash to detect code duplication and disambiguate between multiple version of the same class code (although limitations on the JVM forbid us of having more than one class with a given name and we did not have time to play around with tools to modify the uploaded bytecode to circumvent this). 
+    
+    For this implementation we used a fixed format for the method signature:
+    
+    {\tt \textbf{public static int}[] execute(ActiveRDMA a, \textbf{int}[] args)}
+
+Although, for convenience, we also allow:
+
+    {\tt \textbf{public static int} execute(ActiveRDMA a, \textbf{int}[] args)}
+
+(where the result gets wrapped in an array so that the semantics remain identical to the previous one).
+
+  \item {\tt Execute(code, param)} -- Executes previously-loaded remote code
     (referenced by MD5 hash), giving it direct access to the host
-    memory. Both \textit{param} and the result can use arrays of integers so that more complex arguments and results can be required/produced by an execution. 
+    memory. Both \textit{param} and the result can use arrays of integers so that more complex arguments and results can be required/produced by an execution although more complex types (such as strings) need to be converted to/from their internal representation into an array of ints.
+     
   \end{itemize}
+  
+  This simple interface also includes a series of error codes to account for common mistakes that may occur during execution such as going beyond the memory bounds of the server. We also defined a series of more complex operations that use this simple interface as building block or that are just more convenient for the programmer to use (like just passing a class to the load function instead of having to manually extract its byte code). 
+Finally, even if this was not thoroughly explored, we could also have defined a set of useful library functions for memory management or other convenient procedures that are necessary in real-world production environments.
+  
+  \begin{itemize}
 \item Built a prototype implementation of this system in Java. The
   server consists of a single large array representing host memory and
   an implementation of the wire protocol and Java environment (class
   loader, etc). The client consists of a library that allows the user
-  to easily load classes and call them remotely. Active code is simply a static method (called \textit{execute}) that takes an Active RDMA interface and an array of integers as parameters (and as result). The Active RDMA interface allows for the code, when it is run on the server, to be used in exactly the same way as when it is run from a RDMA only perspective (that is, a client interface that sends all those basic requests across the network to the server). 
+  to easily load classes and call them remotely. Active code is simply a static method (called 
+  \textit{execute}) that takes an Active RDMA interface and an array of integers as parameters (and as result). The Active RDMA interface allows for the code, when it is run on the server, to be used in exactly the same way as when it is run from a RDMA only perspective (that is, a client interface that sends all those basic requests across the network to the server). 
+
+
 \item Built four demo/test applications on this prototype framework: a
   simple hash table, a linked list, a simple non-hierarchical
   in-memory filesystem (built on the hash table), and a locking

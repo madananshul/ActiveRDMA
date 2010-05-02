@@ -57,6 +57,9 @@ do 10 times:
 active-grep:
     cp /usr/share/dict/words /mnt/pt
     ./run-util.sh fsutils.Grep 10.0.0.2 {active,rdma} apple,zoo,moo
+    
+    like this:
+    for x in 0 1 2 3 4 5 6 7 8 9; do ~/timing > ~/t$x; ./run-util.sh fsutils.Grep 10.0.0.2 active ^apple$ /words; ./run-util.sh fsutils.Grep 10.0.0.2 active ^zoo$ /words; ./run-util.sh fsutils.Grep 10.0.0.2 active ^moo$ /words; ~/timing >> ~/t$x; done
 
 active-find:
     ./run-util.sh fsutils.Find 10.0.0.2 {active,rdma} .*sb16ctrl.c

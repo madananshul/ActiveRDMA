@@ -199,7 +199,7 @@ public abstract class ActiveRDMA {
 	
 	protected Map<String,ByteArray> class_to_md5 = new HashMap<String, ByteArray>();
 	protected Map<ByteArray,Class<?>> md5_to_class = new HashMap<ByteArray, Class<?>>();
-	
+
 	public static byte[] getCode(Class<?> cl) throws Exception{
 		String name = cl.getName().replaceAll("\\.", "/")+".class";
 		File classfile = new File( ActiveRDMA.class.getClassLoader().getResource(name).toURI() );
@@ -216,6 +216,7 @@ public abstract class ActiveRDMA {
     protected boolean haveCode(byte[] code) {
         MessageDigest digest = ByteArray.getDigest();
         ByteArray hash = new ByteArray ( code, digest );
+        System.out.println("haveCode query: hash " + hash + " result " + md5_to_class.containsKey(hash));
         return md5_to_class.containsKey(hash);
     }
 
@@ -225,6 +226,7 @@ public abstract class ActiveRDMA {
 			ByteArray hash = new ByteArray( code , digest );
 			class_to_md5.put(cl.getName(), hash);
 			md5_to_class.put(hash, cl);
+            System.out.println("loaded class: name " + cl.getName() + ", hash " + hash);
 			return true;
 		}
 		//already contains

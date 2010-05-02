@@ -195,7 +195,13 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
             }
 		}catch(LinkageError e){
 			//problems loading
-			result.error = ErrorCode.DUPLCIATED_CODE;
+			//result.error = ErrorCode.DUPLCIATED_CODE;
+            System.out.println("WARNING: duplicated code");
+            e.printStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+            result.error = ErrorCode.OK;
+            result.result = new int[] { 0 };
 		}
 		return result;
 	}

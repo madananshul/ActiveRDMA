@@ -42,4 +42,12 @@ public final class ByteArray{
     public int hashCode(){
         return Arrays.hashCode(data);
     }
+
+    public String toString()
+    {
+        String ret = "";
+        for (int i = 0; i < data.length; i++)
+            ret += String.format("%02x", ((int)data[i]) & 0xff);
+        return ret;
+    }
 }

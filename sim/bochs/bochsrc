@@ -5,8 +5,8 @@ display_library: x
 memory: host=256, guest=512
 romimage: file="bios/BIOS-bochs-latest"
 vgaromimage: file="bios/VGABIOS-lgpl-latest"
-boot: disk
-#boot: floppy
+#boot: disk
+boot: floppy
 floppy_bootsig_check: disabled=0
 # no floppya
 # no floppyb

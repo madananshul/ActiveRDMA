@@ -1,0 +1,62 @@
+To mount a new fs:
+
+(in ActiveRDMA)
+    * restart Bochs (sudo ./bochs -f bochsrc in sim/bochs)
+    * sudo ifconfig tap0 10.0.0.1
+    * mkdir /tmp/arfs/N
+    * SERVER=10.0.0.2 ACTIVE={rdma,active} ./arfs_mount.sh /tmp/arfs/N
+
+AB:
+
+do 10 times:
+* cp -R ~/ab .
+* cd ab
+* ~/timing > ~/t; ./test.sh; ~/timing >> ~/t
+
+stream_read:
+
+do 10 times:
+* dd if=/dev/zero of=5 bs=5M count=1
+* timing; cp 5 ~; timing
+
+stream write:
+
+do 10 times:
+* timing; dd if=/dev/zero of=5 bs=5M count=1; timing
+
+grep:
+
+do 10 times:
+
+    timing; grep apple words; grep zoo words; grep moo words; timing
+
+find:
+
+do 10 times:
+    timing; find . -name 'sb16ctrl.c'; timing
+
+
+scalability (5, 10 clients):
+
+mount 5 copies on 0,1,2,3,4
+
+do 10 times:
+    on host: sync ; run run.sh, which is:
+                   #!/bin/sh
+                   for x in 0 1 2 3 4; do cp -R ~/ab $x; done
+                   ~/timing > ~/t
+                   for x in 0 1 2 3 4
+                   do
+                     cd $x
+                     ./test.sh &
+                     cd ..
+                   done
+                   wait
+                   ~/timing >> ~/t
+
+active-grep:
+    cp /usr/share/dict/words /mnt/pt
+    ./run-util.sh fsutils.Grep 10.0.0.2 {active,rdma} apple,zoo,moo
+
+active-find:
+    ./run-util.sh fsutils.Find 10.0.0.2 {active,rdma} .*sb16ctrl.c

@@ -29,7 +29,7 @@ Run MainServer.java
 Terminal 1
 
     * mkdir /tmp/active_rdma
-    * ./arfs-mount.sh /tmp/active_rdma(This will mount and start logging in terminal 1)
+    * ./arfs_mount.sh /tmp/active_rdma(This will mount and start logging in terminal 1)
 
 Terminal 2
 

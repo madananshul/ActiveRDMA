@@ -188,7 +188,7 @@ public class Utilities {
 		args = ActiveRDMA.constructArgs(0,"src/playground/test");
 		Utilities.CopyToDFS.execute(c, args );
 	}
-	
+
 	public static void rdma() throws Exception{
 		ActiveRDMA c = new Client("localhost");
 		DFS dfs = new DFS_RDMA(c, true);

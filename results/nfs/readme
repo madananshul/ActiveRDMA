@@ -1,0 +1,70 @@
+On bochs linux instance:
+
+* edit /etc/exports, export /data
+* mkdir /data
+* mke2fs /dev/ram0
+* mkdir /data/ram
+* mount /dev/ram0 /data/ram
+
+On host system:
+
+* mkdir mnt_point
+* mount -t nfs 10.0.0.2:/data mnt_point
+* cd mnt_point/ram
+
+AB:
+
+* cp -R ~/ab .
+* cd ab
+* for x in 0 1 2 3 4 5 6 7 8 9; do ~/timing > ~/t$x; ./test.sh; ~/timing >> ~/t$x; done
+
+stream_read:
+
+do 10 times:
+
+  on bochs:
+    cd /data/ram
+    dd if=/dev/zero of=x bs=5M count=1
+  on host:
+    ~/timing > ~/t$x; cp x ~; ~/timing > ~/t$x
+
+stream_write:
+
+for x in 0 1 2 3 4 5 6 7 8 9; ~/timing > ~/t$x; dd if=/dev/zero of=x; ~/timing > ~/t$x
+
+grep:
+
+do 10 times:
+
+  on bochs:
+    cp /usr/share/dict/words /data/ram/
+  on host:
+    ~/timing > ~/t$x; grep ^apple$ words; grep ^zoo$ words; grep ^moo$ words; ~/timing > ~/t$x
+
+find:
+
+on host: cp -R ~/ActiveRDMA/sim/find-testtree nfs/
+
+do 10 times:
+  on bochs: cp -R /data/find-testtree /data/ram/find-testtree
+  on host: ~/timing > ~/t; find find-testtree -name 'sb16ctrl.c'; ~/timing >> ~/t
+
+
+scalability (5, 10 clients):
+
+mount {5, 10} copies on nfs0,1,2,...
+
+do 10 times:
+    on bochs: cp -R ab ab0; cp -R ab ab1; ...
+    on host: sync ; run run.sh, which is:
+                   #!/bin/sh
+                   ~/timing > ~/t
+                   for x in 0 1 2 3 4 # ...
+                   do
+                     cd nfs$x/ab$x || exit 1
+                     ./test.sh &
+                     cd ../..
+                   done
+                   wait
+                   ~/timing >> ~/t
+

@@ -1,0 +1,12 @@
+* performance: wallclock time ( --> MB/s for streaming)
+  { NFS, ARFS-r, ARFS-a }
+
+* performance: roundtrips
+  { NFS, ARFS-r, ARFS-a }
+
+* CPU load
+  jvm_nsec, insns for 1, 5 datapoints in scale experiment
+
+* RDMA vs. active
+  synthetic plot of total latency as jvm_nsec + roundtrips*latency
+  { ARFS-r, ARFS-a }

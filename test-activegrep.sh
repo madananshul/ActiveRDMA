@@ -10,5 +10,5 @@ for x in 0 1 2 3 4 5 6 7 8 9; do
     ./run-util.sh fsutils.Grep 10.0.0.2 $ACTIVE ^apple$ /active--words
     ./run-util.sh fsutils.Grep 10.0.0.2 $ACTIVE ^zoo$ /active--words
     ./run-util.sh fsutils.Grep 10.0.0.2 $ACTIVE ^moo$ /active--words
-    sim/timing/timing > $RESULTS/t$x
+    sim/timing/timing >> $RESULTS/t$x
 done 

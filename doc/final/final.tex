@@ -17,9 +17,22 @@ Carnegie Mellon University}
 \maketitle
 
 \begin{abstract}
-The inflexible border between RPC and RDMA like systems imposes a significant tradeoff on system design: you can either have static code exploiting data locality - but without much possibilities for adjusting the application; or you can have a simple DMA like interface that allows for code to be built and updated by still just using a very simple interface - but completely losing the benefits of data locality and paying a considerable penalty on network latency. We propose a middle ground between these two approaches. In Active RDMA the application designer has the possibility of both using just an RDMA like interface or he can decide to upload the code to be run on the server and thus exploit locality.
-
-We designed and implemented a prototype of Active RDMA as well as a series of tests that show significant performance gains \PROBLEM{or not?}. By simulating the execution of this architecture on a NIC we have gather ...
+A classic functionality tradeoff exists between client and server in a
+distributed system such as a network filesystem. One approach, widely
+used, is to define a static API at the server and allow RPCs to this
+API from clients. This approach allows the server implementation to be
+optimized for these specific operations. An alternate proposal,
+RDMA~\cite{thekkath94}, proposes to allow direct remote memory access
+in order to reduce latency and increase flexibility by exposing data
+structures directly. However, this approach can suffer from a lack of
+performance because code is widely separated from the data on which it
+operates. In this project, we propose and prototype a middle ground,
+\emph{Active RDMA}, that uses code migration to enable data-code
+locality while retaining the flexibility of the RDMA approach. We
+propose to run the \emph{active code} directly on the NIC, with full
+access to host memory. We modify a full-system simulator and use this
+infrastructure to build a proof-of-concept network filesystem, and
+provide an initial evaluation of the concept.
 
 \end{abstract}
 
@@ -66,38 +79,38 @@ Furthermore, the assumption that security is externally provided
 allows us to push Active RDMA's code execution to a lower level,
 bypassing layers for higher performance. 
 
-We plan to define our interface to be sufficiently low-level that
-it could hypothetically execute directly on a network interface
-card~\cite{nic-basedreduction}, interacting with shared memory via DMA.
-This would allow for extremely low latency.
+We define our interface to be sufficiently low-level that it could
+hypothetically execute directly on a network interface
+card~\cite{nic-basedreduction}, interacting with shared memory via
+DMA.  This would allow for extremely low latency.
 
 A secondary benefit to this, and one that we explore, lies in the
 flexibility of executing arbitrary code segments on the server,
 defined by an application. For example, a ``grep''-like operation to
-search through some shared data structure is significantly faster when
-executed on the server than when querying a fixed interface from the
-client side.
+search through some shared data structure might be significantly
+faster when executed on the server than when querying a fixed
+interface from the client side. \PROBLEM{verify grep on NFS}
 
 Our work consists of several main contributions:
 
 \begin{itemize} \itemsep -2pt
 
 \item Defining a low-level interface for remote code based on Java
-  class-file shipping and both word-level and byte-level shared memory access; defining a
-  protocol and building reference implementations of a server and a
-  client library to enable use of this ActiveRDMA interface.
+  class-file shipping and both word-level and byte-level shared memory
+  access; defining a protocol and building reference implementations
+  of a server and a client library to enable use of this ActiveRDMA
+  interface.
 
 \item Building a simulation infrastructure to examine the performance
   tradeoffs of the performance split. We base this infrastructure on a
-  conglomeration of the Bochs x86 simulator and the standard Java
-  JVM with a timing model, in order to give some level of fidelity to
-  our comparison results.
+  conglomeration of the Bochs x86 simulator and the standard Java JVM
+  with a timing model, in order to give some level of fidelity
+  (however coarse) to our comparison results.
 
-\item Building a distributed file system on top of this infrastructure,
-  keeping data in-memory for simplicity, and evaluating against
-  existing commonly used distributed file systems both on traditional
-  workloads and application-specific workloads using higher level
-  interfaces made possible by remote code optimizations.
+\item Building a distributed file system on top of this
+  infrastructure, keeping data in-memory for simplicity, and
+  evaluating against NFS; showing use of code shipping to optimize
+  \emph{grep} and \emph{find}.
 
 \end{itemize}
 

@@ -1,4 +1,4 @@
-# jvm_nsec insns pkts mem_rd mem_wr mem_cas
-0 11347884728 35494 0 0 0
-# jvm_nsec insns pkts mem_rd mem_wr mem_cas
-0 11391951285 37608 0 0 0
+# jvm_nsec insns pkts mem_rd mem_wr mem_cas real_ns
+0 13587539235 178102 0 0 0 1272905745204955438
+# jvm_nsec insns pkts mem_rd mem_wr mem_cas real_ns
+0 13627159845 179970 0 0 0 1272905746156487858

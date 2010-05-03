@@ -359,7 +359,9 @@ public class ARFilesystem implements Filesystem3
 
             ARFilesystem a = new ARFilesystem(client, active);
 
-            FuseMount.mount(fuseArgs, a, null);
+            FuseMount.mount(fuseArgs, a, null);//Logging disabled
+            
+            
         }
         catch (Exception e)
         {

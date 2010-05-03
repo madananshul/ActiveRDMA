@@ -4,6 +4,7 @@
 \usepackage{courier}
 \usepackage{color}
 \usepackage{url}
+\usepackage{graphicx}
 \newcommand{\PROBLEM}[1] {\textbf{\textcolor{red}{#1}}}
 
 \title{Active RDMA}
@@ -343,6 +344,38 @@ Since an actual prototype implementation with a real system is much beyond the s
 
 \section{Results}
 did it work?
+
+
+\begin{figure}
+  \centering
+\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/cpuload.pdf}
+  \caption{cpu load}\label{cpuload}
+\end{figure}
+
+\begin{figure}
+  \centering
+\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/rt.pdf}
+  \caption{rt}\label{rt}
+\end{figure}
+
+\begin{figure}
+  \centering
+\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/synth_time.pdf}
+  \caption{synth time}\label{synth_time}
+\end{figure}
+
+\begin{figure}
+  \centering
+\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/wallclock.pdf}
+  \caption{wallclock}\label{wallclock}
+\end{figure}
+
+\begin{figure}
+  \centering
+\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/wallclock2.pdf}
+  \caption{wallclock2}\label{wallclock2}
+\end{figure}
+
 
 \section{Conclusion}
 we are doomed.

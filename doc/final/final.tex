@@ -3,6 +3,7 @@
 %\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \usepackage{courier}
 \usepackage{color}
+\usepackage{url}
 \newcommand{\PROBLEM}[1] {\textbf{\textcolor{red}{#1}}}
 
 \title{Active RDMA}
@@ -234,9 +235,11 @@ The last two application (the file system and the locking service), were then ex
 
 \subsection{DFS}
 
+The core of the testing framework is centered on an in-memory file system that is accessible through the Active RDMA interface and uses the DHT for managing directory entries. It is not meant to be a complete FS and instead is just a core implementation of the basic FS functionalities needed to test our approach. It supports batch reads and writes but the file is restricted to a fixed size and therefore, any append that goes beyond the file's limit must copy the old content to the new location. This pushes some complexity to the application but achieves great simplicity in the implementation by making all content accessible in a contiguous block.
+
 \PROBLEM{TODO}
 
-\subsection{File system utilities (Grep, Copy and Find)}
+\subsection{DFS utilities (Grep, Copy and Find)}
 
 In order to use the file system and expose our performance gains, we built the following utilities that make use of the higher level file system interface:
 
@@ -249,56 +252,71 @@ We made an assumption that the result will necessarily fit into a single packet 
 \item Find -- this utility searches for files that match a specific name pattern. It essentially just traverses the directory table selecting all entries that have compatible names. We did not use the same size restriction as on the previous utility and instead rely on basically exposing the table iterator to the client that can use some state to continue the iteration over a certain point instead of having to \PROBLEM{this makes no sense... little help?}
 
 \end{itemize}
+
+\subsection{FUSE}
+
+\PROBLEM{TODO}
+
+\section{Testing Environment}
+
+Since an actual prototype implementation with a real system is much beyond the scope of this class project, we decided to instead focus on obtaining good estimations of real results through the use of an x86 full system simulator: Bochs ~\cite{bochs}. Thus, by modifying the network card (PCI ne2000) implementation to redirect packets with a specific format (in this case, UDP packets to port 15712) and interpreting them as Active RDMA commands handled directly by the JVM, we believe this approximation of the actual hardware yields good first approximations of what a real system might behave like.
+
+% Integrate the Kaffe JVM into the Bochs full system simulator's
+%  network card (PCI ne2000) implementation.  
+%  This will be a first
+%  approximation of what our proposed hardware would actually look
+%  like.
+%  
+%  The network card will look for ``magic packets'' of a certain
+%  format, probably UDP packets to a particular port, and steal them
+%  from the packet stream, interpreting them as Active RDMA
+%  commands.
   
-\subsection{Other stuff}
-
-By the end of the semester, we plan to do the following:
-
-\begin{itemize}
-
-\item Begun to integrate Kaffe and Bochs in order to build our full
-  system simulator (discussed below).
-  \item Begun to design DFS applications (discussed below).
-
-\item Integrate the Kaffe JVM into the Bochs full system simulator's
-  network card (PCI ne2000) implementation. This will be a first
-  approximation of what our proposed hardware would actually look
-  like. The network card will look for ``magic packets'' of a certain
-  format, probably UDP packets to a particular port, and steal them
-  from the packet stream, interpreting them as Active RDMA
-  commands. The JVM will execute the remote code. We will implement a
+  \PROBLEM{TODO}
+  The JVM will execute the remote code. We will implement a
   unified timing framework between Bochs (which has an instrumentation
   interface for such things) and Kaffe (likely just counting opcodes
   as they execute), defining certain costs for host memory access in
-  order to establish an interesting tradeoff. We will build a simple
+  order to establish an interesting tradeoff. 
+  
+  We will build a simple
   client to query ``server time'' (current cycle count) so that
   benchmarks can be timed on this virtual timeline rather than by
   wallclock time (which may not correspond directly to simulated
-  cycles). \emph{Estimated time:}~\textbf{2 weeks}
+  cycles). synthetic time.
 
-\item Build a client side FUSE filesystem, allowing us to run
-  ``real'' benchmarks against it. We plan to expose a subset
-  of Unix like semantics in order to make comparison with
-  traditional distributed file systems like AFS, NFS possible.
-  \emph{Estimated time:}~\textbf{1 week} (in parallel to the above task)
+%By the end of the semester, we plan to do the following:
 
-\item Evaluate several common distributed filesystem benchmarks on our
-  filesystem, as well as on a Linux NFS server running on our common
-  simulation infrastructure.. \emph{Estimated time:}~\textbf{A few
-    days}
+%\begin{itemize}
 
-\item Implement several optimizations and ease-of-use improvements
-  into our system. Among our ideas so far are a more structured
-  data-store API for the active code to use, which in a real system
-  would be part of a runtime library. Though the goal of our project
-  is to show the feasibility of building a system this way, and
-  hopefully show somewhat competitive performance (maybe!), it is
-  interesting to explore the programmability aspect a bit as well. As
-  well, we are also exploring the possibility of using a
-  DAFS~\cite{DAFS} like interface for applications to directly call
-  InfiniBand-like transport resources.
+%\item Begun to integrate Kaffe and Bochs in order to build our full
+%  system simulator (discussed below).
+%  \item Begun to design DFS applications (discussed below).
 
-\end{itemize}
+%\item
+%\item Build a client side FUSE filesystem, allowing us to run
+%  ``real'' benchmarks against it. We plan to expose a subset
+%  of Unix like semantics in order to make comparison with
+%  traditional distributed file systems like AFS, NFS possible.
+%  \emph{Estimated time:}~\textbf{1 week} (in parallel to the above task)
+
+%\item Evaluate several common distributed filesystem benchmarks on our
+%  filesystem, as well as on a Linux NFS server running on our common
+%  simulation infrastructure.. \emph{Estimated time:}~\textbf{A few
+%    days}
+
+%\item Implement several optimizations and ease-of-use improvements
+%  into our system. Among our ideas so far are a more structured
+%  data-store API for the active code to use, which in a real system
+%  would be part of a runtime library. Though the goal of our project
+%  is to show the feasibility of building a system this way, and
+%  hopefully show somewhat competitive performance (maybe!), it is
+%  interesting to explore the programmability aspect a bit as well. As
+%  well, we are also exploring the possibility of using a
+%  DAFS~\cite{DAFS} like interface for applications to directly call
+%  InfiniBand-like transport resources.
+
+%\end{itemize}
 
 \section{Evaluation Methodology}
 

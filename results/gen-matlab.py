@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import math
+
 stats = 7
 
 def pad(l):
@@ -33,6 +35,7 @@ def read_files(dir):
         for j in range(10):
             dev += ( (float(dat[j][i]) - avg) * (float(dat[j][i]) - avg) )
         dev /= 9.0
+        dev = math.sqrt(dev)
 
         means.append(avg)
         stddev.append(dev)

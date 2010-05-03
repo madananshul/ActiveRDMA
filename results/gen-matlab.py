@@ -22,8 +22,6 @@ def read_files(dir):
     for i in range(10):
         dat.append(read_file(dir + '/t%d' % i))
 
-    print dat[0]
-
     means = []
     stddev = []
     for i in range(stats):

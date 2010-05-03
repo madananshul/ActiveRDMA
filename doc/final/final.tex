@@ -277,9 +277,12 @@ We made an assumption that the result will necessarily fit into a single packet 
 
 \end{itemize}
 
-\subsection{FUSE}
-
-\PROBLEM{TODO}
+\subsection{Observations and Learnings}
+\begin{itemize}
+\item Initially, we had a wire interface with a common address space for code and meory that was being modified. During the initial prototype, we learnt that the code, executed on the NIC, thus 
+differetn address space from the server host's memory, and wire interface changed accordingly.
+\item During the course of building the FUSE file system, and calling appropriate distributed  file system calls in order to perform imeplemtn the FUSE Userspace syscalls, we found out exactly what kind of Functionality the Active DFS code should support. What metadata ops are required.
+\item Initially we implemented int addressable memory because of convenience. Later since we implemented the FUSE file system at the CLient, which uses byte addressable memory, we changed our interface to use byte addressable memory at the Server.
 
 \section{Testing Environment}
 

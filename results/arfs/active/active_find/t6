@@ -1,4 +1,2 @@
-# jvm_nsec insns pkts mem_rd mem_wr mem_cas
-297827974 9877994 8366 171982 4815412 2073
-# jvm_nsec insns pkts mem_rd mem_wr mem_cas
-300726338 9877994 8370 181218 4815412 2073
+# jvm_nsec insns pkts mem_rd mem_wr mem_cas real_ns
+3348660448 9877994 123826 314542105 67062819 27142 1272904933234704487

@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdio.h>
+#include <time.h>
 
 struct timing
 {
@@ -44,10 +45,15 @@ int main()
         return 3;
     }
 
+    // get RT clock
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+
     // print values
-    printf("# jvm_nsec insns pkts mem_rd mem_wr mem_cas\n");
-    printf("%lld %lld %lld %lld %lld %lld\n",
-            t.jvm_nsec, t.insns, t.pkt, t.mem_rd, t.mem_wr, t.mem_cas);
+    printf("# jvm_nsec insns pkts mem_rd mem_wr mem_cas real_ns\n");
+    printf("%lld %lld %lld %lld %lld %lld %lld\n",
+            t.jvm_nsec, t.insns, t.pkt, t.mem_rd, t.mem_wr, t.mem_cas,
+            1000000000ULL*ts.tv_sec + ts.tv_nsec);
 
     return 0;
 }

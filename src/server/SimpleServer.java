@@ -22,7 +22,7 @@ public class SimpleServer extends ActiveRDMA implements MessageVisitor<Object>
     {
         try
         {
-            SimpleServer s = new SimpleServer(128*1024*1024);
+            SimpleServer s = new SimpleServer(1*1024*1024*1024);
             s.serveSocket();
         } catch (IOException e) {
             e.printStackTrace();

@@ -89,7 +89,9 @@ flexibility of executing arbitrary code segments on the server,
 defined by an application. For example, a ``grep''-like operation to
 search through some shared data structure might be significantly
 faster when executed on the server than when querying a fixed
-interface from the client side. \PROBLEM{verify grep on NFS}
+interface from the client side. (In practice, our ``grep'' was not
+optimized enough relative to the system {\tt grep(1)} to show an
+actual improvement, but the concept appears sound nonetheless.)
 
 Our work consists of several main contributions:
 

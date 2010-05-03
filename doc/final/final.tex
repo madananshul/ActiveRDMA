@@ -249,7 +249,7 @@ These results show gains consistent with the complexity of the operation. Thus, 
 
 The last two application (the file system and the locking service), were then extended into the full testing framework discussed further below.
 
-\subsection{Active DFS Server}
+\subsection{Active RDMA File System Server}
 
 The core of the testing framework is centered on an in-memory file system that is accessible through the Active RDMA interface and uses the DHT for managing directory entries. It is not meant to be a complete FS and instead is just a core implementation of the basic FS functionalities needed to test our approach. It supports batch reads and writes but the file is restricted to a fixed size and therefore, any append that goes beyond the file's limit must copy the old content to the new location. This pushes some complexity to the application but achieves great simplicity in the implementation by making all content accessible in a contiguous block.
 
@@ -257,7 +257,7 @@ The following Active DFS operations were implemented : create, lookup, getBlock,
 
 \PROBLEM{TODO}
 
-\subsection{DFS FUSE Client}
+\subsection{Active RDMA File System Client}
 
 The Active DFS client is implemented as a FUSE file system, which considerably simplifies the development effort for us. We used JNI bindings to implement the Active DFS client code in java.
 

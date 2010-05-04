@@ -495,7 +495,9 @@ on the NIC GPU. This will enable better comparison with NFS.
 \item Address scalability issues because NIC processing power limitation, by may
 be experimenting with larger number of NIC cards, and evaluating the performance
 as a function of cost.
-
+\item As well, we are also exploring the possibility of using a DAFS~\cite{DAFS}
+like interface for applications to directly call InfiniBand-like transport resources.
+This would decrease the load on the client machine's CPU.
 \end{itemize}
 
 \section{Conclusion}

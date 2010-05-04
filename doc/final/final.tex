@@ -635,80 +635,111 @@ active-code system.
 \end{figure}
 
 
-% ------------------------------------------- cfallin pass head-pointer -------------------------------------------------------------
 
 \section{Future Work}
-The fairest way to evaluate would be to have a real system with a real network card
-with a real coprocessor running the JVM.
 
-\section{Evaluation Discussion}
-The simulator models a main processor running Linux and a coprocessor that
-runs the JVM. The JVM is not run on the simulated Linux system, because
-it would be terribly slow it would still not be a fair comparison, since
-the actual Active RDMA code would run on the NIC card. The fairest
-way to evaluate would be to have a real system with a real network card
-with a real coprocessor running the JVM, but that is part of future work
+Given the limited scope of our project, there are several avenues
+along which further work is necessary to gain a more complete
+understanding of the Active RDMA design space.
 
+\subsection{Evaluation}
 
-Basically, for NFS the overall protocol processing overhead needs to be
-taken into consideration, the NFS server has stats that can help
-in calculating the execution times things like counts and times of
-nfs\_getattr, nfs\_stat, nfs\_read are maintained by Linux NFS servers. These
-would include the overall execution time for different nfs operations. But 
-we would still not be able to compare these results against the Active ARFS
-and ARFS RDMA because of the different processor speeds.
+The first, and most pressing, need for future work is in performing a
+fairer and more complete evaluation. Given infinite time, we would
+have either built a full cycle-accurate model of the system, or else
+prototyped the ActiveRDMA server core as a Linux kernel module, in
+order to place the bytecode mobile-code core on equal footing with the
+emulated host CPU. The main shortcoming of our existing system and
+evaluation is that it is constructed in a somewhat ad-hoc way, gluing
+a full-speed userspace JVM to Bochs and having only a very rudimentary
+timing infrastructure.
 
-Another way to compare NFS against Active ARFS would be for us to collect
-'CPU load' plot which counts instructions against the stats like
-time spent in the JVM(coprocessor) that we collect. Though that still
-does not give a fair comparison because it does not take into consideration
-the difference in processor speeds.
+If we were to remain with an emulation-based methodology, the ideal
+setup would consist of one server and $N$ clients, all of them with
+realistic full-system timing models in a single clock domain, with a
+realistically-timed (adjustable) network switch model in the same time
+domain and a JVM coprocessor that is synchronized to run at the
+appropriate relative speed to the main CPU. This way, (i) we could
+eliminate the infinitely-fast-client assumption that we effectively
+make by running benchmarks on the host system, and (ii) we could
+simply report the emulated system clock time as real benchmark
+execution time in the emulated clients.
 
-What is most important in the comparison of NFS against ARFS is the total
-time between when the client sends the DFS request and when it receives the
-reply. Thus packet latencies alone are not that important , but number of packet
-roundtrips compared for NFS compared( and contribution of each packet to the
-overall execution time ) to the same test run on ARFS is more important. So
-as the packet latencies increase, ARFS would perform better than NFS because
-it has lesser number of roundtrips.
+Alternately, in a method more in line with traditional systems
+research, we could prototype our system with active code hosted either
+at the kernel level (in some sandboxed way) on the server system, or
+even at a lower level, if coprocessor-on-NIC hardware is available to
+suit that need. Either way, the goal is to build a realistic and
+faithful emulation of what our proposed hardware would actually look
+like.
 
-Our performance measurements have the number of roundtrips(pkts), and we have
-the execution time for ARFS(jvm\_nsec), so if we get NFS execution time from
-our stats, then we could compare the execution times as well as the total time
-from when the packet leaves the client to when the client gets back the reply.
-We get total time by assigning latencies to the each paket (= latency * packets).
+Lacking these more realistic options, a smaller step in the right
+direction might be to build a more accurate synthetic time
+model. While accurate analytical modeling of full-system behavior is a
+research area in its own right, it might be possible to approximate
+the behavior just well enough to be believable without attacking
+intractable analytical problems. At least, a model of NFS performance
+might consider execution times and call counts for each NFS operation,
+and might be trained against and then validated against the
+performance of a real NFS server. This, combined with a network timing
+model that takes into account packet dependences and finds the
+critical path dynamically when multiple packets and transactions are
+in flight in parallel, might give a reasonably good approximation to
+system runtime. Then, if the client speed is matched to the server
+speed (simply by running another Bochs emulated machine, for example,
+attached to the same virtual network), we might gain some credible
+results.
 
-Since jvm\_nsec is a diff taken at start and stop of processing at the JVM coprocessor,
-then memory access times are already included in jvm\_nsec. So we should not include mem\_* for
-calculating execution time.
+\subsection{Implementation}
 
-To get a fair comparison we would require a complete real system, or else full-system emulation of
-server and all clients in a synchronized time domain with realistic JVM speeds.
+Our implementation is very preliminary. There is room for optimization
+in the core IO path and in much of the auxiliary functionality.
 
-To compare Avtive ARFS vs RDMA ARFS we use a Synthetic Time approach.
+More generally, the implementation could be much more complete. A
+first step would be to integrate the filesystem with the kernel at the
+server in order to persist to disk. We would still be able to retain
+the flexibility of arbitrary client code running at the server,
+against server data structures, while only requiring synchronization
+with the host CPU when necessary to initiate disk IO. If this were in
+place, we could claim functionality equivalent to NFS, and test more
+fully. At this point it would also probably be wise to migrate the
+client into a kernel module and build a more robust mobile-code
+infrastructure at the server in place of our current prototype.
 
-Since we are simulating different things at different speeds, we use the "synthetic time"
-approach , wherein we're measuring the different components that contribute to time directly
-and then taking a linear combination of them to get a synthetic (simulated) execution time.
+\subsection{Server-side Architecture}
 
-To simulate different memory access times, we have the number of ARFS memory accesses like
-r(), w(), cas() and these can be sweeped ro detrmine execution time. We can assume a reasonable
-time that NIC takes to access memory per access. Typically, NIC processing power is less than host
-processor, it is 33-200MHz. So can calculate execution time. In some systems, this will be the
-bottleneck as long as the processor is fast enough. Though for our purposes, we consider the bus
-consider CPU as bottleneck. 
+Cooperation with the host CPU opens the door to many more interesting
+possibilities. The load balance between coprocessor and main processor
+is another venue for code migration that we did not explore. Perhaps
+more expensive operations could run on the faster host processor, and
+less expensive operations (performing inode block lookup and
+initiating a packet send of one data block) could remain on the
+coprocessor, close to the network and memory and off the critical path
+of the main processor.
 
+\subsection{Dynamic Active Code}
 
-However, NFS does a lot of processing on the CPU. Since NFS is optimized and runs on the kernel, whereas Active DFS runs in User space and runs on top of a JVM, we expect it to effect the CPU utilization much more. This would be significantly less in case of an optimized (complete) implementation of Active RDMA on the NIC card i.e. the impact on NIC processor would be significantly less than shown in the figures. 
+We only scratched the surface of the possibilities of active code
+transferred from client to server. In the limit case, the client could
+generate a completely arbitrary code segment for every request. It is
+conceivable that some types of applications -- for example, databases
+with complex queries -- might benefit from this dynamic code
+generation to form code segments that run against server data. In some
+sense this particular application resembles a stored procedure in a
+DBMS, though it is much lower-level and more general. Beyond the grep
+and find utilities, it would be interesting to explore these
+application domains.
 
- Active DFS vs RDMA DFS
-As expected, the number of packets transferred over the network is significantly less for Active DFS, thus as the packet latency in a network increases, so does the advantage of using Active RDMA over RDMA. For streaming reads, we observe almost 3X lesser number of packets transferred in case of Active DFS. Whereas, for streaming writes we observe more than 3X lesser number of packets.
+\section{Conclusion}
 
-We consider runtime as the total time it takes from when the system call is issued to the client to when the client receives the reply from the server. Thus Runtime includes the packet latencies and execution time on the server. More discussion on this can be found in the 'Evaluation Discussion' section. Given that we have the number of packets transferred and execution time on the JVM we can plotted the packet latencies vs Runtime, as the packet latencies increased we observed that the improvement in performance of Active DFS over RDMA DFS increased, this is expected due to the reduced number of packets transferred in the case of Active DFS.
-
- Active DFS vs NFS
-The network of roundtrips is more in the case of Active DFS. The reason for this is that our implementation is not optimized unlike the Linux NFS implementation. Because of the limitation of our UDP stack implementation at the simulator, i.e. we donot do fragment re-assembly, we break streaming reads and writes into 1.2KB chunks, thus increasing the number of packets transferred over the network. However, that is not the case with which supports reads/writes in block sizes of 8KB , thus lesser number of packets. In a more complete implementation of ARFS, we would have significantly less number of packets transferred over the network.
-
+We built a prototype implementation of \emph{Active RDMA}, a
+code-migration extension on network direct memory access, and
+evaluated it with a simple in-memory network filesystem. We explored
+some of the design tradeoffs inherent in this system
+architecture. Although our performance results are somewhat
+underwhelming, we are confident that the lessons learned are valuable
+nonetheless, and believe that there is more potential for future
+exploration.
 
 
 \bibliography{final} \bibliographystyle{abbrv}

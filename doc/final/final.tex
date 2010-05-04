@@ -19,9 +19,9 @@ Carnegie Mellon University}
 \begin{abstract}
 A classic functionality tradeoff exists between client and server in a
 distributed system such as a network filesystem. One approach, widely
-used, is to define a static API at the server and allow RPCs to this
-API from clients. This approach allows the server implementation to be
-optimized for these specific operations. An alternate proposal,
+used, is to define a static API at the server and allow RPCs to use
+this API from clients. This approach allows the server implementation
+to be optimized for these specific operations. An alternate proposal,
 RDMA~\cite{thekkath94}, proposes to allow direct remote memory access
 in order to reduce latency and increase flexibility by exposing data
 structures directly. However, this approach can suffer from a lack of
@@ -200,7 +200,7 @@ than its basic interface to a flat memory space.
 \begin{figure}
 \centering
 \includegraphics[width=3in]{fig/fig2.pdf}
-\caption{Data locality due to code shipping reduces roundtrips.}
+\caption{Data locality due to code shipping reduces roundtrips. Here, we see RDMA and Active RDMA traffic from {\tt p->next->next-val}.}
 \label{fig:fig2}
 \end{figure}
 

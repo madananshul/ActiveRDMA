@@ -446,8 +446,11 @@ on evaluation is above in the section 'Evaluation Discussion'.
 
 \begin{itemize}
 \item FS Utilities : Grep, Find
-Here we observe that 
-\item Scalability.
+
+\item Scalability : NFS vs Active DFS vs RDMA DFS
+Here we observe that the effect of number of clients on CPU load is the most for Active DFS as compared to NFS and RDMA DFS. It is expected that the scalability impact on CPU load would be more for Active DFS vs RDMA DFS because RDMA DFS does not do much processing on the CPU, it simplies accesses the host memory unlike Active DFS. 
+
+However, NFS does a lot of processing on the CPU. Since NFS is optimized and runs on the kernel, whereas Active DFS runs in User space and runs on top of a JVM, we expect it to effect the CPU utilization much more. This would be significantly less in case of an optimized (complete) implementation of Active RDMA on the NIC card i.e. the impact on NIC processor would be significantly less than shown in the figures. 
 \item Active DFS vs RDMA DFS
 As expected, the number of packets transferred over the network is significantly less for Active DFS, thus as the packet latency in a network increases, so does the advantage of using Active RDMA over RDMA. For streaming reads, we observe almost 3X lesser number of packets transferred in case of Active DFS. Whereas, for streaming writes we observe more than 3X lesser number of packets.
 

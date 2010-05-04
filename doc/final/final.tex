@@ -567,13 +567,15 @@ implementation.
 Next, we present CPU load as a function of a scaling client base in
 Figure~\ref{cpuload}. This plot compares CPU time in NFS, normalized
 to a 2 GHz host CPU running at 1 IPC (instruction per cycle), against
-the JVM execution times. We see that the scaling in ARFS is greater
-than that in NFS, most certainly due to the push of functionality
-toward the server that characterizes ARFS. (Interestingly, ARFS-rdma
-also exhibits significant JVM coprocessor load, due to the high
-read/write/CAS request density; if these requests were handled
-directly in hardware, there would be no coprocessor overhead in the
-RDMA case.)
+the JVM execution times. We see that the scaling of CPU load in ARFS
+is higher (that is, worse) than that in NFS, most certainly due to the
+push of functionality toward the server that characterizes
+ARFS. (Interestingly, ARFS-rdma also exhibits significant JVM
+coprocessor load, due to the high read/write/CAS request density; if
+these requests were handled directly in hardware, there would be no
+coprocessor overhead in the RDMA case.) Furthermore, it is likely that
+the JVM coprocessor would run slower than the main CPU, exacerbating
+this problem. We partially address this in ``Future Work'' below.
 
 We also evaluated packet roundtrips for each filesystem, with the
 results presented in Figure~\ref{rt}. We take two conclusions from
@@ -614,7 +616,6 @@ active-code system.
 \includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/wallclock2.pdf}
   \caption{wallclock2}\label{wallclock2}
 \end{figure}
-
 
 \begin{figure}
   \centering
@@ -715,7 +716,10 @@ more expensive operations could run on the faster host processor, and
 less expensive operations (performing inode block lookup and
 initiating a packet send of one data block) could remain on the
 coprocessor, close to the network and memory and off the critical path
-of the main processor.
+of the main processor. Such an exploration might address scalability
+issues introduced by pushing functionality onto the NIC coprocessor,
+the effects of which we began to see in the scalability experiment in
+the Evaluation section above.
 
 \subsection{Dynamic Active Code}
 
@@ -730,6 +734,19 @@ DBMS, though it is much lower-level and more general. Beyond the grep
 and find utilities, it would be interesting to explore these
 application domains.
 
+\subsection{Additional Considerations}
+
+Several more exotic optimizations were considered as well during
+brainstorming. One theme that seems to be common in high-performance
+network applications is to reduce the critical path from the
+application to the network by circumventing the usual OS layers; we
+considered using a DAFS~\cite{DAFS}-like interface for applications to
+directly call InfiniBand-like transport resources. In combination with
+the direct coupling between the NIC and host memory at the server end,
+this would make for an extremely low-latency path between the client
+and the shared data, and might alter some of the tradeoff
+considerations.
+
 \section{Conclusion}
 
 We built a prototype implementation of \emph{Active RDMA}, a
@@ -740,7 +757,6 @@ architecture. Although our performance results are somewhat
 underwhelming, we are confident that the lessons learned are valuable
 nonetheless, and believe that there is more potential for future
 exploration.
-
 
 \bibliography{final} \bibliographystyle{abbrv}
 

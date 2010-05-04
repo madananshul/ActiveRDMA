@@ -5,33 +5,4 @@ FIXME tags point to stuff that needs/should be improved in future versions (Ecli
 
 The src/tests uses JUnit (again Eclipse includes this by default but you may need to have junit.jar in your classpath otherwise).
 
-TBD - During 'touch' file gets created, but an EFAULT is returned to the linux client.(NullpointerException) problem with utimensat & utimes??
-
-TBD - Add support for directories - change getattr, getdir, mkdir
-
-TBD - atim/mtime/ctime not handled yet.
-
-TBD - unlink(for swap file) 
-
-TBD - Current FUSE code sometimes calls upto 2 DFS ActiveRDMA calls at a time(the extra call being to lookup), once Objects can be stored via ActiveRDMA, change this to single DFS syscall.
-
-The current build.xml file is broken, use 'make' to compile the project.
-TBD - Fix build.xml
-
-Error no. 524 - Unsupported operation(I guess by FUSEJ)
-
 P.S. Commits by '746 User' are by madananshul, TBD - Add appropriate user in my Linux VM.
-
-Instructions to run FUSE client + Java App prototype :
------------------#start
-Run MainServer.java
-
-Terminal 1
-
-    * mkdir /tmp/active_rdma
-    * ./arfs_mount.sh /tmp/active_rdma(This will mount and start logging in terminal 1)
-
-Terminal 2
-
-    * ls /tmp/active_rdma etc.(ops will be logged in terminal 1)
-#end

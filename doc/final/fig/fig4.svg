@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg3813"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="fig4.svg">
+  <defs
+     id="defs3815">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective3821" />
+    <inkscape:perspective
+       id="perspective4363"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="193.67762"
+     inkscape:cy="843.24881"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="1001"
+     inkscape:window-x="1680"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3823" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.73771113;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4335"
+       width="400"
+       height="200"
+       x="130"
+       y="72.362183" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="302"
+       y="94.362183"
+       id="text4337"><tspan
+         sodipodi:role="line"
+         id="tspan4339"
+         x="302"
+         y="94.362183"
+         style="font-size:20px">Host</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4341"
+       width="130"
+       height="140"
+       x="190"
+       y="112.36218" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="230"
+       y="132.36218"
+       id="text4343"><tspan
+         sodipodi:role="line"
+         id="tspan4345"
+         x="230"
+         y="132.36218"
+         style="font-size:16">Bochs</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4347"
+       width="60"
+       height="30"
+       x="240"
+       y="162.36218" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4349"
+       width="60"
+       height="40"
+       x="240"
+       y="192.36218" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="255.60919"
+       y="184.66145"
+       id="text4351"><tspan
+         sodipodi:role="line"
+         id="tspan4353"
+         x="255.60919"
+         y="184.66145"
+         style="font-size:16px">NIC</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="256"
+       y="212.36218"
+       id="text4351-1"><tspan
+         sodipodi:role="line"
+         id="tspan4353-9"
+         x="256"
+         y="212.36218"
+         style="font-size:16px">JVM</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 300,182.36218 100,0"
+       id="path4380" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.22474492;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4382"
+       width="70"
+       height="60"
+       x="400"
+       y="152.36218" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="412.18286"
+       y="179.631"
+       id="text4384"><tspan
+         sodipodi:role="line"
+         id="tspan4386"
+         x="412.18286"
+         y="179.631"
+         style="font-size:16px">FUSE</tspan><tspan
+         sodipodi:role="line"
+         x="412.18286"
+         y="199.631"
+         id="tspan4388"
+         style="font-size:16px">Client</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="327.45187"
+       y="198.78328"
+       id="text4390"><tspan
+         sodipodi:role="line"
+         id="tspan4392"
+         x="327.45187"
+         y="198.78328"
+         style="font-size:16px">TUN/TAP</tspan><tspan
+         sodipodi:role="line"
+         x="327.45187"
+         y="218.78328"
+         id="tspan4394"
+         style="font-size:16px">net</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="403.23361"
+       y="235.14877"
+       id="text4417"><tspan
+         sodipodi:role="line"
+         id="tspan4419"
+         x="403.23361"
+         y="235.14877"
+         style="font-size:16px">/mnt/arfs0</tspan></text>
+  </g>
+</svg>

@@ -1,6 +1,6 @@
 \documentclass[10pt]{article}
 %\usepackage{fullpage}
-%\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \usepackage{courier}
 \usepackage{color}
 \usepackage{url}
@@ -100,7 +100,7 @@ Our work consists of several main contributions:
 \item Defining a low-level interface for remote code based on Java
   class-file shipping and both word-level and byte-level shared memory
   access; defining a protocol and building reference implementations
-  of a server and a client library to enable use of this ActiveRDMA
+  of a server and a client library to enable use of this Active RDMA
   interface.
 
 \item Building a simulation infrastructure to examine the performance
@@ -148,78 +148,241 @@ alternatives:
   However, Active Disks are limited in scope to this data processing.
   In contrast, Active RDMA is a generic mechanism that not only will
   allow for storage applications but any distributed system that
-  requires some shared state at a central server. Also, the fact the
-  interface would allow the RDMA code to be executed on the NIC itself, 
-  should improve the performance of network storage applications.
+  requires some shared state at a central server. Active RDMA also
+  differs in that it proposes to run code directly on the NIC, with
+  access to the memory space of the main CPU, enabling more
+  interesting and more complex hybrid applications.
 
 \item Mobile code~\cite{mobile} is the name for a general research
   thrust of code migration over networks in order to build distributed
-  systems. This is the most similar to our idea. However, mobile
-  code is generally a higher-level abstraction that does not provide
-  direct access to a shared memory segment, for example, and provides
-  more sandboxing and security that remove many of the potential
-  performance benefits that we are aiming for. We also do not plan for any kind of special language integration and instead rely on traditional interfaces and Java bytecode gets send directly through the network.
+  systems. This is the most similar to our idea. However, mobile code
+  is generally a higher-level abstraction that does not provide direct
+  access to a shared memory segment, for example, and provides more
+  sandboxing and security that removes many of the potential
+  performance benefits that we hope to achive.
 
 \end{itemize}
+
+\section{Basic Design}
+
+Active RDMA extends the set of direct memory access primitives --
+\emph{read}, \emph{write} and \emph{compare-and-swap} -- to include
+two new primitives, \emph{load} and \emph{run}, that load bytecode and
+invoke it. The bytecode is executed at the server with access to the
+same memory segment that the DMA primitives access, so in theory, the
+migration changes only the locality of data access for the shared data
+structures.
+
+A representation of this concept is shown in
+Figure~\ref{fig:fig1}. The fundamental idea is to move code closer to
+data; this allows operations that have longer chains of roundtrips to
+be kept local until the final result can be sent back to the client,
+at the cost of running code at the server. A simple example is shown
+in Figure~\ref{fig:fig2}.
+
+The idea of code shipping is not new, nor is the concept of data
+locality. The focus of Active RDMA is to explore how building a
+framework that allows clients to make this tradeoff will allow for
+more interesting optimizations. The end result might be the same as a
+traditional service: code runs on the server locally to compute a
+result and return it to the client. The interesting bit is that the
+code was sent dynamically by the client, with no prior knowledge from
+the server, and it needed to assume nothing about the server other
+than its basic interface to a flat memory space.
+
+\begin{figure}
+\centering
+\includegraphics[width=3in]{fig/fig1.pdf}
+\caption{Basic Active RDMA code-shipping concept.}
+\label{fig:fig1}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=3in]{fig/fig2.pdf}
+\caption{Data locality due to code shipping reduces roundtrips.}
+\label{fig:fig2}
+\end{figure}
 
 \section{Implementation}
 
-%So far, we have built a prototype implementation of Active RDMA in
-%Java, as well as several simple test applications, and we plan to move
-%onto a full system simulator-based evaluation framework and a
-%FUSE-based client filesystem interface so that we can more accurately
-%evaluate performance. Our progress can be summarized by
-%these accomplishments so far:
+We developed a prototype implementation of Active RDMA as a
+proof-of-concept and a testbed for initial performance
+explorations. We will show here how we develop a fully functional
+network filesystem on top of the basic Active RDMA interface.
 
-We developed a prototype implementation of Active RDMA with the goal of having both a reference implementation of our concept and also to use it to provide significant test results to either prove or disprove our beliefs of performance gains. As with any proof-of-concept code, it does not aim to be full feature and it makes some strong assumptions (such as result sizes, packet formats, etc) to reduce the complexity of the code and allow us to reach the testing phase quicker. We based our implementation on the Java programming language for convenience of the development tools and the flexibility of the JVM in dealing with the uploaded code.
+The most crucial point of our implementation is the definition of the
+Active RDMA client-server interface, both at the API level and at the
+wire protocol level, since it needs to be simple and small but
+powerful enough to facilitate efficient use of the server's
+resources. The interface allows direct memory access as well as code
+migration (using Java bytecode), and supports the following basic
+operations:
 
-The most crucial point of our implementation is the definition of the Active RDMA client-server interface, both at the API level and at the wire protocol level, since it needs to be simple and small but powerful enough to facilitate efficient use of the server's resources. The interface allows direct memory
-  access as well as code migration (using Java bytecode), and supports
-  the following basic operations:
-  \begin{itemize}
-  \item {\tt Read}, {\tt Write}, {\tt Compare-and-Swap} -- as in original RDMA, these
-    allow for direct memory access over the network but both {\tt read}
-    and {\tt write} operations are defined over blocks of addresses (so
-    that batching is possible) which allows us to group together multiple similar requests in the same packet.
-  \item {\tt Load(bytecode)} -- loads a Java class file into the remote
-    environment. This will cause the class' byte code to be sent over the wire and loaded on the server side. The code is then indexed using an MD5 hash to detect code duplication and disambiguate between multiple version of the same class code (although limitations on the JVM forbid us of having more than one class with a given name and we did not have time to play around with tools to modify the uploaded bytecode to circumvent this). 
+\begin{itemize}
+  \item {\tt Read}, {\tt Write}, {\tt Compare-and-Swap} -- as in
+    original RDMA, these allow for direct memory access over the
+    network but both {\tt read} and {\tt write} operations are defined
+    over blocks of addresses (so that batching is possible) which
+    allows us to group together multiple similar requests in the same
+    packet.
+  \item {\tt Load(bytecode)} -- loads a Java class file into the
+    remote environment. This will cause the class bytecode to be sent
+    over the wire and loaded on the server side. The code is then
+    indexed using an MD5 hash to detect code duplication and
+    disambiguate between multiple version of the same class code
     
-    For this implementation we used a fixed format for the method signature:
+    The class is assumed to implement one method, {\tt execute()},
+    that takes as parameters a handle to the server memory space and a
+    set of arguments passed by the client. The method can return an
+    arbitrary chunk of data back to the client. In this way it is as
+    general as possible.
     
-    {\tt \textbf{public static int}[] execute(ActiveRDMA a, \textbf{int}[] args)}
-
-Although, for convenience, we also allow:
-
-    {\tt \textbf{public static int} execute(ActiveRDMA a, \textbf{int}[] args)}
-
-(where the result gets wrapped in an array so that the semantics remain identical to the previous one). This signatures allows for the code, when it is run on the server, to be used in exactly the same way as when it is run from a RDMA only perspective (that is, a client interface that sends all those basic requests across the network to the server). 
-
-  \item {\tt Execute(code, param)} -- Executes previously-loaded remote code
-    (referenced by MD5 hash), giving it direct access to the host
-    memory. Both \textit{param} and the result can use arrays of integers so that more complex arguments and results can be required/produced by an execution although more complex types (such as strings) need to be converted to/from their internal representation into an array of ints.
+  \item {\tt Execute(code, param)} -- Executes previously-loaded
+    remote code (referenced by MD5 hash), giving it direct access to
+    the host memory.
      
-  \end{itemize}
-  
-  This simple interface also includes a series of error codes to account for common mistakes that may occur during execution such as going beyond the memory bounds of the server. We also defined a series of more complex operations that use this simple interface as building block or that are just more convenient for the programmer to use (like just passing a class to the load function instead of having to manually extract its byte code). 
-Finally, even if this was not thoroughly explored, we could also have defined a set of useful library functions for memory management or other convenient procedures that are necessary in real-world production environments.
-  
-   The server consists of a single large array representing host memory and
-  an implementation of the wire protocol and Java environment (class
-  loader, etc). The client consists of a library that allows the user
-  to easily load classes and call them remotely. We based our wire protocol on UDP packets specially to simplify the modification of the test virtual machine (so that it did not require the implementation of a full TCP network stack). This means we made certain assumption of the packet size to keep failure handling simple (in this case a simple timeout and resend).
-  The execution model on the server side is also meant to be simple: a fixed number of threads listens to jobs that are pushed into a single work queue. If a job waits for to long to be handle, it is just assumed to have expired and is ignored. Traditional RDMA request are handled immediately as they should be fairly lightweight and not cause any abuse in the use of server's resources. As a consequence of this execution architecture, we could have situation where an expensive computation ends up running multiple times due to response timeouts on the client side. We did not handle such case as well as providing more control over what computational resources the active code is allowed to use. However, the first case can be handled easily by just pushing some complexity to the active code that needs to have a ``guard'' memory position to tracks the state of the computation (such as ``not-stated'', ``running'' and ``done''). Before starting the heavy code, it just checks to ensure that there is no previously ``running'' or ``done'' values (using compare and swap to avoid races).
+\end{itemize}
 
+\subsection{Filesystem}
+
+On top of this basic interface, there is no inherent structure to the
+server. Of course, for cooperation to exist between clients in any
+reasonable system, some higher-level standard needs to be defined.
+
+We define exactly one system-wide service, {\tt Alloc}, which uses the
+first word of the shared segment to point to the next free byte of
+memory. This allows clients to use compare-and-swap to atomically
+allocate new chunks of memory. (In a real system, of course, we would
+implement a full {\tt malloc()} allocator.)
+
+At the next level, we provide a ``root structure'' of sorts by
+defining a hash table at the beginning of memory. The hash table
+itself is at a known location, and implements linked-list buckets that
+are updated atomically by compare-and-swap instructions. This hash
+table implements a mapping from arbitrary byte string keys to
+pointers. It is up to higher-level applications to assign meaning to
+the keys and to the values.
+
+We then begin to build our filesystem-specific infrastructure on top
+of this, starting with a simple inode-based datastore. The FS layer
+implements arbitrary-length bytestreams, with inode pointers as
+handles. Combined with the root hash table, this allows for a flat
+datastore.
+
+The final piece of the structure is the high-level hierarchical
+filesystem interface. We build ARFS (Active RDMA Filesystem) on top of
+the flat-namespace inode store in a very simple way: files are stored
+in inodes, with hashtable entries from the full pathname to the inode;
+directories are stored likewise, with a special prefix in the key to
+indicate that the path is a directory; and directory ``files'' contain
+directory entries as in a traditional Unix filesystem. This thin
+mapping layer allows performance optimizations at the lower
+inode-store layer to propagate upward fairly easily, and it kept
+implementation complexity manageable within the scope of this class
+project.
+
+The system architecture is depicted in Figure~\ref{fig:fig3}.
+
+\begin{figure}
+\centering
+\includegraphics[width=3in]{fig/fig3.pdf}
+\caption{ARFS system architecture.}
+\label{fig:fig3}
+\end{figure}
+  
+\subsection{System Emulation}
+
+As a final matter, aside from designing the software architecture and
+proposing the hardware to run our active code, we must find a way to
+evaluate the system. Short of actually constructing or modifying a
+network card to run Java bytecode with host memory access, we emulate
+the system using a conglomeration of several large pieces of
+software. We use Bochs~\cite{bochs}, a full-system x86(-64) emulator,
+as our base, and integrate a full Java VM using the JNI (Java Native
+Interface) API into the PIC ne2000 network card emulation.
+
+Just as would be required in a real hardware implementation, the NIC
+emulation implements a rudimentary UDP/IP stack to talk the Active
+RDMA wire protocol. It snoops all packets received by the emulated
+system, and intercepts UDP packets destined for port 15712. These
+packets are sent to a stripped-down version of our reference platform
+server running in the embedded JVM; responses are wrapped in the
+appropriate UDP, IP and Ethernet headers and sent, without ever
+involving the host system.
+
+The emulated NIC's embedded server has a very simple architecture. It
+processes one request at a time, as might be expected from a low-power
+processor meant to execute low-latency operations rather than
+long-running computations. We also intentionally stuck with UDP rather
+than TCP both to maintain statelessness on the server side and to
+simplify implementation.
+
+In the proposed system, ultimately, the active code would have access
+to host memory and would interact with host software to perform
+various functions, if necessary (in the filesystem case, perhaps to
+persist data to disk). Since we operated within a limited time budget
+and prototyped only the bare minimum functionality, we opted to build
+an in-memory filesystem; and since, in this case, no host interaction
+is necessary, the embedded JVM is actually completely independent of
+the host processor. (We could have allowed it access to host memory,
+but then the only ``interaction'' would be allocation of separate
+memory blocks from a common pool of RAM, which would serve no purpose
+other than possible minimal contention.) Because of this, we actually
+implemented an ARP responder in our UDP/IP stack as well, in order to
+avoid the need to boot up the emulated Linux system to run pure ARFS
+tests. (The common simulator infrastructure is still necessary, of
+course, to keep the common network path, timing infrastructure, and so
+on.)
+
+Our system emulator architecture is depicted in Figure~\ref{fig:fig4}.
+
+\subsubsection{Timing model}
+
+We collect two forms of timing information with our emulator
+infrastructure: \emph{wall-clock time} (as observed by the client) and
+\emph{virtual time} (as observed by the server). Since the emulated
+components may not run at uniform speed, a completely accurate
+evaluation of the system would track virtual time as it progresses
+with server events, and produce a synthetic runtime for a given
+benchmark. In our emulator, we punt on the very hard problem of
+accurately modeling every component at cycle accuracy by simply
+tracking various events -- instructions executed on host CPU, network
+packets received, memory accesses by the JVM coprocessor, and time
+spent in the JVM coprocessor -- in order to come up with a synthetic
+runtime from this vector later by assigning costs to each event. In
+practice, we found this approach unreliable at best; however, some of
+the individual statistics, such as network roundtrips, were useful for
+individual evaluations.
+
+\begin{figure}
+\centering
+\includegraphics[width=3in]{fig/fig4.pdf}
+\caption{Emulator architecture.}
+\ref{fig:fig4}
+\end{figure}
+  
 \subsection{Initial demo applications}
 
 We built four simple demo application using our prototype framework. 
+
 \begin{itemize}
-\item linked list - where the most significant operation (from the cost perspective) is the insertion operation as it needs to iterate across all elements of that list before if can insert a new element at the end.
-\item hash table - again where the insertion operation represents the most significant cost, as it has the potential to require multiple lookups before it finds an item.
-\item in-memory filesystem (built using the hash table).
+\item linked list, designed to maximize dependent pointer chasing and
+  thus number of network roundtrips in the non-active case. Insert is
+  a naive linear implementation (it traverses the list to find the
+  tail), and random fetch is also $O(n)$ as it is for any linked list
+  of $n$ elements.
+\item hash table, with linked-list buckets.
+\item in-memory filesystem (built using the hash table), as described
+  previously.
 \item locking (mutual exclusion) service with FCFS lock ordering~\cite{nic-basedatomic}.  
 \end{itemize}
 
-Running the first two as both plain RDMA and as Active code served as initial benchmarks whose results encouraged us to continue with the implementation. The results of running in a local machine (where network latency and bandwidth should be considerably smaller than any real remote execution), are shown in Figure \ref{res1}.
+Running the first two as both plain RDMA and as Active code served as
+initial benchmarks whose results encouraged us to continue with the
+implementation. The results of running in a local machine (where
+network latency and bandwidth should be considerably smaller than any
+real remote execution) are shown in Figure \ref{res1}.
 
 \begin{figure}[h!]
 \center
@@ -245,222 +408,212 @@ table - Active & get & 0.239 ms\\
 \label{res1}
 \end{figure}
 
-These results show gains consistent with the complexity of the operation. Thus, the insertion of 200 elements in a list as well as the iteration over all those elements has a considerable gain on the Active version when compared with the RDMA version that requires all requests to be sent over the wire. On the hash-table side, gains were still significant but more modest as this structure has a lower computational complexity both for insertion and access and therefore, will pay a lower performance penalty for using the network. 
+These results show gains consistent with the complexity of the
+operation. Thus, the insertion of 200 elements in a list as well as
+the iteration over all those elements has a considerable gain on the
+Active version when compared with the RDMA version that requires all
+pointer chasing to be serialized over the network. On the hash-table
+side, gains were still significant but more modest as this structure
+has a lower computational complexity both for insertion and access and
+therefore, will pay a lower performance penalty for using the network.
 
-The last two application (the file system and the locking service), were then extended into the full testing framework discussed further below.
-
-\subsection{Active RDMA File System Server}
-
-The core of the testing framework is centered on an in-memory file system that is accessible through the Active RDMA interface and uses the DHT for managing directory entries. It is not meant to be a complete FS and instead is just a core implementation of the basic FS functionalities needed to test our approach. It supports batch reads and writes but the file is restricted to a fixed size and therefore, any append that goes beyond the file's limit must copy the old content to the new location. This pushes some complexity to the application but achieves great simplicity in the implementation by making all content accessible in a contiguous block.
-
-The following Active DFS operations were implemented : create, lookup, getBlock, setBlock, setLen, getLen, read, write, copy, find. the implementation ensures a single rountrip for each Active DFS operation which is the core strenght of the Avtive RDMA protocol.
-
-For example, the Active DFS implementation uses other Active code like DHT as a library. In out implementation, using run() we send a request to the server to execute particular Active Code, which internally may call other Active code from libraries which are also loaded on the server beforehand. Thus Active RDMA DFS ensures that there are never more than a single round trip between client and server when a single operations is executed. 
-
+The last two application (the file system and the locking service)
+were then extended into the full testing framework discussed further
+below.
 
 \subsection{Active RDMA File System Client}
 
-The Active DFS client is implemented as a FUSE file system, which considerably simplifies the development effort for us. We used JNI bindings to implement the Active DFS client code in java. Java Native Interface (JNI) is a programming framework that allows Java code running in a Java Virtual Machine (JVM) to call and to be called[1]  by native applications (programs specific to a hardware  and operating system platform) and libraries written in other languages, such as C. Our implementation has been built on top of the FUSE J code, which is freely available on sourceforge.net. The FileSystem3 is an adapter interface that is eventually called by the linux system calls. Our file system called ARFS(Active RDMA FIle system) basically implements this interface, by using the Active RDMA wire interface to generate packets sent over the wire, or using libraries we implemented like List, DHT that eventually send packets over the wire using the Active RDMA wire transfer interface. We have supported a file system interface that very closely emulates that of a linux file system calls, because these are required to accurately measure the performance of ARFS.
+The Active DFS client is implemented as a FUSE file system, which
+considerably simplified the development effort over a more traditional
+kernel-hosted approach. We used JNI bindings to implement the Active
+RDMA client code in Java.
 
+\subsubsection{RDMA and Active variants}
+
+Our filesystem implementation supports mounting in two modes: bare
+RDMA, and Active RDMA. In the former mode, all accesses are performed
+using only Read, Write and CAS operations; no code migration is
+performed. This is implemented as a baseline in order to provide a
+comparison point for our ``real''active filesystem.
+
+The Active RDMA filesystem offloads most functionality to server-side
+mobile code. Most common filesystem metadata operations, such as file
+creation and deletion, happen in one server roundtrip, as would be
+expected from a robust network filesystem. The filesystem punts fo the
+underlying FS inode-store layer (described above) for the IO path,
+which is similarly optimized with active code in order to perform
+inode structure traversal and request fragmentation at the server
+side. The hashtable lookups are similarly performed by server-resident
+active code.
 
 \subsection{DFS utilities (Grep, Copy and Find)}
 
-In order to use the file system and expose our performance gains, we built the following utilities that make use of the higher level file system interface:
+In order to use the file system and expose our performance gains, we
+built the following utilities that make use of the unique
+code-migration feature of Active RDMA to access the filesystem at a
+higher level on the server side:
 
 \begin{itemize}
-\item Copy -- a simple utility that is able of copying a file already in DFS to a new position as well as pinning a file in the systems' filesystem to DFS (that is, transfer a file to memory). The expected performance gains are mostly due to keeping all transfers locally instead of having to move each chunk across the network (on a read) just to be written in another block (on a write) on the server side.
+\item Copy -- a simple utility that is able to copy a file already in
+  the FS to another file. File copy is an obvious application of
+  server-resident code, since the data need never traverse the network
+  if its final destination is the same filesystem.
 
-\item Grep -- does simple pattern matching on a text file. It takes a regular expression that is then used to filter a text file and returns all lines that contain that expression. Although we did not experiment with more dynamic code generation (that would truly expose the advantage of such dynamic system), our prototype implementation of this utility should be enough to serve as proof-of-concept that our model can achieve significant performance gains when compared with purely client side RDMA even if a static code migration mechanism (such as in traditional RPC) could also be used in such heavily constrained scenario to get similar benefits. Thus, we leave as future work the potential to send dynamically generated code that matches the data-structures on the server side more efficiently, instead of sending the pattern that gets used in a generic pattern matcher. 
-We made an assumption that the result will necessarily fit into a single packet and as such our tests have been design with this limitation in mind.
+\item Grep -- does simple pattern matching on a text file. It takes a
+  regular expression that is then used to filter a text file and
+  returns all lines that contain that expression. Although we did not
+  experiment with more dynamic code generation based on regex
+  compilation or other more complex query-driven customizations (that
+  would truly expose the advantage of such dynamic system), our
+  prototype implementation of this utility should be enough to serve
+  as proof-of-concept that our model can achieve significant
+  performance gains when compared with purely client side RDMA. Thus,
+  we leave as future work the potential to send dynamically generated
+  code that matches the data-structures on the server side more
+  efficiently, instead of sending the pattern that gets used in a
+  generic pattern matcher.
 
-\item Find -- this utility searches for files that match a specific name pattern. It essentially just traverses the directory table selecting all entries that have compatible names. We did not use the same size restriction as on the previous utility and instead rely on basically exposing the table iterator to the client that can use some state to continue the iteration over a certain point instead of having to \PROBLEM{this makes no sense... little help?}
+\item Find -- this utility searches for files that match a specific
+  name pattern. Like the grep utility described above, it exposes the
+  advantage of server-resident code by locally searching the keyspace
+  of the hash table for filenames matching a given pattern. As above,
+  we compare this find utility to a traditional client-resident RDMA
+  implementation of the same functionality.
 
 \end{itemize}
 
-\subsection{Observations and Learnings}
-\begin{itemize}
-\item Initially, we had a wire interface with a common address space for code and meory that was being modified. During the initial prototype, we learnt that the code, executed on the NIC, thus 
-differetn address space from the server host's memory, and wire interface changed accordingly.
-\item During the course of building the FUSE file system, and calling appropriate distributed  file system calls in order to perform imeplemtn the FUSE Userspace syscalls, we found out exactly what kind of Functionality the Active DFS code should support. What metadata ops are required.
-\item Initially we implemented word addressable memory because of convenience. Later since we implemented the FUSE file system at the CLient, which uses byte addressable memory, we changed our interface to use byte addressable memory at the Server.
-\item Batching reads and writes seemed to have an obvious advantage, so we added those to the interface.
+\section{Evaluation}
 
-\end{itemize}
+Finally, having described the system, we will evaluate it both in
+absolute terms and in comparison to NFS, hoping to explore some of the
+more unique and interesting properties of an Active RDMA-based system.
 
-\section{Testing Environment}
+\subsection{Methodology}
 
-Since an actual prototype implementation with a real system is much beyond the scope of this class project, we decided to instead focus on obtaining good estimations of real results through the use of an x86 full system simulator: Bochs ~\cite{bochs}. Thus, by modifying the network card (PCI ne2000) implementation to redirect packets with a specific format (in this case, UDP packets to port 15712) and interpreting them as Active RDMA commands handled directly by the JVM, we believe this approximation of the actual hardware yields good first approximations of what a real system might behave like.
+We evaluate three filesystems: NFS, our ARFS mounted as RDMA
+(ARFS-rdma), and our ARFS mounted with active code (ARFS-active). All
+three are evaluated on our modified Bochs emulation platform, using a
+local virtual network (TUN/TAP) from Bochs to the evaluation host
+running the network clients.\footnote{The evaluation platform is an
+  Intel Core i7 975 Extreme Edition quad-core, with 6 GB of DDR3-1066,
+  running 64-bit Ubuntu GNU/Linux 10.04 LTS with kernel 2.6.32-21.}
+The host system either mounts ARFS using the FUSE client or NFS using
+the standard Linux NFS client.
 
-% Integrate the Kaffe JVM into the Bochs full system simulator's
-%  network card (PCI ne2000) implementation.  
-%  This will be a first
-%  approximation of what our proposed hardware would actually look
-%  like.
-%  
-%  The network card will look for ``magic packets'' of a certain
-%  format, probably UDP packets to a particular port, and steal them
-%  from the packet stream, interpreting them as Active RDMA
-%  commands.
-  
-  \PROBLEM{TODO}
-  The JVM will execute the remote code. We will implement a
-  unified timing framework between Bochs (which has an instrumentation
-  interface for such things) and Kaffe (likely just counting opcodes
-  as they execute), defining certain costs for host memory access in
-  order to establish an interesting tradeoff. 
-  
-  We will build a simple
-  client to query ``server time'' (current cycle count) so that
-  benchmarks can be timed on this virtual timeline rather than by
-  wallclock time (which may not correspond directly to simulated
-  cycles). synthetic time.
+To make the comparison fair between NFS and the very simple
+memory-resident ARFS, we serve the NFS mount off of a RAM disk in the
+emulated Linux system. This ensures that disk reads and writes do not
+interfere with the measurements. We also manually touch files on the
+emulated system before benchmarks on the host system read them, to
+ensure that the host system is not caching the files' contents.
 
-%By the end of the semester, we plan to do the following:
-
-%\begin{itemize}
-
-%\item Begun to integrate Kaffe and Bochs in order to build our full
-%  system simulator (discussed below).
-%  \item Begun to design DFS applications (discussed below).
-
-%\item
-%\item Build a client side FUSE filesystem, allowing us to run
-%  ``real'' benchmarks against it. We plan to expose a subset
-%  of Unix like semantics in order to make comparison with
-%  traditional distributed file systems like AFS, NFS possible.
-%  \emph{Estimated time:}~\textbf{1 week} (in parallel to the above task)
-
-%\item Evaluate several common distributed filesystem benchmarks on our
-%  filesystem, as well as on a Linux NFS server running on our common
-%  simulation infrastructure.. \emph{Estimated time:}~\textbf{A few
-%    days}
-
-%\item Implement several optimizations and ease-of-use improvements
-%  into our system. Among our ideas so far are a more structured
-%  data-store API for the active code to use, which in a real system
-%  would be part of a runtime library. Though the goal of our project
-%  is to show the feasibility of building a system this way, and
-%  hopefully show somewhat competitive performance (maybe!), it is
-%  interesting to explore the programmability aspect a bit as well. As
-%  well, we are also exploring the possibility of using a
-%  DAFS~\cite{DAFS} like interface for applications to directly call
-%  InfiniBand-like transport resources.
-
-%\end{itemize}
-
-\section{Future Work}
-The fairest way to evaluate would be to have a real system with a real network card
-with a real coprocessor running the JVM.
-
-\section{Evaluation Discussion}
-The simulator models a main processor running Linux and a coprocessor that
-runs the JVM. The JVM is not run on the simulated Linux system, because
-it would be terribly slow it would still not be a fair comparison, since
-the actual Active RDMA code would run on the NIC card. The fairest
-way to evaluate would be to have a real system with a real network card
-with a real coprocessor running the JVM, but that is part of future work
-
-
-Basically, for NFS the overall protocol processing overhead needs to be
-taken into consideration, the NFS server has stats that can help
-in calculating the execution times things like counts and times of
-nfs_getattr, nfs_stat, nfs_read are maintained by Linux NFS servers. These
-would include the overall execution time for different nfs operations. But 
-we would still not be able to compare these results against the Active ARFS
-and ARFS RDMA because of the different processor speeds.
-
-Following counters are all maintainted as counters at the simulator:
-\begin{itemize}
-\item jvm_nsec : The time spent in the simulator's JVM when running ARFS for processing requests.
-\item  insns : The number of instructions executed when running NFS on the simulated CPU.
-\item pkts : Total number of packets received by server for both NFS and ARFS.
-\item mem_rd mem_wr mem_cas : Memory access operations executed by simulated NIC on simulated memory.
-\end{itemize}
-
-Another way to compare NFS against Active ARFS would be for us to collect
-'CPU load' plot which counts instructions against the stats like
-time spent in the JVM(co_processor) that we collect. Though that still
-does not give a fair comparison because it does not take into consideration
-the difference in processor speeds.
-
-What is most important in the comparison of NFS against ARFS is the total
-time between when the client sends the DFS request and when it receives the
-reply. Thus packet latencies alone are not that important , but number of packet
-roundtrips compared for NFS compared( and contribution of each packet to the
-overall execution time ) to the same test run on ARFS is more important. So
-as the packet latencies increase, ARFS would perform better than NFS because
-it has lesser number of roundtrips.
-
-Our performance measurements have the number of roundtrips(pkts), and we have
-the execution time for ARFS(jvm_nsec), so if we get NFS execution time from
-our stats, then we could compare the execution times as well as the total time
-from when the packet leaves the client to when the client gets back the reply.
-We get total time by assigning latencies to the each paket (= latency * packets).
-
-Since jvm_nsec is a diff taken at start and stop of processing at the JVM coprocessor,
-then memory access times are already included in jvm_nsec. So we should not include mem_* for
-calculating execution time.
-
-To get a fair comparison we would require a complete real system, or else full-system emulation of
-server and all clients in a synchronized time domain with realistic JVM speeds.
-
-To compare Avtive ARFS vs RDMA ARFS we use a Synthetic Time approach.
-
-Since we are simulating different things at different speeds, we use the "synthetic time"
-approach , wherein we're measuring the different components that contribute to time directly
-and then taking a linear combination of them to get a synthetic (simulated) execution time.
-
-To simulate different memory access times, we have the number of ARFS memory accesses like
-r(), w(), cas() and these can be sweeped ro detrmine execution time. We can assume a reasonable
-time that NIC takes to access memory per access. Typically, NIC processing power is less than host
-processor, it is 33-200MHz. So can calculate execution time. In some systems, this will be the
-bottleneck as long as the processor is fast enough. Though for our purposes, we consider the bus
-consider CPU as bottleneck. 
-
-\section{Evaluation Methodology}
+The following tests were performed on each filesystem, each 10 times
+(to obtain a 95\% confidence interval):
 
 \begin{itemize}
-\item Basic performance: sequential read, write, Modified Andrew
-  Benchmark
-\begin{itemize}
-\item Compare against NFS, AFS
-\item Warm the pagecache for NFS, AFS comparisons to make in-memory
-  comparison fair
-\end{itemize}
-\item Scaling performance: read/write bandwidth as number of clients grows
-\item Performance as JVM speed varies: sweep the JVM speed relative to
-  the main CPU speed
-\item Performance as DMA cost varies: sweep the cost of memory access
-  from the NIC
-\item Performance as network latency varies: sweep the round-trip time
-\item Custom code-assisted applications (compare against NFS, AFS)
-\begin{itemize}
-\item Remote grep, remote find
-\item Large-tree file copy
-\end{itemize}
+\item Andrew Benchmark~\cite{ab}.
+\item Streaming read, using a 5 MB file copied from {\tt /dev/zero}.
+\item Streaming write of the same 5 MB file.
+\item Find, using the standard {\tt find(1)} utility to find a single source file in the Bochs source tree.
+\item Grep, using the standard {\tt grep(1)} utility to find three
+  words (apple, zoo, moo) from {\tt /usr/share/dict/words}.
+\item Scale, in which the filesystem was mounted at five mountpoints
+  concurrently, and an Andrew Benchmark run simultaneously at each
+  mountpoint.
 \end{itemize}
 
-\section{Evaluation Results and Observations}
-We compared ARFS Active vs Active RDMA vs NFS. Discussion and reasoning 
-on evaluation is above in the section 'Evaluation Discussion'.
+For each test, we invoked a custom utility to query the server
+virtual-time counters immediately before and after the benchmark. We
+also recorded the system time (from a high-resolution RT clock) at
+both of these points in order to provide wallclock time figures. Our
+postprocessing then found the deltas in each counter and constructed
+means and confidence intervals, from which we were able to obtain our
+final results.
 
-\begin{itemize}
-\item FS Utilities : Grep, Find
+In actuality, we were able to glean far less from the virtual time
+counters than we had hoped we would be able to. Originally, we wanted
+to construct a virtual time function as a linear combination of the
+event counter vectors; it turns out that real systems are much more
+complex than this, as some events are off the critical path and others
+happen in parallel. We thus resort to presenting wallclock time first,
+with the understanding that this is not the most trustworthy
+comparison due to the disparity in speed between the emulated host CPU
+and the JVM ``coprocessor'' running on the native host. A more
+complete evaluation methodology, developed postmortem, is presented in
+Future Work below.
 
-\item Scalability : NFS vs Active DFS vs RDMA DFS
-Here we observe that the effect of number of clients on CPU load is the most for Active DFS as compared to NFS and RDMA DFS. It is expected that the scalability impact on CPU load would be more for Active DFS vs RDMA DFS because RDMA DFS does not do much processing on the CPU, it simplies accesses the host memory unlike Active DFS. 
+\subsection{Results}
 
-However, NFS does a lot of processing on the CPU. Since NFS is optimized and runs on the kernel, whereas Active DFS runs in User space and runs on top of a JVM, we expect it to effect the CPU utilization much more. This would be significantly less in case of an optimized (complete) implementation of Active RDMA on the NIC card i.e. the impact on NIC processor would be significantly less than shown in the figures. 
-\item Active DFS vs RDMA DFS
-As expected, the number of packets transferred over the network is significantly less for Active DFS, thus as the packet latency in a network increases, so does the advantage of using Active RDMA over RDMA. For streaming reads, we observe almost 3X lesser number of packets transferred in case of Active DFS. Whereas, for streaming writes we observe more than 3X lesser number of packets.
+We present wallclock time results first in
+Figures~\ref{wallclock}~and~\ref{wallclock2}. As mentioned previously,
+the disparity in speed between the JVM and the Bochs CPU provides an
+artificial advantage to ARFS. Nevertheless, these results are
+interesting because (i) they provide some sense of possible client
+performance, at least, and (ii) they are better than nothing. The
+results also show that ARFS-active is a marked improvement over
+ARFS-rdma, as expected.
 
-We consider runtime as the total time it takes from when the system call is issued to the client to when the client receives the reply from the server. Thus Runtime includes the packet latencies and execution time on the server. More discussion on this can be found in the 'Evaluation Discussion' section. Given that we have the number of packets transferred and execution time on the JVM we can plotted the packet latencies vs Runtime, as the packet latencies increased we observed that the improvement in performance of Active DFS over RDMA DFS increased, this is expected due to the reduced number of packets transferred in the case of Active DFS.
-\item Active DFS vs NFS
-The network of roundtrips is more in the case of Active DFS. The reason for this is that our implementation is not optimized unlike the Linux NFS implementation. Because of the limitation of our UDP stack implementation at the simulator, i.e. we donot do fragment re-assembly, we break streaming reads and writes into 1.2KB chunks, thus increasing the number of packets transferred over the network. However, that is not the case with which supports reads/writes in block sizes of 8KB , thus lesser number of packets. In a more complete implementation of ARFS, we would have significantly less number of packets transferred over the network.
-\end{itemize}
+Figure~\ref{wallclock2}, in particular, shows the rather embarrassing
+result that our custom Grep and Find utilities are several times
+slower than the respective native Unix utilities running on our
+filesystem, even when active code is used (that is, Active-Grep with
+active code is still slower than native grep). The most likely
+explanation is simply that our utility is naive and unoptimized,
+whereas native grep is heavily optimized. Its in-memory data
+structures are especially superior for larger-than-trivial files as
+compared to our utility's use of the Java class library regex
+implementation.
 
-\section{Results}
-did it work?
+Next, we present CPU load as a function of a scaling client base in
+Figure~\ref{cpuload}. This plot compares CPU time in NFS, normalized
+to a 2 GHz host CPU running at 1 IPC (instruction per cycle), against
+the JVM execution times. We see that the scaling in ARFS is greater
+than that in NFS, most certainly due to the push of functionality
+toward the server that characterizes ARFS. (Interestingly, ARFS-rdma
+also exhibits significant JVM coprocessor load, due to the high
+read/write/CAS request density; if these requests were handled
+directly in hardware, there would be no coprocessor overhead in the
+RDMA case.)
+
+We also evaluated packet roundtrips for each filesystem, with the
+results presented in Figure~\ref{rt}. We take two conclusions from
+this plot. First, the reduction in roundtrips that Active RDMA enables
+over base RDMA is striking: ARFS-rdma exhibits as many as 3x
+roundtrips as ARFS-active in these basic filesystem performance
+tests. However, ARFS-active still makes use of more packet roundtrips
+than NFS. This is due to NFS' request block size and
+response-fragmentation behavior: a single roundtrip in NFS can invoke
+a response of, for example, 4KB, that is split over multiple UDP
+packets because of the Ethernet MTU, whereas an ARFS response is
+limited to one packet due to simplistic design.
+
+Finally, we evaluate the impact of reduced roundtrips due to active
+code explicitly by deriving a synthetic time function in
+Figure~\ref{synth_time} as a function of packet latency. Here we take
+the JVM execution time and add the number of roundtrips multiplied by
+some RTT latency in order to obtain the synthetic execution time for
+the Andrew benchmark (assuming an infinitely fast client). This is
+actually a valid approach because there is no parallelism in our
+simplistic design: a request packet is sent, the server churns, and a
+response is sent; after that arrives, the next request packet can be
+sent. So the critical path is a strict sum of each of these
+components. The base RDMA runtime (at zero latency) is greater
+because, as mentioned above, the coprocessor also handles
+read/write/CAS requests; if it did not, this line would be at the
+origin for latency zero, but would quickly exceed the runtime for the
+active-code system.
+
+\begin{figure}
+  \centering
+\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/wallclock.pdf}
+  \caption{wallclock}\label{wallclock}
+\end{figure}
+
+\begin{figure}
+  \centering
+\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/wallclock2.pdf}
+  \caption{wallclock2}\label{wallclock2}
+\end{figure}
 
 
 \begin{figure}
@@ -481,21 +634,80 @@ did it work?
   \caption{synth time}\label{synth_time}
 \end{figure}
 
-\begin{figure}
-  \centering
-\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/wallclock.pdf}
-  \caption{wallclock}\label{wallclock}
-\end{figure}
 
-\begin{figure}
-  \centering
-\includegraphics[scale=0.5, trim = 0 200 0 200]{../../results/matlab/wallclock2.pdf}
-  \caption{wallclock2}\label{wallclock2}
-\end{figure}
+% ------------------------------------------- cfallin pass head-pointer -------------------------------------------------------------
+
+\section{Future Work}
+The fairest way to evaluate would be to have a real system with a real network card
+with a real coprocessor running the JVM.
+
+\section{Evaluation Discussion}
+The simulator models a main processor running Linux and a coprocessor that
+runs the JVM. The JVM is not run on the simulated Linux system, because
+it would be terribly slow it would still not be a fair comparison, since
+the actual Active RDMA code would run on the NIC card. The fairest
+way to evaluate would be to have a real system with a real network card
+with a real coprocessor running the JVM, but that is part of future work
 
 
-\section{Conclusion}
-we are doomed.
+Basically, for NFS the overall protocol processing overhead needs to be
+taken into consideration, the NFS server has stats that can help
+in calculating the execution times things like counts and times of
+nfs\_getattr, nfs\_stat, nfs\_read are maintained by Linux NFS servers. These
+would include the overall execution time for different nfs operations. But 
+we would still not be able to compare these results against the Active ARFS
+and ARFS RDMA because of the different processor speeds.
+
+Another way to compare NFS against Active ARFS would be for us to collect
+'CPU load' plot which counts instructions against the stats like
+time spent in the JVM(coprocessor) that we collect. Though that still
+does not give a fair comparison because it does not take into consideration
+the difference in processor speeds.
+
+What is most important in the comparison of NFS against ARFS is the total
+time between when the client sends the DFS request and when it receives the
+reply. Thus packet latencies alone are not that important , but number of packet
+roundtrips compared for NFS compared( and contribution of each packet to the
+overall execution time ) to the same test run on ARFS is more important. So
+as the packet latencies increase, ARFS would perform better than NFS because
+it has lesser number of roundtrips.
+
+Our performance measurements have the number of roundtrips(pkts), and we have
+the execution time for ARFS(jvm\_nsec), so if we get NFS execution time from
+our stats, then we could compare the execution times as well as the total time
+from when the packet leaves the client to when the client gets back the reply.
+We get total time by assigning latencies to the each paket (= latency * packets).
+
+Since jvm\_nsec is a diff taken at start and stop of processing at the JVM coprocessor,
+then memory access times are already included in jvm\_nsec. So we should not include mem\_* for
+calculating execution time.
+
+To get a fair comparison we would require a complete real system, or else full-system emulation of
+server and all clients in a synchronized time domain with realistic JVM speeds.
+
+To compare Avtive ARFS vs RDMA ARFS we use a Synthetic Time approach.
+
+Since we are simulating different things at different speeds, we use the "synthetic time"
+approach , wherein we're measuring the different components that contribute to time directly
+and then taking a linear combination of them to get a synthetic (simulated) execution time.
+
+To simulate different memory access times, we have the number of ARFS memory accesses like
+r(), w(), cas() and these can be sweeped ro detrmine execution time. We can assume a reasonable
+time that NIC takes to access memory per access. Typically, NIC processing power is less than host
+processor, it is 33-200MHz. So can calculate execution time. In some systems, this will be the
+bottleneck as long as the processor is fast enough. Though for our purposes, we consider the bus
+consider CPU as bottleneck. 
+
+
+However, NFS does a lot of processing on the CPU. Since NFS is optimized and runs on the kernel, whereas Active DFS runs in User space and runs on top of a JVM, we expect it to effect the CPU utilization much more. This would be significantly less in case of an optimized (complete) implementation of Active RDMA on the NIC card i.e. the impact on NIC processor would be significantly less than shown in the figures. 
+\item Active DFS vs RDMA DFS
+As expected, the number of packets transferred over the network is significantly less for Active DFS, thus as the packet latency in a network increases, so does the advantage of using Active RDMA over RDMA. For streaming reads, we observe almost 3X lesser number of packets transferred in case of Active DFS. Whereas, for streaming writes we observe more than 3X lesser number of packets.
+
+We consider runtime as the total time it takes from when the system call is issued to the client to when the client receives the reply from the server. Thus Runtime includes the packet latencies and execution time on the server. More discussion on this can be found in the 'Evaluation Discussion' section. Given that we have the number of packets transferred and execution time on the JVM we can plotted the packet latencies vs Runtime, as the packet latencies increased we observed that the improvement in performance of Active DFS over RDMA DFS increased, this is expected due to the reduced number of packets transferred in the case of Active DFS.
+\item Active DFS vs NFS
+The network of roundtrips is more in the case of Active DFS. The reason for this is that our implementation is not optimized unlike the Linux NFS implementation. Because of the limitation of our UDP stack implementation at the simulator, i.e. we donot do fragment re-assembly, we break streaming reads and writes into 1.2KB chunks, thus increasing the number of packets transferred over the network. However, that is not the case with which supports reads/writes in block sizes of 8KB , thus lesser number of packets. In a more complete implementation of ARFS, we would have significantly less number of packets transferred over the network.
+\end{itemize}
+
 
 
 \bibliography{final} \bibliographystyle{abbrv}

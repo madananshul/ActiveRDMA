@@ -348,10 +348,6 @@ Since an actual prototype implementation with a real system is much beyond the s
 
 %\end{itemize}
 
-\section{Future Work}
-The fairest way to evaluate would be to have a real system with a real network card
-with a real coprocessor running the JVM.
-
 \section{Evaluation Discussion}
 The simulator models a main processor running Linux and a coprocessor that
 runs the JVM. The JVM is not run on the simulated Linux system, because
@@ -369,7 +365,7 @@ would include the overall execution time for different nfs operations. But
 we would still not be able to compare these results against the Active ARFS
 and ARFS RDMA because of the different processor speeds.
 
-Following counters are all maintainted as counters at the simulator:
+Following counters are all maintainted at the simulator:
 \begin{itemize}
 \item jvm_nsec : The time spent in the simulator's JVM when running ARFS for processing requests.
 \item  insns : The number of instructions executed when running NFS on the simulated CPU.
@@ -451,6 +447,8 @@ on evaluation is above in the section 'Evaluation Discussion'.
 Here we observe that the effect of number of clients on CPU load is the most for Active DFS as compared to NFS and RDMA DFS. It is expected that the scalability impact on CPU load would be more for Active DFS vs RDMA DFS because RDMA DFS does not do much processing on the CPU, it simplies accesses the host memory unlike Active DFS. 
 
 However, NFS does a lot of processing on the CPU. Since NFS is optimized and runs on the kernel, whereas Active DFS runs in User space and runs on top of a JVM, we expect it to effect the CPU utilization much more. This would be significantly less in case of an optimized (complete) implementation of Active RDMA on the NIC card i.e. the impact on NIC processor would be significantly less than shown in the figures. 
+
+We feel that scalability issues need be addressed by adding more NIC cards, as there would be a limit to the number of clients that each NIC card would be able to support since the NIC processing power would be significantly less than that of the CPU processing power.
 \item Active DFS vs RDMA DFS
 As expected, the number of packets transferred over the network is significantly less for Active DFS, thus as the packet latency in a network increases, so does the advantage of using Active RDMA over RDMA. For streaming reads, we observe almost 3X lesser number of packets transferred in case of Active DFS. Whereas, for streaming writes we observe more than 3X lesser number of packets.
 
@@ -458,10 +456,6 @@ We consider runtime as the total time it takes from when the system call is issu
 \item Active DFS vs NFS
 The network of roundtrips is more in the case of Active DFS. The reason for this is that our implementation is not optimized unlike the Linux NFS implementation. Because of the limitation of our UDP stack implementation at the simulator, i.e. we donot do fragment re-assembly, we break streaming reads and writes into 1.2KB chunks, thus increasing the number of packets transferred over the network. However, that is not the case with which supports reads/writes in block sizes of 8KB , thus lesser number of packets. In a more complete implementation of ARFS, we would have significantly less number of packets transferred over the network.
 \end{itemize}
-
-\section{Results}
-did it work?
-
 
 \begin{figure}
   \centering
@@ -493,9 +487,18 @@ did it work?
   \caption{wallclock2}\label{wallclock2}
 \end{figure}
 
+\section{Future Work}
+\begin{itemize}
+\item Evaluate the system with a real system with a real network card with
+a real coprocessor running the JVM. Go even further, and implement the code
+on the NIC GPU. This will enable better comparison with NFS.
+\item Address scalability issues because NIC processing power limitation, by may
+be experimenting with larger number of NIC cards, and evaluating the performance
+as a function of cost.
+\end{itemize}
 
 \section{Conclusion}
-we are doomed.
+THE WORLD WILL NEVER BE THE SAME AGAIN ;)
 
 
 \bibliography{final} \bibliographystyle{abbrv}

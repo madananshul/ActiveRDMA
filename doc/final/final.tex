@@ -700,13 +700,14 @@ consider CPU as bottleneck.
 
 
 However, NFS does a lot of processing on the CPU. Since NFS is optimized and runs on the kernel, whereas Active DFS runs in User space and runs on top of a JVM, we expect it to effect the CPU utilization much more. This would be significantly less in case of an optimized (complete) implementation of Active RDMA on the NIC card i.e. the impact on NIC processor would be significantly less than shown in the figures. 
-\item Active DFS vs RDMA DFS
+
+ Active DFS vs RDMA DFS
 As expected, the number of packets transferred over the network is significantly less for Active DFS, thus as the packet latency in a network increases, so does the advantage of using Active RDMA over RDMA. For streaming reads, we observe almost 3X lesser number of packets transferred in case of Active DFS. Whereas, for streaming writes we observe more than 3X lesser number of packets.
 
 We consider runtime as the total time it takes from when the system call is issued to the client to when the client receives the reply from the server. Thus Runtime includes the packet latencies and execution time on the server. More discussion on this can be found in the 'Evaluation Discussion' section. Given that we have the number of packets transferred and execution time on the JVM we can plotted the packet latencies vs Runtime, as the packet latencies increased we observed that the improvement in performance of Active DFS over RDMA DFS increased, this is expected due to the reduced number of packets transferred in the case of Active DFS.
-\item Active DFS vs NFS
+
+ Active DFS vs NFS
 The network of roundtrips is more in the case of Active DFS. The reason for this is that our implementation is not optimized unlike the Linux NFS implementation. Because of the limitation of our UDP stack implementation at the simulator, i.e. we donot do fragment re-assembly, we break streaming reads and writes into 1.2KB chunks, thus increasing the number of packets transferred over the network. However, that is not the case with which supports reads/writes in block sizes of 8KB , thus lesser number of packets. In a more complete implementation of ARFS, we would have significantly less number of packets transferred over the network.
-\end{itemize}
 
 
 

@@ -238,7 +238,7 @@ operations:
     arbitrary chunk of data back to the client. In this way it is as
     general as possible.
     
-  \item {\tt Execute(code, param)} -- Executes previously-loaded
+  \item {\tt Execute(md5, args)} -- Executes previously-loaded
     remote code (referenced by MD5 hash), giving it direct access to
     the host memory.
      
@@ -359,7 +359,7 @@ individual evaluations.
 \centering
 \includegraphics[width=3in]{fig/fig4.pdf}
 \caption{Emulator architecture.}
-\ref{fig:fig4}
+\label{fig:fig4}
 \end{figure}
   
 \subsection{Initial demo applications}

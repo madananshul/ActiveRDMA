@@ -257,13 +257,11 @@ The following Active DFS operations were implemented : create, lookup, getBlock,
 
 For example, the Active DFS implementation uses other Active code like DHT as a library. In out implementation, using run() we send a request to the server to execute particular Active Code, which internally may call other Active code from libraries which are also loaded on the server beforehand. Thus Active RDMA DFS ensures that there are never more than a single round trip between client and server when a single operations is executed. 
 
-\PROBLEM{TODO}
 
 \subsection{Active RDMA File System Client}
 
 The Active DFS client is implemented as a FUSE file system, which considerably simplifies the development effort for us. We used JNI bindings to implement the Active DFS client code in java. Java Native Interface (JNI) is a programming framework that allows Java code running in a Java Virtual Machine (JVM) to call and to be called[1]  by native applications (programs specific to a hardware  and operating system platform) and libraries written in other languages, such as C. Our implementation has been built on top of the FUSE J code, which is freely available on sourceforge.net. The FileSystem3 is an adapter interface that is eventually called by the linux system calls. Our file system called ARFS(Active RDMA FIle system) basically implements this interface, by using the Active RDMA wire interface to generate packets sent over the wire, or using libraries we implemented like List, DHT that eventually send packets over the wire using the Active RDMA wire transfer interface. We have supported a file system interface that very closely emulates that of a linux file system calls, because these are required to accurately measure the performance of ARFS.
 
-\PROBLEM{TODO}
 
 \subsection{DFS utilities (Grep, Copy and Find)}
 
@@ -284,7 +282,9 @@ We made an assumption that the result will necessarily fit into a single packet 
 \item Initially, we had a wire interface with a common address space for code and meory that was being modified. During the initial prototype, we learnt that the code, executed on the NIC, thus 
 differetn address space from the server host's memory, and wire interface changed accordingly.
 \item During the course of building the FUSE file system, and calling appropriate distributed  file system calls in order to perform imeplemtn the FUSE Userspace syscalls, we found out exactly what kind of Functionality the Active DFS code should support. What metadata ops are required.
-\item Initially we implemented int addressable memory because of convenience. Later since we implemented the FUSE file system at the CLient, which uses byte addressable memory, we changed our interface to use byte addressable memory at the Server.
+\item Initially we implemented word addressable memory because of convenience. Later since we implemented the FUSE file system at the CLient, which uses byte addressable memory, we changed our interface to use byte addressable memory at the Server.
+\item Batching reads and writes seemed to have an obvious advantage, so we added those to the interface.
+
 \end{itemize}
 
 \section{Testing Environment}
@@ -449,6 +449,9 @@ on evaluation is above in the section 'Evaluation Discussion'.
 Here we observe that 
 \item Scalability.
 \item Active DFS vs RDMA DFS
+As expected, the number of packets transferred over the network is significantly less for Active DFS, thus as the packet latency in a network increases, so does the advantage of using Active RDMA over RDMA. For streaming reads, we observe almost 3X lesser number of packets transferred in case of Active DFS. Whereas, for streaming writes we observe more than 3X lesser number of packets.
+\item Active DFS vs NFS
+The network of roundtrips is more in the case of Active DFS. The reason for this is that our implementation is not optimized unlike the Linux NFS implementation. Because of the limitation of our UDP stack implementation at the simulator, i.e. we donot do fragment re-assembly, we break streaming reads and writes into 1.2KB chunks, thus increasing the number of packets transferred over the network. However, that is not the case with which supports reads/writes in block sizes of 8KB , thus lesser number of packets. In a more complete implementation of ARFS, we would have significantly less number of packets transferred over the network.
 \end{itemize}
 
 \section{Results}

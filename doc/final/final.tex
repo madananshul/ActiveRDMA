@@ -255,11 +255,13 @@ The core of the testing framework is centered on an in-memory file system that i
 
 The following Active DFS operations were implemented : create, lookup, getBlock, setBlock, setLen, getLen, read, write, copy, find. the implementation ensures a single rountrip for each Active DFS operation which is the core strenght of the Avtive RDMA protocol.
 
+For example, the Active DFS implementation uses other Active code like DHT as a library. In out implementation, using run() we send a request to the server to execute particular Active Code, which internally may call other Active code from libraries which are also loaded on the server beforehand. Thus Active RDMA DFS ensures that there are never more than a single round trip between client and server when a single operations is executed. 
+
 \PROBLEM{TODO}
 
 \subsection{Active RDMA File System Client}
 
-The Active DFS client is implemented as a FUSE file system, which considerably simplifies the development effort for us. We used JNI bindings to implement the Active DFS client code in java. Java Native Interface (JNI) is a programming framework that allows Java code running in a Java Virtual Machine (JVM) to call and to be called[1]  by native applications (programs specific to a hardware  and operating system platform) and libraries written in other languages, such as C. The FileSystem3 is an adapter interface that is eventually called by the linux system calls. Our file system called ARFS(Active RDMA FIle system) basically implements this interface, by using the Active RDMA wire interface to generate packets sent over the wire, or using libraries we implemented like List, DHT that eventually send packets over the wire using the Active RDMA wire transfer interface. We have supported a file system interface that very closely emulates that of a linux file system calls, because these are required to accurately measure the performance of ARFS.
+The Active DFS client is implemented as a FUSE file system, which considerably simplifies the development effort for us. We used JNI bindings to implement the Active DFS client code in java. Java Native Interface (JNI) is a programming framework that allows Java code running in a Java Virtual Machine (JVM) to call and to be called[1]  by native applications (programs specific to a hardware  and operating system platform) and libraries written in other languages, such as C. Our implementation has been built on top of the FUSE J code, which is freely available on sourceforge.net. The FileSystem3 is an adapter interface that is eventually called by the linux system calls. Our file system called ARFS(Active RDMA FIle system) basically implements this interface, by using the Active RDMA wire interface to generate packets sent over the wire, or using libraries we implemented like List, DHT that eventually send packets over the wire using the Active RDMA wire transfer interface. We have supported a file system interface that very closely emulates that of a linux file system calls, because these are required to accurately measure the performance of ARFS.
 
 \PROBLEM{TODO}
 
@@ -283,6 +285,7 @@ We made an assumption that the result will necessarily fit into a single packet 
 differetn address space from the server host's memory, and wire interface changed accordingly.
 \item During the course of building the FUSE file system, and calling appropriate distributed  file system calls in order to perform imeplemtn the FUSE Userspace syscalls, we found out exactly what kind of Functionality the Active DFS code should support. What metadata ops are required.
 \item Initially we implemented int addressable memory because of convenience. Later since we implemented the FUSE file system at the CLient, which uses byte addressable memory, we changed our interface to use byte addressable memory at the Server.
+\end{itemize}
 
 \section{Testing Environment}
 
@@ -372,6 +375,7 @@ Following counters are all maintainted as counters at the simulator:
 \item  insns : The number of instructions executed when running NFS on the simulated CPU.
 \item pkts : Total number of packets received by server for both NFS and ARFS.
 \item mem_rd mem_wr mem_cas : Memory access operations executed by simulated NIC on simulated memory.
+\end{itemize}
 
 Another way to compare NFS against Active ARFS would be for us to collect
 'CPU load' plot which counts instructions against the stats like
@@ -434,6 +438,17 @@ consider CPU as bottleneck.
 \item Remote grep, remote find
 \item Large-tree file copy
 \end{itemize}
+\end{itemize}
+
+\section{Evaluation Results and Observations}
+We compared ARFS Active vs Active RDMA vs NFS. Discussion and reasoning 
+on evaluation is above in the section 'Evaluation Discussion'.
+
+\begin{itemize}
+\item FS Utilities : Grep, Find
+Here we observe that 
+\item Scalability.
+\item Active DFS vs RDMA DFS
 \end{itemize}
 
 \section{Results}

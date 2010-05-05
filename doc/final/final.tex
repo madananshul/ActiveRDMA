@@ -1,5 +1,6 @@
 \documentclass[10pt]{article}
 %\usepackage{fullpage}
+\usepackage{url}
 \usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \usepackage{courier}
 \usepackage{color}
@@ -208,8 +209,11 @@ than its basic interface to a flat memory space.
 
 We developed a prototype implementation of Active RDMA as a
 proof-of-concept and a testbed for initial performance
-explorations. We will show here how we develop a fully functional
-network filesystem on top of the basic Active RDMA interface.
+explorations.\footnote{The source for our prototype system and
+  simulator can be found at
+  \url{http://github.com/madananshul/ActiveRDMA}.} We will show here
+how we develop a fully functional network filesystem on top of the
+basic Active RDMA interface.
 
 The most crucial point of our implementation is the definition of the
 Active RDMA client-server interface, both at the API level and at the
@@ -480,10 +484,6 @@ higher level on the server side:
   implementation of the same functionality.
 
 \end{itemize}
-
-\subsection{Repository}
-The code repository can be accessed at : http://github.com/madananshul/ActiveRDMA
-
 
 \section{Evaluation}
 

@@ -1,5 +1,6 @@
 \documentclass[10pt]{article}
 %\usepackage{fullpage}
+\usepackage{url}
 \usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \usepackage{courier}
 \usepackage{color}
@@ -208,8 +209,11 @@ than its basic interface to a flat memory space.
 
 We developed a prototype implementation of Active RDMA as a
 proof-of-concept and a testbed for initial performance
-explorations. We will show here how we develop a fully functional
-network filesystem on top of the basic Active RDMA interface.
+explorations.\footnote{The source for our prototype system and
+  simulator can be found at
+  \url{http://github.com/madananshul/ActiveRDMA}.} We will show here
+how we develop a fully functional network filesystem on top of the
+basic Active RDMA interface.
 
 The most crucial point of our implementation is the definition of the
 Active RDMA client-server interface, both at the API level and at the
@@ -373,9 +377,9 @@ We built four simple demo application using our prototype framework.
   tail), and random fetch is also $O(n)$ as it is for any linked list
   of $n$ elements.
 \item hash table, with linked-list buckets.
+\item locking (mutual exclusion) service with FCFS lock ordering~\cite{nic-basedatomic}.  
 \item in-memory filesystem (built using the hash table), as described
   previously.
-\item locking (mutual exclusion) service with FCFS lock ordering~\cite{nic-basedatomic}.  
 \end{itemize}
 
 Running the first two as both plain RDMA and as Active code served as
@@ -439,7 +443,7 @@ comparison point for our ``real''active filesystem.
 The Active RDMA filesystem offloads most functionality to server-side
 mobile code. Most common filesystem metadata operations, such as file
 creation and deletion, happen in one server roundtrip, as would be
-expected from a robust network filesystem. The filesystem punts fo the
+expected from a robust network filesystem. The filesystem punts to the
 underlying FS inode-store layer (described above) for the IO path,
 which is similarly optimized with active code in order to perform
 inode structure traversal and request fragmentation at the server
@@ -455,8 +459,7 @@ higher level on the server side:
 
 \begin{itemize}
 \item Copy -- a simple utility that is able to copy a file already in
-  the FS to another file. File copy is an obvious application of
-  server-resident code, since the data need never traverse the network
+  the FS to another file, so the data need never traverse the network
   if its final destination is the same filesystem.
 
 \item Grep -- does simple pattern matching on a text file. It takes a
@@ -737,13 +740,12 @@ application domains.
 
 \subsection{Additional Considerations}
 
-Several more exotic optimizations were considered as well during
-brainstorming. One theme that seems to be common in high-performance
-network applications is to reduce the critical path from the
-application to the network by circumventing the usual OS layers; we
-considered using a DAFS~\cite{DAFS}-like interface for applications to
-directly call InfiniBand-like transport resources. In combination with
-the direct coupling between the NIC and host memory at the server end,
+One theme that seems to be common in high-performance network 
+applications is to reduce the critical path from the application to
+the network by circumventing the usual OS layers; we considered
+using a DAFS~\cite{DAFS}-like interface for applications to directly
+call InfiniBand-like transport resources. In combination with the
+direct coupling between the NIC and host memory at the server end,
 this would make for an extremely low-latency path between the client
 and the shared data, and might alter some of the tradeoff
 considerations.
